@@ -12,3 +12,16 @@ export type Snippet = {
   createdAt?: string;
   updatedAt?: string;
 };
+
+export type CreateSnippetData = {
+  title: string;
+  codeBody: string;
+  language: string;
+  visibility: string;
+  description?: string | null;
+  ownerId?: string | null;
+  forkedFromId?: string | null;
+  tagIds?: string[];
+};
+
+export type UpdateSnippetData = Partial<CreateSnippetData>;

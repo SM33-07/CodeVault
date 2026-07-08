@@ -8,7 +8,7 @@ export type User = {
 export type Snippet = {
   id: string;
   title: string;
-  code: string;
+  codeBody: string;
   language: string;
   description?: string;
   visibility: "public" | "private";
