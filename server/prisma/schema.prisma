@@ -20,4 +20,22 @@ model Snippet {
   forkCount    Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  snippetTags  SnippetTag[]
+}
+
+model Tag {
+  id    String       @id @default(uuid())
+  name  String       @unique
+  // relation to join table
+  snippetTags SnippetTag[]
+}
+
+model SnippetTag {
+  id        String   @id @default(uuid())
+  snippet   Snippet  @relation(fields: [snippetId], references: [id])
+  snippetId String
+  tag       Tag      @relation(fields: [tagId], references: [id])
+  tagId     String
+
+  @@unique([snippetId, tagId])
 }

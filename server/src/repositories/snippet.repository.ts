@@ -1,4 +1,4 @@
-import { prisma } from '../prisma/client';
+import prisma from '../prisma/client';
 import { Snippet } from '../types/snippet';
 
 export const snippetRepository = {
