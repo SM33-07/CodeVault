@@ -1,0 +1,397 @@
+SOFTWARE REQUIREMENTS SPECIFICATION 
+CodeVault 
+An Open-Source, Self-Hostable Code Snippet Manager for Developers 
+ 
+Prepared by 
+Soham More 
+Document Version 1.0 
+July 2026 
+Personal Engineering Project — Portfolio & Internship Application Reference 
+Table of Contents 
+1. Introduction 
+	3 
+2. Overall Description 
+	4 
+3. System Features (Functional Requirements) 
+	6 
+4. External Interface Requirements 
+	8 
+5. Non-Functional Requirements 
+	9 
+6. System Architecture 
+	10 
+7. Data Requirements 
+	12 
+8. Use Cases 
+	13 
+9. Sprint Plan 
+	15 
+10. Non-Goals (v1) 
+	16 
+Appendix A — Glossary 
+	17 
+1. Introduction 
+1.1 Purpose 
+This document specifies the functional and non-functional requirements for CodeVault, a self-hosted code snippet management platform. It serves as the engineering reference during implementation and as a design record demonstrating full-stack architecture, database design, and authentication engineering for portfolio and internship review. 
+1.2 Scope 
+CodeVault allows a developer to store, tag, search, and organize reusable code snippets, fork snippets from other users, view usage analytics, and maintain a public profile showcasing their snippet library. A single AI-assisted capability — natural-language explanation of a snippet's behavior — is included as a secondary feature; it is not the product's core identity. 
+Version 1 (this document) targets a single-server, single-region deployment suitable for individual use and portfolio demonstration. Team workspaces and organization-level sharing are explicitly out of scope for v1 (see Section 10). 
+1.3 Intended Audience 
+Solo developer (author) — implementation reference 
+Internship/hackathon reviewers — architecture and design record 
+Future contributors — onboarding reference if open-sourced 
+1.4 Definitions, Acronyms & Abbreviations 
+Term 
+Definition 
+Snippet 
+A stored, reusable block of code with associated language, title, and tags 
+Fork 
+A copy of another user's snippet, created under the forking user's account, preserving lineage to the original 
+JWT 
+JSON Web Token — used for stateless authentication 
+ORM 
+Object-Relational Mapper (Prisma, in this system) 
+RBAC 
+Role-Based Access Control 
+2. Overall Description 
+2.1 Problem Statement 
+Developers accumulate reusable code — utility functions, configuration templates, regex patterns, boilerplate — across projects, but rarely have a structured place to store it. GitHub Gists provide storage without organization: no tagging, no search by language, no analytics, and no lightweight way to browse a personal library. The result is snippets scattered across notes apps, Slack messages, and forgotten repositories. 
+2.2 Proposed Solution 
+CodeVault provides a structured, searchable, self-hostable home for code snippets. Every snippet carries a language, a set of tags, and visibility settings. Snippets can be forked the way repositories are forked on GitHub, preserving a lineage back to the original author. A public profile page lets a developer showcase their snippet library the way a portfolio site showcases projects. 
+2.3 Product Perspective 
+CodeVault is a standalone full-stack web application: a Next.js frontend, an Express REST API, and a PostgreSQL database accessed through Prisma. It has no dependency on any external platform and is designed to be self-hosted via Docker by any individual developer. 
+2.4 Product Functions — Summary 
+User authentication (signup, login, JWT-based session management) 
+Snippet CRUD with language, title, description, and tags 
+Full-text and tag-based snippet search 
+Snippet forking with lineage tracking 
+View-count analytics per snippet 
+Public, shareable user profile pages 
+AI-assisted snippet explanation (single feature, on-demand) 
+2.5 User Classes and Characteristics 
+User Class 
+Characteristics & Needs 
+Registered User 
+Creates, edits, tags, and organizes their own snippets. Can fork public snippets from others. 
+Visitor (unauthenticated) 
+Can browse public snippets and public profiles, but cannot create or fork without an account. 
+2.6 Operating Environment 
+A Dockerized deployment (application container + PostgreSQL container) runnable on any machine with Docker installed, or deployable to a platform such as Railway or Render for public hosting. The frontend is a standard responsive web application accessible from any modern browser. 
+2.7 Design and Implementation Constraints 
+PostgreSQL only — no additional datastore dependency for v1 
+Authentication must be self-contained (JWT) — no dependency on a third-party auth provider for v1 
+The AI explanation feature must degrade gracefully — the rest of the product must work fully if the AI API is unavailable 
+2.8 Assumptions and Dependencies 
+Single-server deployment is sufficient for v1 — no horizontal scaling requirement at this stage 
+The AI explanation feature depends on an external LLM API (Anthropic Claude) and is treated as an optional enhancement, not a core dependency 
+3. System Features (Functional Requirements) 
+Priority reflects the sprint in which each requirement is targeted for implementation (see Section 9 for the full sprint plan). Must-Have requirements are required for the v1 deployed product; Should-Have requirements strengthen it; Could-Have requirements are candidates for v2. 
+3.1 Authentication 
+ID 
+Requirement 
+Priority 
+FR-1 
+The system shall allow a new user to register with an email and password. 
+Must-Have 
+FR-2 
+The system shall hash passwords using bcrypt prior to storage. 
+Must-Have 
+FR-3 
+The system shall issue a JWT on successful login. 
+Must-Have 
+FR-4 
+The system shall reject requests to protected routes without a valid JWT. 
+Must-Have 
+3.2 Snippet Management 
+ID 
+Requirement 
+Priority 
+FR-5 
+The system shall allow an authenticated user to create a snippet with title, code body, language, and description. 
+Must-Have 
+FR-6 
+The system shall allow a user to edit or delete only their own snippets. 
+Must-Have 
+FR-7 
+The system shall allow a user to mark a snippet as public or private. 
+Must-Have 
+FR-8 
+The system shall render snippet code with syntax highlighting on the frontend. 
+Must-Have 
+3.3 Tagging & Search 
+ID 
+Requirement 
+Priority 
+FR-9 
+The system shall allow a user to attach one or more tags to a snippet. 
+Must-Have 
+FR-10 
+The system shall allow filtering snippets by tag and by language. 
+Must-Have 
+FR-11 
+The system shall support keyword search across snippet titles and descriptions. 
+Should-Have 
+3.4 Forking 
+ID 
+Requirement 
+Priority 
+FR-12 
+The system shall allow an authenticated user to fork any public snippet into their own account. 
+Must-Have 
+FR-13 
+The system shall preserve a reference from a forked snippet back to its original. 
+Must-Have 
+FR-14 
+The system shall display fork count on the original snippet. 
+Should-Have 
+3.5 Analytics 
+ID 
+Requirement 
+Priority 
+FR-15 
+The system shall increment a view counter each time a public snippet is viewed. 
+Should-Have 
+FR-16 
+The system shall display total views and fork count on a user's own snippets. 
+Should-Have 
+3.6 Public Profiles 
+ID 
+Requirement 
+Priority 
+FR-17 
+The system shall provide a public profile page listing a user's public snippets. 
+Must-Have 
+FR-18 
+The system shall allow a user to set a display name and short bio on their profile. 
+Should-Have 
+3.7 AI-Assisted Explanation 
+ID 
+Requirement 
+Priority 
+FR-19 
+The system shall allow a user to request a natural-language explanation of a snippet's behavior via an on-demand action. 
+Should-Have 
+FR-20 
+The system shall display a clear loading and error state if the explanation service is unavailable, without blocking any other functionality. 
+Must-Have 
+4. External Interface Requirements 
+4.1 User Interfaces 
+A responsive Next.js web application covering: signup/login, snippet creation and editing, a searchable snippet library view, an individual snippet detail view with syntax highlighting, and a public profile page. 
+4.2 Hardware Interfaces 
+None. Standard client hardware — a modern browser and an internet connection — is sufficient. 
+4.3 Software Interfaces 
+Anthropic Claude API — used for the on-demand snippet explanation feature only 
+PostgreSQL — primary and only datastore 
+4.4 Communication Interfaces 
+The frontend communicates with the backend over HTTPS via a REST API secured with JWT bearer tokens. The AI explanation feature makes a server-side call from the Express API to the Anthropic API — the frontend never calls the AI provider directly, which keeps the API key server-side and lets the backend apply rate limiting to that specific route. 
+5. Non-Functional Requirements 
+5.1 Performance 
+ID 
+Requirement 
+Priority 
+NFR-1 
+Snippet list and search queries shall return within 500ms under normal load. 
+Should-Have 
+NFR-2 
+The AI explanation feature shall show a loading state within 200ms of the request being triggered. 
+Must-Have 
+5.2 Security 
+ID 
+Requirement 
+Priority 
+NFR-3 
+Passwords shall never be stored or logged in plaintext. 
+Must-Have 
+NFR-4 
+A user shall only be able to modify or delete snippets they own. 
+Must-Have 
+NFR-5 
+JWTs shall have a defined expiry and require re-authentication after expiry. 
+Must-Have 
+5.3 Reliability 
+ID 
+Requirement 
+Priority 
+NFR-6 
+Core snippet CRUD and search functionality shall remain fully available if the AI explanation service is down or rate-limited. 
+Must-Have 
+5.4 Maintainability 
+ID 
+Requirement 
+Priority 
+NFR-7 
+Business logic shall be separated into a service layer, independent of Express route handlers, to support future migration or testing. 
+Should-Have 
+5.5 Usability 
+ID 
+Requirement 
+Priority 
+NFR-8 
+A new user shall be able to create and view their first snippet within two minutes of registering, without external documentation. 
+Should-Have 
+6. System Architecture 
+6.1 High-Level Architecture 
+CodeVault follows a conventional three-tier architecture with one clearly isolated external dependency. The Next.js frontend never talks to PostgreSQL or the AI provider directly — every request flows through the Express API, which enforces authentication, ownership checks, and validation before touching the database or calling out to the AI service. 
+Figure 1 — CodeVault system architecture 
+6.2 Component Breakdown 
+Component 
+Responsibility 
+Next.js Dashboard 
+Snippet library UI, search/filter, snippet editor, public profile pages. 
+Express API Layer 
+Route handling, JWT auth middleware, request validation, rate limiting. 
+Auth Service 
+Signup, login, password hashing, JWT issuance and verification. 
+Snippet Service 
+CRUD operations and ownership enforcement for snippets. 
+Search Service 
+Tag and language filtering, keyword search across title/description. 
+Fork Service 
+Snippet forking logic and lineage tracking back to the original. 
+Analytics Service 
+View-count increments and per-snippet usage stats. 
+PostgreSQL (via Prisma) 
+System of record for users, snippets, tags, and analytics. 
+Anthropic Claude API 
+Called on-demand by the Snippet Service for the explanation feature only. 
+6.3 Technology Stack 
+Layer 
+Technology 
+Backend runtime 
+Node.js + Express (TypeScript) 
+ORM 
+Prisma 
+Database 
+PostgreSQL 
+Auth 
+JWT + bcrypt 
+Frontend 
+Next.js + TypeScript 
+AI integration 
+Anthropic Claude API (server-side only) 
+Infrastructure 
+Docker, Docker Compose, GitHub Actions CI/CD 
+Deployment target 
+Railway or Render 
+6.4 Data Flow — Example: Creating and Forking a Snippet 
+1. A user submits a new snippet through the dashboard. 2. The API validates the JWT and the request body, then the Snippet Service writes the record via Prisma. 3. Another user browses public snippets and selects Fork. 4. The Fork Service creates a new snippet record owned by the forking user, storing a reference to the original snippet's ID. 5. The original snippet's fork count is incremented. 6. Both the original and the fork are independently editable from that point forward. 
+7. Data Requirements 
+7.1 Core Entities 
+Entity 
+Key Attributes 
+Relationships 
+User 
+id, email, password_hash, display_name, bio 
+Has many Snippets 
+Snippet 
+id, owner_id, title, code_body, language, description, visibility, forked_from_id, view_count, fork_count 
+Belongs to User; has many SnippetTags; optionally references a parent Snippet 
+Tag 
+id, name 
+Has many SnippetTags 
+SnippetTag 
+snippet_id, tag_id 
+Join table between Snippet and Tag 
+SnippetView 
+id, snippet_id, viewed_at 
+Belongs to Snippet — supports future time-series analytics 
+7.2 Entity Relationships — Narrative Overview 
+A User has many Snippets; each Snippet belongs to exactly one owning User. 
+A Snippet may optionally reference a parent Snippet via forked_from_id, forming a self-referential fork lineage. 
+Tags are many-to-many with Snippets through the SnippetTag join table, allowing search and filtering by tag without duplication. 
+SnippetView records are appended on each public view, enabling both a simple counter and, later, time-based view analytics without a schema change. 
+8. Use Cases 
+UC-1 — Register and Create First Snippet 
+Actor 
+Visitor 
+Description 
+A new user signs up and creates their first snippet. 
+Preconditions 
+None. 
+Main Flow 
+1) Visitor registers with email/password. 2) System hashes password and creates the User record. 3) System issues a JWT. 4) User creates a snippet with title, code, and language. 
+Postcondition 
+A new User and their first Snippet exist in the database. 
+UC-2 — Search and Filter Snippets 
+Actor 
+Registered User or Visitor 
+Description 
+A user searches their own library or browses public snippets by tag/language. 
+Preconditions 
+At least one public snippet exists in the system for a visitor; none required for a user browsing their own library. 
+Main Flow 
+1) User enters a keyword or selects a tag/language filter. 2) System queries matching snippets. 3) Results are displayed with syntax-highlighted previews. 
+Postcondition 
+None — read-only operation. 
+UC-3 — Fork a Public Snippet 
+Actor 
+Registered User 
+Description 
+A user copies another user's public snippet into their own account. 
+Preconditions 
+The target snippet is marked public; the acting user is authenticated. 
+Main Flow 
+1) User views a public snippet. 2) User selects Fork. 3) System creates a new Snippet owned by the acting user, referencing the original via forked_from_id. 4) The original snippet's fork_count is incremented. 
+Postcondition 
+A new, independently editable Snippet exists, with lineage preserved to the original. 
+UC-4 — Request AI Explanation 
+Actor 
+Registered User 
+Description 
+A user requests a natural-language explanation of one of their snippets. 
+Preconditions 
+The user owns or is viewing the snippet; the AI service is reachable. 
+Main Flow 
+1) User selects Explain on a snippet. 2) API sends the snippet body to the Anthropic API. 3) Response is streamed or returned to the frontend and displayed below the snippet. 
+Postcondition 
+No data is persisted from this action in v1 — the explanation is generated on demand each time. 
+UC-5 — View a Public Profile 
+Actor 
+Visitor or Registered User 
+Description 
+Anyone views another user's public profile and their public snippet library. 
+Preconditions 
+The profile owner has at least one public snippet, or an empty state is shown. 
+Main Flow 
+1) Visitor navigates to a user's public profile URL. 2) System returns the user's display name, bio, and list of public snippets. 
+Postcondition 
+None — read-only operation. 
+9. Sprint Plan 
+CodeVault is built in six incremental sprints, each introducing exactly one new architectural concept on top of a working system from the previous sprint. This mirrors how the project is actually intended to be built — Postman-tested backend first, frontend last. 
+Sprint 
+Focus 
+Deliverable 
+Sprint 1 
+Express server + basic Snippet CRUD (no auth, no DB — in-memory) 
+POST/GET/DELETE /snippets working, tested in Postman 
+Sprint 2 
+PostgreSQL + Prisma integration 
+Snippet CRUD persisted to a real database 
+Sprint 3 
+Prisma relations + validation 
+Tag model, SnippetTag join table, input validation 
+Sprint 4 
+Authentication 
+JWT signup/login; snippet routes require ownership 
+Sprint 5 
+Search, filtering, forking, analytics 
+Full FR-9 through FR-16 implemented 
+Sprint 6 
+Next.js dashboard + public profiles + AI feature 
+Deployed, documented v1 
+10. Non-Goals (v1) 
+Explicitly excluded from v1 to keep the project achievable on a solo, time-boxed timeline. These are natural v2 candidates once the core product is deployed and documented. 
+Team workspaces or shared/organization-owned snippet libraries 
+Snippet versioning or edit history beyond the current state 
+Real-time collaborative editing 
+Comments or social interaction features beyond forking 
+Persisted AI explanations (v1 generates on-demand only, nothing is cached or stored) 
+Appendix A — Glossary 
+Term 
+Meaning 
+Lineage 
+The reference chain from a forked snippet back to its original source snippet 
+Visibility 
+Whether a snippet is public (viewable/forkable by anyone) or private (owner-only) 
+Service layer 
+Business logic separated from Express route handlers, for testability and future migration
