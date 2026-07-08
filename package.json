@@ -6,6 +6,7 @@
     "server"
   ],
   "scripts": {
+    "dev": "concurrently \"npm run dev:app\" \"npm run dev:server\"",
     "dev:app": "npm --workspace app run dev",
     "dev:server": "npm --workspace server run dev",
     "build:app": "npm --workspace app run build",
