@@ -1,0 +1,18 @@
+{
+  "name": "codevault-monorepo",
+  "private": true,
+  "workspaces": [
+    "app",
+    "server"
+  ],
+  "scripts": {
+    "dev:app": "npm --workspace app run dev",
+    "dev:server": "npm --workspace server run dev",
+    "build:app": "npm --workspace app run build",
+    "build:server": "npm --workspace server run build",
+    "build": "npm run build:app && npm run build:server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
