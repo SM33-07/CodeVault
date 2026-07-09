@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String?
+  bio          String?
+  snippets     Snippet[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 model Snippet {
   id           String   @id @default(uuid())
   title        String
@@ -14,13 +25,14 @@ model Snippet {
   language     String
   description  String?
   visibility   String
-  ownerId      String?
   forkedFromId String?
   viewCount    Int      @default(0)
   forkCount    Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   snippetTags  SnippetTag[]
+  ownerId String?
+  owner   User?   @relation(fields: [ownerId], references: [id])
 }
 
 model Tag {

@@ -6,7 +6,6 @@ export const createSnippetSchema = z.object({
   language: z.string().min(1),
   visibility: z.enum(["public", "private"]),
   description: z.string().optional(),
-  ownerId: z.string().uuid().optional(),
   tagIds: z.array(z.string().uuid()).optional(),
 });
 

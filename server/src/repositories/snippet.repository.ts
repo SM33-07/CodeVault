@@ -20,7 +20,7 @@ const tagConnections = (tagIds: string[]) =>
 
 export const snippetRepository = {
   findAll: () => prisma.snippet.findMany({ orderBy: { createdAt: 'desc' }, include: withTags }),
-  create: (data: CreateSnippetData) => {
+  create: (data: CreateSnippetData & { ownerId: string }) => {
     const { tagIds, ...snippetData } = data;
 
     return prisma.snippet.create({
@@ -28,8 +28,8 @@ export const snippetRepository = {
         ...snippetData,
         snippetTags: tagIds?.length
           ? {
-              create: tagConnections(tagIds),
-            }
+            create: tagConnections(tagIds),
+          }
           : undefined,
       },
       include: withTags,
@@ -51,8 +51,8 @@ export const snippetRepository = {
             ...snippetData,
             snippetTags: tagIds?.length
               ? {
-                  create: tagConnections(tagIds),
-                }
+                create: tagConnections(tagIds),
+              }
               : undefined,
           },
           include: withTags,

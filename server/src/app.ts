@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import snippetRoutes from './routes/snippet.routes';
-import { errorHandler } from './middlewares/error.middleware';
+import { errorMiddleware } from './middlewares/error.middleware';
+import authRoutes from './routes/auth.routes';
 
 export const app = express();
 
@@ -16,6 +17,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.use('/api/auth', authRoutes);
 app.use('/api/snippets', snippetRoutes);
 
-app.use(errorHandler);
+app.use(errorMiddleware);

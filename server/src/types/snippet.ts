@@ -19,7 +19,6 @@ export type CreateSnippetData = {
   language: string;
   visibility: string;
   description?: string | null;
-  ownerId?: string | null;
   forkedFromId?: string | null;
   tagIds?: string[];
 };
