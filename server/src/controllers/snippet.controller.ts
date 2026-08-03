@@ -2,9 +2,21 @@ import { Request, Response, NextFunction } from 'express';
 import { snippetService } from '../services/snippet.service';
 
 export const snippetController = {
-  getAll: async (_req: Request, res: Response) => {
-    const items = await snippetService.findAll();
-    res.json(items);
+  getAll: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const items = await snippetService.findAll(
+        {
+          tag: req.query.tag as string | undefined,
+          language: req.query.language as string | undefined,
+          q: req.query.q as string | undefined,
+        },
+        req.user?.id
+      );
+
+      res.json(items);
+    } catch (err) {
+      next(err);
+    }
   },
 
   create: async (req: Request, res: Response, next: NextFunction) => {
@@ -18,8 +30,11 @@ export const snippetController = {
 
   getById: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const item = await snippetService.findById(req.params.id);
-      if (!item) return res.status(404).json({ error: `Snippet with id "${req.params.id}" not found` });
+      const item = await snippetService.findById(
+        req.params.id,
+        req.user?.id
+      );
+
       res.json(item);
     } catch (err) {
       next(err);

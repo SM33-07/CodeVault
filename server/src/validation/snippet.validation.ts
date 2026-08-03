@@ -14,3 +14,9 @@ export const updateSnippetSchema = createSnippetSchema.partial();
 export const paramsIdSchema = z.object({
   id: z.string().uuid(),
 });
+
+export const snippetQuerySchema = z.object({
+  tag: z.string().optional(),
+  language: z.string().optional(),
+  q: z.string().optional(),
+});

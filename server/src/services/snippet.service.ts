@@ -3,7 +3,14 @@ import { snippetRepository } from "../repositories/snippet.repository";
 import { ForbiddenError, NotFoundError } from "../errors";
 
 export const snippetService = {
-  findAll: () => snippetRepository.findAll(),
+  findAll: (
+    _filters: {
+      tag?: string;
+      language?: string;
+      q?: string;
+    },
+    _requestingUserId?: string
+  ) => snippetRepository.findAll(),
 
   async create(data: CreateSnippetData, requestingUserId: string) {
     return snippetRepository.create({
@@ -12,7 +19,10 @@ export const snippetService = {
     });
   },
 
-  findById: (id: string) => snippetRepository.findById(id),
+  findById: (
+    id: string,
+    _requestingUserId?: string
+  ) => snippetRepository.findById(id),
 
   async update(
     id: string,
@@ -48,5 +58,5 @@ export const snippetService = {
     }
 
     return snippetRepository.delete(id);
-  },
+  }
 };
