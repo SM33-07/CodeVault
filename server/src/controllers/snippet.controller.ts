@@ -35,6 +35,7 @@ export const snippetController = {
         req.user?.id
       );
 
+      if (!item) return res.status(404).json({ error: `Snippet with id "${req.params.id}" not found` });
       res.json(item);
     } catch (err) {
       next(err);
@@ -56,6 +57,19 @@ export const snippetController = {
       const deleted = await snippetService.delete(req.params.id, req.user!.id);
       if (!deleted) return res.status(404).json({ error: `Snippet with id "${req.params.id}" not found` });
       res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  fork: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const fork = await snippetService.fork(
+        req.params.id,
+        req.user!.id
+      );
+
+      res.status(201).json(fork);
     } catch (err) {
       next(err);
     }

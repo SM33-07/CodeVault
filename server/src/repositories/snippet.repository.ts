@@ -19,7 +19,65 @@ const tagConnections = (tagIds: string[]) =>
   }));
 
 export const snippetRepository = {
-  findAll: () => prisma.snippet.findMany({ orderBy: { createdAt: 'desc' }, include: withTags }),
+  findAll: (filters?: {
+    tag?: string;
+    language?: string;
+    q?: string;
+    requestingUserId?: string;
+  }) => {
+    const where: any = {};
+
+    // Visibility: public snippets + requesting user's own private snippets
+    if (filters?.requestingUserId) {
+      where.OR = [
+        { visibility: 'public' },
+        { ownerId: filters.requestingUserId },
+      ];
+    } else {
+      where.visibility = 'public';
+    }
+
+    // Filter by tag name
+    if (filters?.tag) {
+      where.snippetTags = {
+        some: {
+          tag: {
+            name: {
+              equals: filters.tag,
+              mode: 'insensitive',
+            },
+          },
+        },
+      };
+    }
+
+    // Filter by language
+    if (filters?.language) {
+      where.language = {
+        equals: filters.language,
+        mode: 'insensitive',
+      };
+    }
+
+    // Keyword search across title and description
+    if (filters?.q) {
+      where.AND = [
+        ...(where.AND || []),
+        {
+          OR: [
+            { title: { contains: filters.q, mode: 'insensitive' } },
+            { description: { contains: filters.q, mode: 'insensitive' } },
+          ],
+        },
+      ];
+    }
+
+    return prisma.snippet.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      include: withTags,
+    });
+  },
   create: (data: CreateSnippetData & { ownerId: string }) => {
     const { tagIds, ...snippetData } = data;
 
@@ -62,4 +120,24 @@ export const snippetRepository = {
   },
   delete: (id: string) =>
     prisma.snippet.delete({ where: { id } }).then(() => true).catch(() => false),
+
+  incrementForkCount: (id: string) =>
+    prisma.snippet.update({
+      where: { id },
+      data: {
+        forkCount: {
+          increment: 1,
+        },
+      },
+    }),
+
+  incrementViewCount: (id: string) =>
+    prisma.snippet.update({
+      where: { id },
+      data: {
+        viewCount: {
+          increment: 1,
+        },
+      },
+    }),
 };
