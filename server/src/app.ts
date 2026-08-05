@@ -3,6 +3,8 @@ import cors from 'cors';
 import snippetRoutes from './routes/snippet.routes';
 import { errorMiddleware } from './middlewares/error.middleware';
 import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import aiRoutes from './routes/ai.routes';
 
 export const app = express();
 
@@ -19,5 +21,7 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/snippets', snippetRoutes);
+app.use('/api/users', userRoutes)
+app.use('/api/ai', aiRoutes)
 
 app.use(errorMiddleware);

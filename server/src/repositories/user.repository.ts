@@ -12,3 +12,22 @@ export async function create(data: Prisma.UserCreateInput) {
         data,
     });
 }
+
+export async function findById(id: string) {
+    return prisma.user.findUnique({
+        where: { id },
+    });
+}
+
+export async function update(
+    id: string,
+    data: {
+        displayName?: string;
+        bio?: string;
+    }
+) {
+    return prisma.user.update({
+        where: { id },
+        data,
+    });
+}

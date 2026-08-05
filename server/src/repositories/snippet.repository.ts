@@ -140,4 +140,20 @@ export const snippetRepository = {
         },
       },
     }),
+
+  findByUserId: (userId: string, requestingUserId?: string) => {
+    const where: { ownerId: string; visibility?: string } = {
+      ownerId: userId,
+    };
+
+    if (requestingUserId !== userId) {
+      where.visibility = "public";
+    }
+
+    return prisma.snippet.findMany({ where, orderBy: { createdAt: "desc" }, include: withTags, });
+  },
+
+
+
+
 };

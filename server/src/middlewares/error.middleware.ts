@@ -4,6 +4,8 @@ import {
   UnauthorizedError,
   ForbiddenError,
   NotFoundError,
+  ServiceUnavailableError,
+  TooManyRequestsError
 } from "../errors";
 
 export function errorMiddleware(
@@ -34,6 +36,18 @@ export function errorMiddleware(
 
   if (err instanceof NotFoundError) {
     return res.status(404).json({
+      error: err.message,
+    });
+  }
+
+  if (err instanceof ServiceUnavailableError) {
+    return res.status(503).json({
+      error: err.message,
+    });
+  }
+
+  if (err instanceof TooManyRequestsError) {
+    return res.status(429).json({
       error: err.message,
     });
   }

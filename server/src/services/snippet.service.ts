@@ -122,4 +122,13 @@ export const snippetService = {
 
     return fork;
   },
+
+  findByUserId: (
+    userId: string,
+    requestingUserId?: string
+  ) =>
+    snippetRepository.findByUserId(
+      userId,
+      requestingUserId
+    ),
 };

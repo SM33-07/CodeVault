@@ -25,3 +25,17 @@ export class NotFoundError extends Error {
         this.name = "NotFoundError";
     }
 }
+
+export class ServiceUnavailableError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "ServiceUnavailableError";
+    }
+}
+
+export class TooManyRequestsError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "TooManyRequestsError";
+    }
+}

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { authService } from "../services/auth.service";
-import { ConflictError } from "../errors/index";
+
 export const authController = {
     signup: async (req: Request, res: Response, next: NextFunction) => {
         try {

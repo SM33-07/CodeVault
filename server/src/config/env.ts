@@ -18,4 +18,5 @@ export const env = {
   jwtSecret: getEnvValue("JWT_SECRET"),
   jwtExpiresIn: getEnvValue("JWT_EXPIRES_IN") as SignOptions["expiresIn"],
   bcryptSaltRounds: Number(process.env.BCRYPT_SALT_ROUNDS ?? 10),
+  geminiApiKey: process.env.GEMINI_API_KEY ?? "",
 };
