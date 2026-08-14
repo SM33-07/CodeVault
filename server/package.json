@@ -1,5 +1,5 @@
 {
-  "name": "codevault-sprint2",
+  "name": "codevault-server",
   "version": "0.1.0",
   "private": true,
   "main": "dist/server.js",
