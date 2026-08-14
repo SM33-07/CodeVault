@@ -116,9 +116,9 @@ export default function AuthLayout({
     footerLinkHref,
 }: AuthLayoutProps) {
     return (
-        <div className="flex min-h-screen w-full">
+        <div className="flex min-h-screen w-full pt-20">
             {/* Left Panel - Form */}
-            <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 lg:px-16">
+            <div className="relative flex w-full flex-col items-center justify-center px-6 py-10 lg:w-1/2 lg:px-16">
                 {/* Subtle background pattern */}
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 dark:from-neutral-950 dark:via-neutral-900 dark:to-indigo-950/20" />
 
