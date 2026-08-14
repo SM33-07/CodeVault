@@ -130,16 +130,14 @@ export default function AuthLayout({
                 >
                     {/* Logo */}
                     <Link href="/" className="mb-8 inline-flex items-center group">
-                        <div className="flex items-center rounded-xl bg-black/95 px-3 py-1.5 shadow-md transition-all duration-300 group-hover:scale-105 border border-neutral-800">
-                            <Image
-                                src="/images/logo_codevault.png"
-                                alt="CodeVault"
-                                width={180}
-                                height={48}
-                                className="h-8 md:h-9 w-auto object-contain"
-                                priority
-                            />
-                        </div>
+                        <Image
+                            src="/images/logo_codevault.png"
+                            alt="CodeVault"
+                            width={180}
+                            height={48}
+                            className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                            priority
+                        />
                     </Link>
 
                     {/* Title */}
