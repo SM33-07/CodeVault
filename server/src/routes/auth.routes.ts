@@ -17,4 +17,12 @@ router.post(
     authController.login
 );
 
+// Google OAuth
+router.get("/google", authController.googleAuth);
+router.get("/google/callback", authController.googleCallback);
+
+// GitHub OAuth
+router.get("/github", authController.githubAuth);
+router.get("/github/callback", authController.githubCallback);
+
 export default router;

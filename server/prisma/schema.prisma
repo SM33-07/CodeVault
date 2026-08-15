@@ -10,12 +10,17 @@ datasource db {
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
-  passwordHash String
+  passwordHash String?
   displayName  String?
+  avatarUrl    String?
   bio          String?
+  provider     String   @default("local")
+  providerId   String?
   snippets     Snippet[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@unique([provider, providerId])
 }
 
 model Snippet {

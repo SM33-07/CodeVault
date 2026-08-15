@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { authService } from "../services/auth.service";
+import { oauthService } from "../services/oauth.service";
+import { env } from "../config/env";
 
 export const authController = {
     signup: async (req: Request, res: Response, next: NextFunction) => {
@@ -27,4 +29,84 @@ export const authController = {
             next(err);
         }
     },
-};
+
+    googleAuth: async (req: Request, res: Response) => {
+        try {
+            const url = oauthService.getGoogleAuthUrl();
+            res.redirect(url);
+        } catch (err: any) {
+            res.redirect(
+                `${env.clientUrl}/login?error=${encodeURIComponent(
+                    err.message || "Google OAuth is not configured."
+                )}`
+            );
+        }
+    },
+
+    googleCallback: async (req: Request, res: Response) => {
+        const code = req.query.code as string;
+        const error = req.query.error as string;
+
+        if (error || !code) {
+            return res.redirect(
+                `${env.clientUrl}/login?error=${encodeURIComponent(
+                    error || "Google authentication was cancelled."
+                )}`
+            );
+        }
+
+        try {
+            const result = await oauthService.handleGoogleCallback(code);
+            const userJson = encodeURIComponent(JSON.stringify(result.user));
+            res.redirect(
+                `${env.clientUrl}/auth/callback?token=${result.token}&user=${userJson}`
+            );
+        } catch (err: any) {
+            res.redirect(
+                `${env.clientUrl}/login?error=${encodeURIComponent(
+                    err.message || "Failed to authenticate with Google."
+                )}`
+            );
+        }
+    },
+
+    githubAuth: async (req: Request, res: Response) => {
+        try {
+            const url = oauthService.getGithubAuthUrl();
+            res.redirect(url);
+        } catch (err: any) {
+            res.redirect(
+                `${env.clientUrl}/login?error=${encodeURIComponent(
+                    err.message || "GitHub OAuth is not configured."
+                )}`
+            );
+        }
+    },
+
+    githubCallback: async (req: Request, res: Response) => {
+        const code = req.query.code as string;
+        const error = req.query.error as string;
+
+        if (error || !code) {
+            return res.redirect(
+                `${env.clientUrl}/login?error=${encodeURIComponent(
+                    error || "GitHub authentication was cancelled."
+                )}`
+            );
+        }
+
+        try {
+            const result = await oauthService.handleGithubCallback(code);
+            const userJson = encodeURIComponent(JSON.stringify(result.user));
+            res.redirect(
+                `${env.clientUrl}/auth/callback?token=${result.token}&user=${userJson}`
+            );
+        } catch (err: any) {
+            res.redirect(
+                `${env.clientUrl}/login?error=${encodeURIComponent(
+                    err.message || "Failed to authenticate with GitHub."
+                )}`
+            );
+        }
+    },
+};
