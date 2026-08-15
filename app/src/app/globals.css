@@ -6,7 +6,7 @@
 
 :root {
   color-scheme: light;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   background: #f5f7fb;
   color: #14213d;
   --background: oklch(1 0 0);
@@ -41,6 +41,18 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* CodeVault "Lineage" Design System Tokens */
+  --cv-canvas: #0F1115;
+  --cv-surface: #181B22;
+  --cv-elevated: #20242E;
+  --cv-text: #E8E6E1;
+  --cv-muted: #8B8D97;
+  --cv-lineage: #E0A458;
+  --cv-interactive: #4FBDB8;
+  --cv-success: #34D399;
+  --cv-danger: #F87171;
+  --cv-info: #60A5FA;
 }
 
 * {
@@ -118,6 +130,8 @@ h1 {
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -149,6 +163,16 @@ h1 {
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-cv-canvas: var(--cv-canvas);
+  --color-cv-surface: var(--cv-surface);
+  --color-cv-elevated: var(--cv-elevated);
+  --color-cv-text: var(--cv-text);
+  --color-cv-muted: var(--cv-muted);
+  --color-cv-lineage: var(--cv-lineage);
+  --color-cv-interactive: var(--cv-interactive);
+  --color-cv-success: var(--cv-success);
+  --color-cv-danger: var(--cv-danger);
+  --color-cv-info: var(--cv-info);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);

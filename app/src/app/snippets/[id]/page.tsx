@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
     ArrowLeft,
+    ArrowRight,
     Copy,
     Check,
     GitFork,
@@ -214,7 +215,7 @@ export default function SnippetDetailPage({
                         )}
 
                         {snippet.forkedFromId && (
-                            <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 px-2.5 py-1 text-xs font-medium text-purple-700 dark:bg-purple-950/60 dark:text-purple-300">
+                            <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400 border border-amber-500/20">
                                 <GitFork className="h-3 w-3" />
                                 Forked Snippet
                             </span>
@@ -224,6 +225,29 @@ export default function SnippetDetailPage({
                     <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white">
                         {titleStr}
                     </h1>
+
+                    {snippet.forkedFromId && (
+                        <div className="mt-3 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-3 text-xs text-neutral-700 dark:text-neutral-300">
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                                <GitFork className="h-4 w-4" />
+                            </div>
+                            <div className="flex-1 flex flex-wrap items-center justify-between gap-2">
+                                <span>
+                                    <strong className="text-amber-600 dark:text-amber-400 font-semibold">Fork Lineage:</strong> This snippet originates from parent snippet{" "}
+                                    <code className="font-mono text-[11px] bg-amber-500/15 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded">
+                                        {snippet.forkedFromId.slice(0, 8)}...
+                                    </code>
+                                </span>
+                                <Link
+                                    href={`/snippets/${snippet.forkedFromId}`}
+                                    className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:underline"
+                                >
+                                    <span>View Parent Source</span>
+                                    <ArrowRight className="h-3 w-3" />
+                                </Link>
+                            </div>
+                        </div>
+                    )}
 
                     <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
                         {snippet.description || "No description provided for this snippet."}

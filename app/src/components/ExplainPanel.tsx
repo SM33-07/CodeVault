@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Loader2, AlertCircle, CheckCircle2, Shield, Zap, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/lib/api-client";
+import { TextGenerate } from "@/components/animations/TextGenerate";
 
 interface ExplainPanelProps {
     snippetId: string;
@@ -124,11 +125,14 @@ export function ExplainPanel({ snippetId, codeBody, language }: ExplainPanelProp
                             <span className="font-bold text-neutral-900 dark:text-white uppercase tracking-wider text-[10px] text-indigo-600 dark:text-indigo-400">
                                 Overview
                             </span>
-                            <p className="mt-1 text-neutral-700 dark:text-neutral-300">
-                                {typeof explanation.summary === "string"
-                                    ? explanation.summary
-                                    : JSON.stringify(explanation.summary)}
-                            </p>
+                            <TextGenerate
+                                words={
+                                    typeof explanation.summary === "string"
+                                        ? explanation.summary
+                                        : JSON.stringify(explanation.summary)
+                                }
+                                className="mt-1 text-neutral-700 dark:text-neutral-300"
+                            />
                         </div>
 
                         {/* Breakdown */}

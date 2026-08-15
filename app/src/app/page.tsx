@@ -16,6 +16,7 @@ import {
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { InteractiveSnippetMockup } from "@/components/landing/InteractiveSnippetMockup";
+import { LineageGraph } from "@/components/landing/LineageGraph";
 import { CoverflowSnippetShowcase } from "@/components/snippets/CoverflowSnippetShowcase";
 import { FeatureBentoGrid } from "@/components/landing/FeatureBentoGrid";
 
@@ -31,7 +32,20 @@ export default function HomePage() {
                 </ContainerScroll>
             </section>
 
-            {/* 2. 3D Coverflow Interactive Snippet Showcase with Click-to-Expand Modal */}
+            {/* 2. Signature Visual Element: The Lineage Thread */}
+            <section className="relative w-full px-4 py-8 border-t border-neutral-200/60 dark:border-neutral-800/60 bg-gradient-to-b from-transparent via-amber-500/[0.02] to-transparent">
+                <div className="mx-auto max-w-5xl text-center space-y-2 mb-2">
+                    <span className="text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                        The Signature Differentiator
+                    </span>
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-neutral-900 dark:text-white">
+                        Every Fork Remembers Its Roots
+                    </h2>
+                </div>
+                <LineageGraph />
+            </section>
+
+            {/* 3. 3D Coverflow Interactive Snippet Showcase with Click-to-Expand Modal */}
             <section className="relative w-full border-t border-neutral-200/60 dark:border-neutral-800/60 bg-white/40 dark:bg-neutral-900/30">
                 <CoverflowSnippetShowcase />
             </section>

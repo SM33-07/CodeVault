@@ -30,6 +30,8 @@ export interface SnippetItem {
     viewCount: number;
     createdAt: string;
     isPrivate?: boolean;
+    forkedFromId?: string | null;
+    forkedFromTitle?: string;
     author: {
         name: string;
         avatar?: string;
@@ -48,6 +50,7 @@ interface SnippetCardProps {
 
 export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
     const [isCopied, setIsCopied] = useState(false);
+    const isForked = Boolean(snippet.forkedFromId);
 
     const handleCopy = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -58,21 +61,28 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
         setTimeout(() => setIsCopied(false), 2000);
     };
 
-
-
     return (
         <motion.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            whileHover={{ y: -4 }}
-            transition={{ duration: 0.3 }}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-[24px] border border-neutral-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:border-neutral-300 hover:shadow-xl dark:border-neutral-800/90 dark:bg-neutral-900/90 dark:hover:border-neutral-700"
+            whileHover={{
+                y: -4,
+                boxShadow: isForked
+                    ? "0 20px 25px -5px rgba(224, 164, 88, 0.18), 0 8px 10px -6px rgba(224, 164, 88, 0.12)"
+                    : "0 20px 25px -5px rgba(79, 189, 184, 0.18), 0 8px 10px -6px rgba(79, 189, 184, 0.12)",
+            }}
+            transition={{ duration: 0.25 }}
+            className={`group relative flex flex-col justify-between overflow-hidden rounded-[24px] border bg-white p-6 shadow-sm transition-all duration-300 dark:bg-neutral-900/90 ${
+                isForked
+                    ? "border-neutral-200/80 hover:border-amber-400/70 dark:border-neutral-800/90 dark:hover:border-amber-500/50"
+                    : "border-neutral-200/80 hover:border-teal-400/70 dark:border-neutral-800/90 dark:hover:border-teal-500/50"
+            }`}
         >
-            {/* Top-Right Ambient Corner Gradient (inspired by Course Design Cards) */}
+            {/* Top-Right Ambient Corner Gradient */}
             <div
                 className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full opacity-20 blur-3xl transition-opacity duration-300 group-hover:opacity-40"
-                style={{ backgroundColor: snippet.gradientTheme.glow }}
+                style={{ backgroundColor: isForked ? "#E0A458" : (snippet.gradientTheme?.glow || "#4FBDB8") }}
             />
 
             {/* Top Section */}
@@ -126,6 +136,13 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
                     <h3 className="text-lg font-bold text-neutral-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
                         {snippet.title}
                     </h3>
+                    {isForked && (
+                        <div className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                            <GitFork className="h-3 w-3" />
+                            <span>Forked Snippet</span>
+                            {snippet.forkedFromTitle && <span className="text-neutral-400 font-normal truncate">from {snippet.forkedFromTitle}</span>}
+                        </div>
+                    )}
                     <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
                         {snippet.description}
                     </p>
