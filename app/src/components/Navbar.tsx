@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Moon, Plus, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useScroll, useMotionValueEvent } from "framer-motion";
 
 import {
     Navbar,
@@ -26,6 +27,13 @@ export default function CodeVaultNavbar() {
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
+
+    const { scrollY } = useScroll();
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useMotionValueEvent(scrollY, "change", (latest: number) => {
+        setIsScrolled(latest > 50);
+    });
 
     const token = useAuthStore((state) => state.token);
     const user = useAuthStore((state) => state.user);
@@ -56,39 +64,20 @@ export default function CodeVaultNavbar() {
         setTheme(theme === "dark" ? "light" : "dark");
     };
 
-    const navItems = isAuthenticated
-        ? [
-            {
-                name: "Home",
-                link: "/",
-            },
-            {
-                name: "Dashboard",
-                link: "/dashboard",
-            },
-            {
-                name: "Library",
-                link: "/snippets",
-            },
-            {
-                name: "Profile",
-                link: `/profile/${user?.id || "me"}`,
-            },
-        ]
-        : [
-            {
-                name: "Home",
-                link: "/",
-            },
-            {
-                name: "Library",
-                link: "/snippets",
-            },
-            {
-                name: "Dashboard",
-                link: "/dashboard",
-            },
-        ];
+    const navItems = [
+        {
+            name: "Home",
+            link: "/",
+        },
+        {
+            name: "Library",
+            link: "/snippets",
+        },
+        {
+            name: "Dashboard",
+            link: "/dashboard",
+        },
+    ];
 
     return (
         <Navbar>
@@ -117,27 +106,31 @@ export default function CodeVaultNavbar() {
 
                     {isAuthenticated && user ? (
                         <>
-                            {/* New Snippet */}
+                            {/* User: Full at max size, avatar-only on scroll */}
+                            <NavbarButton
+                                variant="secondary"
+                                onClick={() => router.push(`/profile/${user.id}`)}
+                                className={isScrolled ? "p-1 rounded-full border border-neutral-200/80 dark:border-neutral-700/80" : "flex items-center"}
+                                title={displayName}
+                            >
+                                <span className={isScrolled ? "flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold dark:bg-neutral-700" : "mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold dark:bg-neutral-700"}>
+                                    {(displayName ?? "?").charAt(0).toUpperCase()}
+                                </span>
+
+                                {!isScrolled && (
+                                    <span className="max-w-[140px] truncate">
+                                        {displayName}
+                                    </span>
+                                )}
+                            </NavbarButton>
+
+                            {/* New */}
                             <NavbarButton
                                 variant="primary"
                                 onClick={() => router.push("/snippets/new")}
                             >
-                                <Plus className="mr-2 h-4 w-4" />
-                                New Snippet
-                            </NavbarButton>
-
-                            {/* User */}
-                            <NavbarButton
-                                variant="secondary"
-                                onClick={() => router.push(`/profile/${user.id}`)}
-                            >
-                                <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold dark:bg-neutral-700">
-                                    {(displayName ?? "?").charAt(0).toUpperCase()}
-                                </span>
-
-                                <span className="max-w-[140px] truncate">
-                                    {displayName}
-                                </span>
+                                <Plus className="mr-1.5 h-4 w-4" />
+                                New
                             </NavbarButton>
 
                             {/* Logout */}

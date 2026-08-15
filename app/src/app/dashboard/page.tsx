@@ -330,13 +330,13 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Create New Snippet Button */}
-                        <button
-                            onClick={() => setIsCreateOpen(true)}
+                        <Link
+                            href="/snippets/new"
                             className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs shadow-indigo-500/20 transition-all hover:bg-indigo-700 active:scale-95"
                         >
                             <Plus className="h-3.5 w-3.5" />
                             <span>New Snippet</span>
-                        </button>
+                        </Link>
                     </div>
                 </header>
 

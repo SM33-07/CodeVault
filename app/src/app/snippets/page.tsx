@@ -117,7 +117,7 @@ export default function SnippetsLibraryPage() {
 
                     <div className="flex items-center gap-3">
                         <Link
-                            href="/dashboard"
+                            href="/snippets/new"
                             className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700 transition-all active:scale-95"
                         >
                             <Plus className="h-4 w-4" />
@@ -325,7 +325,7 @@ export default function SnippetsLibraryPage() {
                             Try adjusting your search terms or create a new snippet.
                         </p>
                         <Link
-                            href="/dashboard"
+                            href="/snippets/new"
                             className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700"
                         >
                             <Plus className="h-3.5 w-3.5" />
