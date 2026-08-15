@@ -8,18 +8,39 @@ import { SnippetCard, SnippetItem } from "./SnippetCard";
 export const SAMPLE_SNIPPETS: SnippetItem[] = [
     {
         id: "snip-1",
-        title: "useDebounce & useThrottle Hook",
-        description: "Custom React hooks for debouncing search queries and throttling rapid UI events.",
+        title: "OAuth 2.0 PKCE & State Token Exchange Service",
+        description: "Zero-dependency server-side OAuth exchange logic with Google email_verified gatekeeping and GitHub verified primary email resolution.",
         language: "TypeScript",
         langColor: "#3178C6",
-        code: `import { useState, useEffect } from 'react';\n\nexport function useDebounce<T>(value: T, delay = 300): T {\n  const [debounced, setDebounced] = useState<T>(value);\n  useEffect(() => {\n    const timer = setTimeout(() => setDebounced(value), delay);\n    return () => clearTimeout(timer);\n  }, [value, delay]);\n  return debounced;\n}`,
+        code: `export async function handleGoogleCallback(code: string, redirectUri: string) {
+  const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      code,
+      client_id: env.googleClientId,
+      client_secret: env.googleClientSecret,
+      redirect_uri: redirectUri,
+      grant_type: "authorization_code",
+    }),
+  });
+  const tokens = await tokenRes.json();
+  const userRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: { Authorization: \`Bearer \${tokens.access_token}\` },
+  });
+  const googleUser = await userRes.json();
+  if (!googleUser.email || !googleUser.email_verified) {
+    throw new Error("Google account email is not verified.");
+  }
+  return upsertOAuthUser({ email: googleUser.email, provider: "google" });
+}`,
         codePreview: [
-            "export function useDebounce<T>(value: T, delay = 300): T {",
-            "  const [debounced, setDebounced] = useState<T>(value);",
-            "  useEffect(() => { const timer = setTimeout(...) }, [value]);",
-            "  return debounced; }",
+            "export async function handleGoogleCallback(code, redirectUri) {",
+            "  const tokens = await exchangeGoogleAuthCode(code, redirectUri);",
+            "  const user = await fetchGoogleUserInfo(tokens.access_token);",
+            "  if (!user.email_verified) throw new Error(\"Unverified email\");",
         ],
-        tags: ["#react", "#hooks", "#performance"],
+        tags: ["#auth", "#oauth2", "#security", "#typescript"],
         forkCount: 0,
         viewCount: 0,
         createdAt: "Example",
@@ -28,18 +49,96 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
     },
     {
         id: "snip-2",
-        title: "FastAPI JWT & Rate-Limiter Guard",
-        description: "Asynchronous middleware combining Redis token-bucket rate limiting with JWT auth verification.",
+        title: "Zustand Session Store with SSR Hydration Safety",
+        description: "Custom Zustand authentication hook with session persistence, local storage sync, and hydration lifecycle guards.",
+        language: "TypeScript",
+        langColor: "#3178C6",
+        code: `import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+export interface User {
+  id: string;
+  email: string;
+  displayName: string;
+}
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      setAuth: (token, user) => set({ token, user, isAuthenticated: true }),
+      clearAuth: () => set({ token: null, user: null, isAuthenticated: false }),
+    }),
+    { name: "codevault-session" }
+  )
+);`,
+        codePreview: [
+            "export const useAuthStore = create<AuthState>()(",
+            "  persist(",
+            "    (set) => ({ user: null, token: null, isAuthenticated: false }),",
+            "    { name: \"codevault-session\" }",
+        ],
+        tags: ["#react", "#zustand", "#auth", "#state"],
+        forkCount: 0,
+        viewCount: 0,
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
+        gradientTheme: { glow: "#6366F1", accent: "from-indigo-500/20" },
+    },
+    {
+        id: "snip-3",
+        title: "Framer Motion SVG Lineage PathLength Animator",
+        description: "Dynamic SVG cubic bezier curve animation tracing provenance between original snippet roots and child forks.",
+        language: "TypeScript",
+        langColor: "#3178C6",
+        code: `<motion.path
+  d="M 400 0 C 400 50, 160 50, 160 100"
+  fill="none"
+  stroke="url(#lineageGlow)"
+  strokeWidth="2.5"
+  strokeDasharray="4 2"
+  initial={{ pathLength: 0, opacity: 0 }}
+  animate={{ pathLength: 1, opacity: 1 }}
+  transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+/>`,
+        codePreview: [
+            "<motion.path",
+            "  d=\"M 400 0 C 400 50, 160 50, 160 100\"",
+            "  stroke=\"#E0A458\" strokeWidth=\"2.5\"",
+            "  animate={{ pathLength: 1 }} transition={{ duration: 1.2 }} />",
+        ],
+        tags: ["#framer-motion", "#svg", "#lineage", "#animations"],
+        forkCount: 0,
+        viewCount: 0,
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
+        gradientTheme: { glow: "#E0A458", accent: "from-amber-500/20" },
+    },
+    {
+        id: "snip-4",
+        title: "FastAPI Async Token-Bucket Rate Limiter Guard",
+        description: "High-performance Redis token-bucket middleware with non-blocking atomic evaluation and custom 429 detail payload.",
         language: "Python",
         langColor: "#3776AB",
-        code: `@app.middleware("http")\nasync def rate_limit_jwt_guard(request: Request, call_next):\n    token = request.headers.get("Authorization")\n    user_id = verify_jwt(token)\n    if not await check_rate_limit(user_id):\n        raise HTTPException(status_code=429, detail="Too Many Requests")\n    return await call_next(request)`,
+        code: `@app.middleware("http")
+async def rate_limit_jwt_guard(request: Request, call_next):
+    token = request.headers.get("Authorization")
+    if not token or not token.startswith("Bearer "):
+        return JSONResponse(status_code=401, content={"detail": "Unauthorized"})
+    user_id = jwt.decode(token.split(" ")[1], SECRET_KEY, algorithms=["HS256"])["sub"]
+    is_allowed = await redis_client.evalsha(TOKEN_BUCKET_SHA, 1, f"ratelimit:{user_id}", 60, 1)
+    if not is_allowed:
+        raise HTTPException(status_code=429, detail="Rate limit exceeded. Try again in 60s.")
+    return await call_next(request)`,
         codePreview: [
             "@app.middleware(\"http\")",
             "async def rate_limit_jwt_guard(request: Request, call_next):",
-            "    user_id = verify_jwt(request.headers.get(\"Authorization\"))",
+            "    user_id = decode_jwt(request.headers.get(\"Authorization\"))",
             "    if not await check_rate_limit(user_id): raise 429",
         ],
-        tags: ["#fastapi", "#jwt", "#redis", "#security"],
+        tags: ["#fastapi", "#python", "#redis", "#security"],
         forkCount: 0,
         viewCount: 0,
         createdAt: "Example",
@@ -47,16 +146,70 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
         gradientTheme: { glow: "#3776AB", accent: "from-sky-500/20" },
     },
     {
-        id: "snip-3",
-        title: "Tokio Async Semaphore Worker Pool",
-        description: "Zero-allocation concurrent bounded worker pool with graceful cancellation channels in Rust.",
+        id: "snip-5",
+        title: "Postgres Recursive Fork Lineage Ancestry CTE",
+        description: "Hierarchical SQL query using recursive Common Table Expressions to traverse multi-generational snippet fork trees.",
+        language: "SQL",
+        langColor: "#336791",
+        code: `WITH RECURSIVE SnippetLineage AS (
+  SELECT id, title, forked_from_id, user_id, 0 AS depth
+  FROM snippets
+  WHERE id = $1
+  UNION ALL
+  SELECT s.id, s.title, s.forked_from_id, s.user_id, sl.depth + 1
+  FROM snippets s
+  INNER JOIN SnippetLineage sl ON s.id = sl.forked_from_id
+)
+SELECT * FROM SnippetLineage ORDER BY depth DESC;`,
+        codePreview: [
+            "WITH RECURSIVE SnippetLineage AS (",
+            "  SELECT id, title, forked_from_id, 0 AS depth FROM snippets",
+            "  UNION ALL",
+            "  SELECT s.id, s.title, sl.depth + 1 FROM snippets s JOIN ...",
+        ],
+        tags: ["#postgres", "#sql", "#lineage", "#database"],
+        forkCount: 0,
+        viewCount: 0,
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
+        gradientTheme: { glow: "#336791", accent: "from-indigo-500/20" },
+    },
+    {
+        id: "snip-6",
+        title: "Tokio Async Semaphore Concurrency Worker Pool",
+        description: "Zero-allocation concurrent bounded worker pool using Tokio permits and cancellation-safe async joins in Rust.",
         language: "Rust",
         langColor: "#DEA584",
-        code: `use tokio::sync::Semaphore;\nuse std::sync::Arc;\n\npub struct WorkerPool {\n    sem: Arc<Semaphore>,\n}\n\nimpl WorkerPool {\n    pub async fn spawn<F>(&self, task: F) where F: Future + Send + 'static {\n        let permit = self.sem.clone().acquire_owned().await.unwrap();\n        tokio::spawn(async move { task.await; drop(permit); });\n    }\n}`,
+        code: `use std::sync::Arc;
+use tokio::sync::Semaphore;
+
+pub struct AsyncWorkerPool {
+    sem: Arc<Semaphore>,
+}
+
+impl AsyncWorkerPool {
+    pub fn new(concurrency: usize) -> Self {
+        Self { sem: Arc::new(Semaphore::new(concurrency)) }
+    }
+
+    pub async fn spawn<F, T>(&self, task: F) -> T 
+    where
+        F: std::future::Future<Output = T> + Send + 'static,
+        T: Send + 'static,
+    {
+        let permit = self.sem.clone().acquire_owned().await.unwrap();
+        let handle = tokio::spawn(async move {
+            let res = task.await;
+            drop(permit);
+            res
+        });
+        handle.await.unwrap()
+    }
+}`,
         codePreview: [
-            "pub struct WorkerPool { sem: Arc<Semaphore> }",
-            "impl WorkerPool {",
-            "    pub async fn spawn<F>(&self, task: F) {",
+            "pub struct AsyncWorkerPool { sem: Arc<Semaphore> }",
+            "impl AsyncWorkerPool {",
+            "    pub async fn spawn<F, T>(&self, task: F) -> T {",
             "        let permit = self.sem.clone().acquire_owned().await;",
         ],
         tags: ["#rust", "#tokio", "#concurrency", "#async"],
@@ -65,66 +218,6 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#DEA584", accent: "from-orange-500/20" },
-    },
-    {
-        id: "snip-4",
-        title: "PostgreSQL Zero-Downtime Migration",
-        description: "Safe concurrent index creation and column alteration patterns for production Postgres databases.",
-        language: "SQL",
-        langColor: "#336791",
-        code: `-- 1. Add column nullable\nALTER TABLE snippets ADD COLUMN IF NOT EXISTS encrypted_body TEXT;\n-- 2. Create index concurrently\nCREATE INDEX CONCURRENTLY IF NOT EXISTS idx_snippets_user_id \nON snippets (user_id) WHERE is_deleted = false;`,
-        codePreview: [
-            "-- Safe concurrent index creation",
-            "CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_snippets_user",
-            "ON snippets (user_id) WHERE is_deleted = false;",
-            "-- Zero table locks during peak traffic",
-        ],
-        tags: ["#postgres", "#sql", "#database", "#devops"],
-        forkCount: 0,
-        viewCount: 0,
-        createdAt: "Example",
-        author: { name: "CodeVault Team", handle: "codevault" },
-        gradientTheme: { glow: "#336791", accent: "from-indigo-500/20" },
-    },
-    {
-        id: "snip-5",
-        title: "Go High-Throughput HTTP Client",
-        description: "Tuned HTTP transport with connection pooling, custom dialer timeout, and circuit breaker.",
-        language: "Go",
-        langColor: "#00ADD8",
-        code: `var HTTPClient = &http.Client{\n    Timeout: 10 * time.Second,\n    Transport: &http.Transport{\n        MaxIdleConns:        100,\n        MaxIdleConnsPerHost: 20,\n        IdleConnTimeout:     90 * time.Second,\n        DisableCompression: false,\n    },\n}`,
-        codePreview: [
-            "var HTTPClient = &http.Client{",
-            "    Timeout: 10 * time.Second,",
-            "    Transport: &http.Transport{ MaxIdleConns: 100 },",
-            "}",
-        ],
-        tags: ["#go", "#http", "#networking", "#microservices"],
-        forkCount: 0,
-        viewCount: 0,
-        createdAt: "Example",
-        author: { name: "CodeVault Team", handle: "codevault" },
-        gradientTheme: { glow: "#00ADD8", accent: "from-cyan-500/20" },
-    },
-    {
-        id: "snip-6",
-        title: "Multi-Stage Docker Node & Next.js",
-        description: "Ultra-lean production Dockerfile with Alpine base, standalone output, and non-root runner user.",
-        language: "Docker",
-        langColor: "#2496ED",
-        code: `FROM node:20-alpine AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM node:20-alpine AS runner\nUSER node\nCMD ["node", "server.js"]`,
-        codePreview: [
-            "FROM node:20-alpine AS builder",
-            "WORKDIR /app && RUN npm ci && RUN npm run build",
-            "FROM node:20-alpine AS runner",
-            "USER node && CMD [\"node\", \"server.js\"]",
-        ],
-        tags: ["#docker", "#nextjs", "#devops", "#cloud"],
-        forkCount: 0,
-        viewCount: 0,
-        createdAt: "Example",
-        author: { name: "CodeVault Team", handle: "codevault" },
-        gradientTheme: { glow: "#2496ED", accent: "from-blue-500/20" },
     },
 ];
 
