@@ -20,8 +20,8 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "  return debounced; }",
         ],
         tags: ["#react", "#hooks", "#performance"],
-        stars: 0,
-        copies: 0,
+        forkCount: 0,
+        viewCount: 0,
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#3178C6", accent: "from-blue-500/20" },
@@ -40,8 +40,8 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "    if not await check_rate_limit(user_id): raise 429",
         ],
         tags: ["#fastapi", "#jwt", "#redis", "#security"],
-        stars: 0,
-        copies: 0,
+        forkCount: 0,
+        viewCount: 0,
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#3776AB", accent: "from-sky-500/20" },
@@ -60,8 +60,8 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "        let permit = self.sem.clone().acquire_owned().await;",
         ],
         tags: ["#rust", "#tokio", "#concurrency", "#async"],
-        stars: 0,
-        copies: 0,
+        forkCount: 0,
+        viewCount: 0,
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#DEA584", accent: "from-orange-500/20" },
@@ -80,8 +80,8 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "-- Zero table locks during peak traffic",
         ],
         tags: ["#postgres", "#sql", "#database", "#devops"],
-        stars: 0,
-        copies: 0,
+        forkCount: 0,
+        viewCount: 0,
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#336791", accent: "from-indigo-500/20" },
@@ -100,8 +100,8 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "}",
         ],
         tags: ["#go", "#http", "#networking", "#microservices"],
-        stars: 0,
-        copies: 0,
+        forkCount: 0,
+        viewCount: 0,
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#00ADD8", accent: "from-cyan-500/20" },
@@ -120,8 +120,8 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "USER node && CMD [\"node\", \"server.js\"]",
         ],
         tags: ["#docker", "#nextjs", "#devops", "#cloud"],
-        stars: 0,
-        copies: 0,
+        forkCount: 0,
+        viewCount: 0,
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#2496ED", accent: "from-blue-500/20" },
@@ -142,7 +142,7 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
     const [selectedLanguage, setSelectedLanguage] = useState<string>("All");
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
-    const [sortBy, setSortBy] = useState<"stars" | "copies" | "recent">("stars");
+    const [sortBy, setSortBy] = useState<"forks" | "views" | "recent">("recent");
 
     const filteredSnippets = useMemo(() => {
         return SAMPLE_SNIPPETS.filter((snippet) => {
@@ -163,8 +163,8 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
 
             return matchesLang && matchesTag && matchesQuery;
         }).sort((a, b) => {
-            if (sortBy === "stars") return b.stars - a.stars;
-            if (sortBy === "copies") return b.copies - a.copies;
+            if (sortBy === "forks") return b.forkCount - a.forkCount;
+            if (sortBy === "views") return b.viewCount - a.viewCount;
             return 0;
         });
     }, [selectedLanguage, searchQuery, selectedTag, sortBy]);
@@ -210,8 +210,8 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
                         onChange={(e) => setSortBy(e.target.value as any)}
                         className="rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-xs font-medium text-neutral-700 shadow-sm outline-none transition-all hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
                     >
-                        <option value="stars">Most Starred</option>
-                        <option value="copies">Most Copied</option>
+                        <option value="forks">Most Forked</option>
+                        <option value="views">Most Viewed</option>
                         <option value="recent">Recently Added</option>
                     </select>
                 </div>

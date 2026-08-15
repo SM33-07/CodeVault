@@ -8,7 +8,7 @@ import {
     Copy,
     Lock,
     Globe,
-    Star,
+    GitFork,
     Share2,
     Code,
     Sparkles,
@@ -26,8 +26,8 @@ export interface SnippetItem {
     code: string;
     codePreview: string[];
     tags: string[];
-    stars: number;
-    copies: number;
+    forkCount: number;
+    viewCount: number;
     createdAt: string;
     isPrivate?: boolean;
     author: {
@@ -48,8 +48,6 @@ interface SnippetCardProps {
 
 export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
     const [isCopied, setIsCopied] = useState(false);
-    const [isStarred, setIsStarred] = useState(false);
-    const [starCount, setStarCount] = useState(snippet.stars);
 
     const handleCopy = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -60,18 +58,7 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
         setTimeout(() => setIsCopied(false), 2000);
     };
 
-    const handleStar = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-        if (isStarred) {
-            setStarCount((prev) => prev - 1);
-            setIsStarred(false);
-        } else {
-            setStarCount((prev) => prev + 1);
-            setIsStarred(true);
-            toast.success(`Starred "${snippet.title}"`);
-        }
-    };
+
 
     return (
         <motion.div
@@ -112,21 +99,13 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
                     </div>
 
                     <div className="flex items-center gap-1">
-                        <button
-                            onClick={handleStar}
-                            className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
-                                isStarred
-                                    ? "text-amber-500 bg-amber-500/10"
-                                    : "text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
-                            }`}
-                            title="Star Snippet"
+                        <span
+                            className="flex h-8 items-center gap-1 rounded-lg px-2 text-xs text-neutral-400"
+                            title="Fork count"
                         >
-                            <Star
-                                className={`h-4 w-4 ${
-                                    isStarred ? "fill-amber-400 text-amber-400" : ""
-                                }`}
-                            />
-                        </button>
+                            <GitFork className="h-4 w-4" />
+                            <span>{snippet.forkCount}</span>
+                        </span>
 
                         <button
                             onClick={handleCopy}
@@ -197,8 +176,8 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
 
                     <div className="flex items-center gap-3">
                         <span className="flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400">
-                            <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-                            {starCount}
+                            <Eye className="h-3 w-3" />
+                            {snippet.viewCount}
                         </span>
 
                         <span className="flex items-center gap-1 rounded-full bg-neutral-100 dark:bg-neutral-800 px-2.5 py-0.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">

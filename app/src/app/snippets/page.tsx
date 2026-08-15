@@ -300,11 +300,11 @@ export default function SnippetsLibraryPage() {
                                         <div className="flex items-center gap-3 text-neutral-400 text-[11px]">
                                             <span className="flex items-center gap-1">
                                                 <Eye className="h-3 w-3" />
-                                                {snippet.viewCount || snippet.copies || 0}
+                                                {snippet.viewCount || 0}
                                             </span>
                                             <span className="flex items-center gap-1">
                                                 <GitFork className="h-3 w-3" />
-                                                {snippet.forkCount || snippet.stars || 0}
+                                                {snippet.forkCount || 0}
                                             </span>
                                         </div>
                                     </div>

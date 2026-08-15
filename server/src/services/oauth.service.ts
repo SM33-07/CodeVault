@@ -74,12 +74,13 @@ export const oauthService = {
         const googleUser = (await userRes.json()) as {
             sub: string;
             email: string;
+            email_verified?: boolean;
             name?: string;
             picture?: string;
         };
 
-        if (!googleUser.email) {
-            throw new Error("No verified email returned from Google.");
+        if (!googleUser.email || !googleUser.email_verified) {
+            throw new Error("Google account email is not verified. Cannot link account.");
         }
 
         // 3. Upsert user in database
@@ -212,7 +213,7 @@ export const oauthService = {
                     primary: boolean;
                     verified: boolean;
                 }>;
-                const primary = emails.find((e) => e.primary && e.verified) || emails[0];
+                const primary = emails.find((e) => e.primary && e.verified);
                 if (primary) {
                     email = primary.email;
                 }

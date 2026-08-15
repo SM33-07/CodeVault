@@ -10,7 +10,6 @@ import {
     GitFork,
     Lock,
     Sparkles,
-    Star,
     Terminal,
     Share2,
     ShieldCheck,
@@ -35,7 +34,7 @@ interface SnippetTab {
     langColor: string;
     description: string;
     tags: string[];
-    stars: number;
+    forkCount: number;
     lines: {
         number: number;
         code: React.ReactNode;
@@ -50,7 +49,7 @@ const SNIPPET_TABS: SnippetTab[] = [
         langColor: "#3178C6",
         description: "Zero-dependency JWT auth state hook with session persistence",
         tags: ["#react", "#auth", "#jwt", "#hooks"],
-        stars: 184,
+        forkCount: 0,
         lines: [
             {
                 number: 1,
@@ -172,7 +171,7 @@ const SNIPPET_TABS: SnippetTab[] = [
         langColor: "#3776AB",
         description: "Redis asynchronous TTL memoization decorator with fallback",
         tags: ["#python", "#redis", "#fastapi", "#async"],
-        stars: 142,
+        forkCount: 0,
         lines: [
             {
                 number: 1,
@@ -318,7 +317,7 @@ const SNIPPET_TABS: SnippetTab[] = [
         langColor: "#DEA584",
         description: "Token-bucket concurrency rate limiter using Tokio channels",
         tags: ["#rust", "#tokio", "#concurrency", "#ratelimit"],
-        stars: 96,
+        forkCount: 0,
         lines: [
             {
                 number: 1,
@@ -426,7 +425,6 @@ const SNIPPET_TABS: SnippetTab[] = [
 export function InteractiveSnippetMockup() {
     const [activeTab, setActiveTab] = useState<string>("auth");
     const [copied, setCopied] = useState<boolean>(false);
-    const [starred, setStarred] = useState<Record<string, boolean>>({});
 
     const currentSnippet =
         SNIPPET_TABS.find((tab) => tab.id === activeTab) || SNIPPET_TABS[0];
@@ -437,12 +435,7 @@ export function InteractiveSnippetMockup() {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const toggleStar = (id: string) => {
-        setStarred((prev) => ({
-            ...prev,
-            [id]: !prev[id],
-        }));
-    };
+
 
     return (
         <div className="flex h-full w-full bg-neutral-950 text-neutral-200 select-none overflow-hidden">
@@ -473,19 +466,19 @@ export function InteractiveSnippetMockup() {
                         <span>Private Vault</span>
                     </div>
                     <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-200 transition-colors">
-                        <Star className="h-3.5 w-3.5 text-amber-400" />
-                        <span>Starred</span>
+                        <GitFork className="h-3.5 w-3.5 text-amber-400" />
+                        <span>Forked</span>
                     </div>
                 </div>
 
-                {/* Storage Meter */}
+                {/* Snippet Count */}
                 <div className="mt-auto rounded-xl bg-neutral-900 p-3 border border-neutral-800">
                     <div className="flex items-center justify-between text-[11px] text-neutral-400 mb-1.5">
-                        <span>Vault Storage</span>
-                        <span className="font-semibold text-white">142/500</span>
+                        <span>My Snippets</span>
+                        <span className="font-semibold text-white">{SNIPPET_TABS.length}</span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-neutral-800 overflow-hidden">
-                        <div className="h-full w-[28%] rounded-full bg-indigo-500" />
+                        <div className="h-full w-[60%] rounded-full bg-indigo-500" />
                     </div>
                 </div>
             </div>
@@ -537,26 +530,15 @@ export function InteractiveSnippetMockup() {
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => toggleStar(currentSnippet.id)}
-                            className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
-                                starred[currentSnippet.id]
-                                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                                    : "text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200"
-                            }`}
-                            title="Star Snippet"
+                        <span
+                            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-neutral-400"
+                            title="Fork count"
                         >
-                            <Star
-                                className={`h-3.5 w-3.5 ${
-                                    starred[currentSnippet.id]
-                                        ? "fill-amber-400 text-amber-400"
-                                        : ""
-                                }`}
-                            />
+                            <GitFork className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">
-                                {currentSnippet.stars + (starred[currentSnippet.id] ? 1 : 0)}
+                                {currentSnippet.forkCount}
                             </span>
-                        </button>
+                        </span>
 
                         <button
                             onClick={handleCopy}
@@ -580,12 +562,12 @@ export function InteractiveSnippetMockup() {
                 {/* KPI Metrics Row inside Mockup (like SaaS Template) */}
                 <div className="grid grid-cols-3 gap-2 border-b border-neutral-800 bg-neutral-900/40 p-2.5 text-xs">
                     <div className="flex items-center justify-between rounded-lg bg-neutral-900 px-3 py-1.5 border border-neutral-800/80">
-                        <span className="text-neutral-400">Total Snippets</span>
-                        <span className="font-bold text-white">142</span>
+                        <span className="text-neutral-400">Snippets</span>
+                        <span className="font-bold text-white">{SNIPPET_TABS.length}</span>
                     </div>
                     <div className="flex items-center justify-between rounded-lg bg-neutral-900 px-3 py-1.5 border border-neutral-800/80">
-                        <span className="text-neutral-400">Total Copies</span>
-                        <span className="font-bold text-emerald-400">4,820</span>
+                        <span className="text-neutral-400">Forks</span>
+                        <span className="font-bold text-emerald-400">{currentSnippet.forkCount}</span>
                     </div>
                     <div className="flex items-center justify-between rounded-lg bg-neutral-900 px-3 py-1.5 border border-neutral-800/80">
                         <span className="text-neutral-400">Visibility</span>

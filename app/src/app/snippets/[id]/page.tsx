@@ -257,11 +257,11 @@ export default function SnippetDetailPage({
                         </div>
                         <div className="flex items-center gap-1.5">
                             <Eye className="h-4 w-4 text-neutral-400" />
-                            <span>{snippet.viewCount || snippet.copies || 0} views</span>
+                            <span>{snippet.viewCount || 0} views</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <GitFork className="h-4 w-4 text-neutral-400" />
-                            <span>{snippet.forkCount || snippet.stars || 0} forks</span>
+                            <span>{snippet.forkCount || 0} forks</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <Calendar className="h-4 w-4 text-neutral-400" />

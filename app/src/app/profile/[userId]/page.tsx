@@ -120,7 +120,7 @@ export default function UserProfilePage({
     }
 
     const displayName = profile?.displayName || profile?.email?.split("@")[0] || "Developer";
-    const totalViews = snippets.reduce((acc, s) => acc + (s.viewCount || s.copies || 0), 0);
+    const totalViews = snippets.reduce((acc, s) => acc + (s.viewCount || 0), 0);
 
     return (
         <div className="min-h-full bg-neutral-50/50 dark:bg-neutral-950 pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
@@ -263,7 +263,7 @@ export default function UserProfilePage({
                                     </div>
 
                                     <div className="mt-4 pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400">
-                                        <span>{snippet.copies || snippet.viewCount || 0} copies</span>
+                                        <span>{snippet.viewCount || 0} views</span>
                                         <Link
                                             href={`/snippets/${snippet.id}`}
                                             className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"

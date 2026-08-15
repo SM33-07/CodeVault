@@ -107,8 +107,8 @@ export default function DashboardPage() {
                     .split(",")
                     .map((t) => (t.trim().startsWith("#") ? t.trim() : `#${t.trim()}`))
                 : ["#custom", "#vault"],
-            copies: 0,
-            stars: 0,
+            viewCount: 0,
+            forkCount: 0,
             createdAt: "Just now",
             isPrivate: isPrivate,
         };
@@ -136,7 +136,7 @@ export default function DashboardPage() {
                     ? true
                     : activeTab === "private"
                         ? s.isPrivate
-                        : s.stars > 200;
+                        : false;
 
             const matchesLang =
                 selectedLanguage === "All" || s.language === selectedLanguage;
@@ -151,7 +151,7 @@ export default function DashboardPage() {
         });
     }, [snippets, activeTab, selectedLanguage, searchQuery]);
 
-    const totalCopies = snippets.reduce((acc, s) => acc + s.copies, 0);
+    const totalViews = snippets.reduce((acc, s) => acc + s.viewCount, 0);
     const privateCount = snippets.filter((s) => s.isPrivate).length;
 
     const languagesList = [
@@ -366,7 +366,7 @@ export default function DashboardPage() {
                         <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                                    Total Copies
+                                    Total Views
                                 </span>
                                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">
                                     <TrendingUp className="h-3.5 w-3.5" />
@@ -374,7 +374,7 @@ export default function DashboardPage() {
                             </div>
                             <div className="mt-2.5 flex items-baseline gap-2">
                                 <span className="text-xl font-bold text-neutral-900 dark:text-white">
-                                    {totalCopies.toLocaleString()}
+                                    {totalViews.toLocaleString()}
                                 </span>
                                 <span className="text-[11px] font-semibold text-emerald-500">
                                     +24% vs last week
