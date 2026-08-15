@@ -68,7 +68,7 @@ export default function UserProfilePage({
                             id: targetId,
                             displayName: currentUser?.displayName || "Soham More",
                             email: currentUser?.email || "developer@codevault.dev",
-                            bio: currentUser?.bio || "Full-stack engineer building high-performance developer tools, encrypted vaults, and distributed systems.",
+                            bio: currentUser?.bio || "Full-stack engineer building high-performance developer tools, snippet managers, and distributed systems.",
                             createdAt: "Joined July 2026",
                         });
                     }
@@ -123,7 +123,7 @@ export default function UserProfilePage({
     const totalViews = snippets.reduce((acc, s) => acc + (s.viewCount || s.copies || 0), 0);
 
     return (
-        <div className="min-h-screen bg-neutral-50/50 dark:bg-neutral-950 py-10 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-full bg-neutral-50/50 dark:bg-neutral-950 pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-5xl space-y-8">
                 {/* Profile Header Banner */}
                 <div className="rounded-3xl border border-neutral-200/80 bg-white p-6 sm:p-8 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">

@@ -61,7 +61,7 @@ export default function ProfileSettingsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-neutral-50/50 dark:bg-neutral-950 py-10 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-full bg-neutral-50/50 dark:bg-neutral-950 pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl space-y-6">
                 <Link
                     href="/dashboard"

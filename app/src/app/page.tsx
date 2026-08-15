@@ -5,15 +5,11 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
     Code2,
-    Shield,
     Sparkles,
     Search,
-    Share2,
-    Layers,
     ArrowRight,
     Terminal,
-    Lock,
-    Key,
+    GitFork,
     FolderKanban,
 } from "lucide-react";
 
@@ -24,30 +20,30 @@ import { SnippetFilterGrid } from "@/components/snippets/SnippetFilterGrid";
 
 const FEATURES = [
     {
-        title: "Zero-Knowledge Vault Encryption",
+        title: "Fork Lineage Tracking",
         description:
-            "Keep private API keys, sensitive auth helpers, and internal algorithms securely encrypted before cloud synchronization.",
-        icon: <Lock className="h-5 w-5 text-indigo-400" />,
-        badge: "Security",
+            "Every fork remembers its origin. Trace any snippet back through its full revision chain to the original author.",
+        icon: <GitFork className="h-5 w-5 text-amber-400" />,
+        badge: "Provenance",
     },
     {
         title: "Lightning Ctrl+K & ⌘K Search",
         description:
-            "Find any snippet across syntax, descriptions, or tags in sub-10ms with instant fuzzy-indexed keyboard search.",
-        icon: <Search className="h-5 w-5 text-amber-400" />,
+            "Find any snippet across syntax, descriptions, or tags with instant fuzzy-indexed keyboard search.",
+        icon: <Search className="h-5 w-5 text-teal-400" />,
         badge: "Speed",
     },
     {
-        title: "Ray.so Beautiful Image Export",
+        title: "AI-Powered Explanation",
         description:
-            "Export any snippet as a social-ready high resolution PNG with custom gradients, font sizing, and macOS window frames.",
+            "Generate on-demand natural-language explanations for any snippet. Falls back gracefully when the AI provider is unavailable.",
         icon: <Sparkles className="h-5 w-5 text-purple-400" />,
-        badge: "Sharing",
+        badge: "Intelligence",
     },
     {
-        title: "Multi-Language Vault Collections",
+        title: "Multi-Language Tag Collections",
         description:
-            "Organize code by folders, tags, and languages (TypeScript, Python, Rust, Go, SQL, Docker, and 40+ others).",
+            "Organize code by many-to-many tags and languages (TypeScript, Python, Rust, Go, SQL, Docker, and 40+ others).",
         icon: <FolderKanban className="h-5 w-5 text-cyan-400" />,
         badge: "Organization",
     },
@@ -128,7 +124,7 @@ export default function HomePage() {
                             Start building your personal code vault today
                         </h2>
                         <p className="mt-3 text-indigo-100 max-w-xl mx-auto text-sm md:text-base">
-                            Join thousands of developers saving hours every week with encrypted, organized snippets.
+                            Organize, fork, and rediscover your code — with lineage tracking and AI explanations built in.
                         </p>
 
                         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -152,7 +148,7 @@ export default function HomePage() {
             {/* Footer */}
             <footer className="mt-auto border-t border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-950 px-4 py-8 text-center text-xs text-neutral-500">
                 <div className="mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-between gap-4">
-                    <p>© 2026 CodeVault. Store. Organize. Protect. Code.</p>
+                    <p>© 2026 CodeVault. Store. Fork. Discover. Code.</p>
                     <div className="flex items-center gap-6">
                         <Link href="/login" className="hover:text-neutral-800 dark:hover:text-neutral-300 transition-colors">
                             Sign In

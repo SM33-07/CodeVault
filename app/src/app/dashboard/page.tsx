@@ -40,7 +40,7 @@ export default function DashboardPage() {
 
     const [snippets, setSnippets] = useState<SnippetItem[]>(SAMPLE_SNIPPETS);
     const [activeNav, setActiveNav] = useState<string>("dashboard");
-    const [activeTab, setActiveTab] = useState<"all" | "encrypted" | "starred">("all");
+    const [activeTab, setActiveTab] = useState<"all" | "private" | "starred">("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedLanguage, setSelectedLanguage] = useState("All");
     const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -52,7 +52,7 @@ export default function DashboardPage() {
     const [newLanguage, setNewLanguage] = useState("TypeScript");
     const [newCode, setNewCode] = useState("");
     const [newTags, setNewTags] = useState("");
-    const [isEncrypted, setIsEncrypted] = useState(false);
+    const [isPrivate, setIsPrivate] = useState(false);
 
     const handleCopy = (snippet: SnippetItem, e?: React.MouseEvent) => {
         e?.stopPropagation();
@@ -110,13 +110,13 @@ export default function DashboardPage() {
             copies: 0,
             stars: 0,
             createdAt: "Just now",
-            isPrivate: isEncrypted,
+            isPrivate: isPrivate,
         };
 
         setSnippets([newSnippet, ...snippets]);
         toast.success(
-            isEncrypted
-                ? "Snippet encrypted with AES-256 & saved!"
+            isPrivate
+                ? "Private snippet saved!"
                 : "Snippet created successfully!"
         );
 
@@ -125,7 +125,7 @@ export default function DashboardPage() {
         setNewDescription("");
         setNewCode("");
         setNewTags("");
-        setIsEncrypted(false);
+        setIsPrivate(false);
         setIsCreateOpen(false);
     };
 
@@ -134,7 +134,7 @@ export default function DashboardPage() {
             const matchesTab =
                 activeTab === "all"
                     ? true
-                    : activeTab === "encrypted"
+                    : activeTab === "private"
                         ? s.isPrivate
                         : s.stars > 200;
 
@@ -152,7 +152,7 @@ export default function DashboardPage() {
     }, [snippets, activeTab, selectedLanguage, searchQuery]);
 
     const totalCopies = snippets.reduce((acc, s) => acc + s.copies, 0);
-    const encryptedCount = snippets.filter((s) => s.isPrivate).length;
+    const privateCount = snippets.filter((s) => s.isPrivate).length;
 
     const languagesList = [
         "All",
@@ -180,7 +180,7 @@ export default function DashboardPage() {
                         </p>
                         <p className="text-[10px] text-emerald-500 font-semibold flex items-center gap-1">
                             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            AES-256 Active
+                            Online
                         </p>
                     </div>
                 </div>
@@ -228,9 +228,9 @@ export default function DashboardPage() {
                                 }`}
                             >
                                 <Lock className="h-4 w-4 text-indigo-500" />
-                                <span>Encrypted Vault</span>
+                                <span>Private Snippets</span>
                                 <span className="ml-auto rounded-full bg-indigo-100 dark:bg-indigo-950 px-2 py-0.5 text-[10px] font-bold text-indigo-600 dark:text-indigo-400">
-                                    AES-256
+                                    {privateCount}
                                 </span>
                             </button>
 
@@ -263,7 +263,7 @@ export default function DashboardPage() {
                             </button>
                             <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800/60 transition-colors">
                                 <Settings className="h-4 w-4" />
-                                <span>Vault Settings</span>
+                                <span>Settings</span>
                             </button>
                         </nav>
                     </div>
@@ -319,7 +319,7 @@ export default function DashboardPage() {
                             <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
                             <input
                                 type="text"
-                                placeholder="Search vault (Ctrl+K)..."
+                                placeholder="Search snippets (Ctrl+K)..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full rounded-xl border border-neutral-200 bg-neutral-50 py-1.5 pl-8 pr-12 text-xs text-neutral-900 outline-none transition-all focus:border-indigo-500 focus:bg-white dark:border-neutral-800 dark:bg-neutral-800 dark:text-white dark:focus:bg-neutral-900"
@@ -385,7 +385,7 @@ export default function DashboardPage() {
                         <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                                    Encrypted Vault
+                                    Private Snippets
                                 </span>
                                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400">
                                     <Shield className="h-3.5 w-3.5" />
@@ -393,10 +393,10 @@ export default function DashboardPage() {
                             </div>
                             <div className="mt-2.5 flex items-baseline gap-2">
                                 <span className="text-xl font-bold text-neutral-900 dark:text-white">
-                                    {encryptedCount}
+                                    {privateCount}
                                 </span>
                                 <span className="text-[11px] font-semibold text-purple-600 dark:text-purple-400">
-                                    AES-256 Active
+                                    Hidden from public
                                 </span>
                             </div>
                         </div>
@@ -412,7 +412,7 @@ export default function DashboardPage() {
                             </div>
                             <div className="mt-2.5 flex items-baseline gap-2">
                                 <span className="text-xl font-bold text-neutral-900 dark:text-white">
-                                    {snippets.length - encryptedCount}
+                                    {snippets.length - privateCount}
                                 </span>
                                 <span className="text-[11px] font-semibold text-neutral-500">
                                     Live links
@@ -438,15 +438,15 @@ export default function DashboardPage() {
                                     All ({snippets.length})
                                 </button>
                                 <button
-                                    onClick={() => setActiveTab("encrypted")}
+                                    onClick={() => setActiveTab("private")}
                                     className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                                        activeTab === "encrypted"
+                                        activeTab === "private"
                                             ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-900 dark:text-white"
                                             : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
                                     }`}
                                 >
                                     <Lock className="h-3 w-3 text-indigo-500" />
-                                    <span>Encrypted ({encryptedCount})</span>
+                                    <span>Private ({privateCount})</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveTab("starred")}
@@ -504,7 +504,7 @@ export default function DashboardPage() {
                                                 {snippet.isPrivate && (
                                                     <span className="flex items-center gap-1 rounded bg-amber-50 dark:bg-amber-950/60 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-300">
                                                         <Lock className="h-2.5 w-2.5" />
-                                                        AES-256
+                                                        Private
                                                     </span>
                                                 )}
                                             </div>
@@ -523,7 +523,7 @@ export default function DashboardPage() {
                                                     </span>
                                                 ))}
                                                 <span className="text-[10px] text-neutral-400 ml-2">
-                                                    • {snippet.copies} copies
+                                                    • {snippet.language}
                                                 </span>
                                             </div>
                                         </div>
@@ -682,23 +682,23 @@ export default function DashboardPage() {
                                     />
                                 </div>
 
-                                {/* Zero Knowledge Encryption Toggle */}
+                                {/* Visibility Toggle */}
                                 <div className="flex items-center justify-between rounded-xl bg-indigo-50/50 p-3 border border-indigo-100 dark:bg-indigo-950/30 dark:border-indigo-900/40">
                                     <div className="flex items-center gap-2.5">
-                                        <Shield className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                                        <Lock className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                                         <div>
                                             <p className="text-xs font-semibold text-neutral-900 dark:text-white">
-                                                Zero-Knowledge Encryption
+                                                Private Snippet
                                             </p>
                                             <p className="text-[10px] text-neutral-500">
-                                                Encrypt payload with AES-256 client-side.
+                                                Hidden from public snippet library.
                                             </p>
                                         </div>
                                     </div>
                                     <input
                                         type="checkbox"
-                                        checked={isEncrypted}
-                                        onChange={(e) => setIsEncrypted(e.target.checked)}
+                                        checked={isPrivate}
+                                        onChange={(e) => setIsPrivate(e.target.checked)}
                                         className="h-4 w-4 rounded accent-indigo-600 cursor-pointer"
                                     />
                                 </div>

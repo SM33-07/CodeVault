@@ -116,9 +116,9 @@ export default function AuthLayout({
     footerLinkHref,
 }: AuthLayoutProps) {
     return (
-        <div className="flex min-h-screen w-full pt-20">
+        <div className="flex min-h-[calc(100vh-4rem)] w-full">
             {/* Left Panel - Form */}
-            <div className="relative flex w-full flex-col items-center justify-center px-6 py-10 lg:w-1/2 lg:px-16">
+            <div className="relative flex w-full flex-col items-center justify-center px-6 py-8 sm:px-10 lg:w-1/2 lg:px-16">
                 {/* Subtle background pattern */}
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 dark:from-neutral-950 dark:via-neutral-900 dark:to-indigo-950/20" />
 
@@ -129,13 +129,21 @@ export default function AuthLayout({
                     className="relative z-10 w-full max-w-[420px]"
                 >
                     {/* Logo */}
-                    <Link href="/" className="mb-8 inline-flex items-center group">
+                    <Link href="/" className="mb-6 inline-flex items-center group">
                         <Image
-                            src="/images/logo_codevault.png"
+                            src="/images/logo_codevault_light.png"
                             alt="CodeVault"
                             width={180}
                             height={48}
-                            className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                            className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105 dark:hidden"
+                            priority
+                        />
+                        <Image
+                            src="/images/logo_codevault_dark.png"
+                            alt="CodeVault"
+                            width={180}
+                            height={48}
+                            className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105 hidden dark:block"
                             priority
                         />
                     </Link>
@@ -145,12 +153,12 @@ export default function AuthLayout({
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.15, duration: 0.5 }}
-                        className="mb-8"
+                        className="mb-6"
                     >
-                        <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
                             {title}
                         </h1>
-                        <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
                             {subtitle}
                         </p>
                     </motion.div>
@@ -169,7 +177,7 @@ export default function AuthLayout({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5, duration: 0.5 }}
-                        className="mt-8 text-center text-sm text-neutral-500 dark:text-neutral-400"
+                        className="mt-6 text-center text-sm text-neutral-500 dark:text-neutral-400"
                     >
                         {footerText}{" "}
                         <Link
@@ -183,7 +191,7 @@ export default function AuthLayout({
             </div>
 
             {/* Right Panel - Visual */}
-            <div className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:items-center lg:justify-center">
+            <div className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:items-center lg:justify-center py-8">
                 {/* Animated mesh gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950" />
 
@@ -214,7 +222,7 @@ export default function AuthLayout({
                 />
 
                 {/* Center content */}
-                <div className="relative z-10 flex flex-col items-center gap-8 px-12">
+                <div className="relative z-10 flex flex-col items-center gap-6 px-12">
                     {/* Logo Banner */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.85 }}
@@ -223,11 +231,11 @@ export default function AuthLayout({
                         className="flex flex-col items-center"
                     >
                         <Image
-                            src="/images/logo_codevault.png"
+                            src="/images/logo_codevault_dark.png"
                             alt="CodeVault"
-                            width={360}
-                            height={100}
-                            className="h-20 w-auto object-contain mix-blend-screen drop-shadow-[0_0_35px_rgba(99,102,241,0.5)]"
+                            width={320}
+                            height={80}
+                            className="h-14 sm:h-16 w-auto object-contain drop-shadow-[0_0_30px_rgba(99,102,241,0.4)]"
                             priority
                         />
                     </motion.div>
@@ -260,7 +268,7 @@ export default function AuthLayout({
                         <div className="h-8 w-px bg-white/10" />
                         <div className="text-center">
                             <p className="text-lg font-bold text-white/70">🔒</p>
-                            <p className="text-xs">Secure</p>
+                            <p className="text-xs">Private</p>
                         </div>
                     </motion.div>
                 </div>

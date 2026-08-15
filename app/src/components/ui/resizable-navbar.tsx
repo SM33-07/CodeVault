@@ -243,14 +243,24 @@ export const NavbarLogo = ({
             )}
         >
             {children ?? (
-                <Image
-                    src="/images/logo_codevault.png"
-                    alt="CodeVault"
-                    width={160}
-                    height={40}
-                    className="h-7 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                    priority
-                />
+                <>
+                    <Image
+                        src="/images/logo_codevault_light.png"
+                        alt="CodeVault"
+                        width={180}
+                        height={48}
+                        className="h-7 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105 dark:hidden"
+                        priority
+                    />
+                    <Image
+                        src="/images/logo_codevault_dark.png"
+                        alt="CodeVault"
+                        width={180}
+                        height={48}
+                        className="h-7 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105 hidden dark:block"
+                        priority
+                    />
+                </>
             )}
         </Link>
     );

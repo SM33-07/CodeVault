@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Lock, Sparkles, Terminal, Shield, Zap, Command, Keyboard } from "lucide-react";
+import { ArrowRight, GitFork, Sparkles, Terminal, Search, Zap } from "lucide-react";
 
 export function HeroSection() {
     return (
@@ -44,7 +44,7 @@ export function HeroSection() {
                         CodeVault v1.0
                     </span>
                     <span className="text-neutral-300 dark:text-neutral-700">•</span>
-                    <span>Encrypted Developer Snippet Vault</span>
+                    <span>Self-Hostable Snippet Manager</span>
                     <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 text-neutral-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
                 </Link>
             </motion.div>
@@ -56,21 +56,22 @@ export function HeroSection() {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-6xl md:text-7xl dark:text-white"
             >
-                Store. Organize. Protect. <br />
+                Every fork remembers <br />
                 <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 bg-clip-text text-transparent">
-                    Your Code Snippets.
+                    where it came from.
                 </span>
             </motion.h1>
 
-            {/* Subtitle with Windows + Mac shortcuts */}
+            {/* Subtitle */}
             <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="mt-5 max-w-2xl text-base md:text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed"
             >
-                The developer-first snippet sanctuary. Save reusable snippets in
-                encrypted vaults, search in milliseconds with{" "}
+                The self-hostable home for code snippets. Save reusable functions,
+                trace fork lineages back to original authors, search across languages
+                and tags, and generate on-demand AI explanations — all with{" "}
                 <kbd className="rounded-md border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-xs font-mono font-semibold text-neutral-800 shadow-xs dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
                     Ctrl + K
                 </kbd>{" "}
@@ -78,7 +79,7 @@ export function HeroSection() {
                 <kbd className="rounded-md border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-xs font-mono font-semibold text-neutral-800 shadow-xs dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
                     ⌘K
                 </kbd>
-                , and export beautiful Raycast-style cards with one click.
+                .
             </motion.p>
 
             {/* CTA Buttons */}
@@ -98,11 +99,11 @@ export function HeroSection() {
                 </Link>
 
                 <Link
-                    href="/dashboard"
+                    href="/snippets"
                     className="inline-flex items-center gap-2 rounded-full border border-neutral-300/80 bg-white/70 px-7 py-3.5 text-sm font-semibold text-neutral-800 shadow-sm backdrop-blur-md transition-all duration-200 hover:bg-neutral-100 hover:border-neutral-400 hover:-translate-y-0.5 dark:border-neutral-800 dark:bg-neutral-900/70 dark:text-neutral-200 dark:hover:bg-neutral-800"
                 >
                     <Terminal className="h-4 w-4 text-neutral-500" />
-                    <span>Open Live Dashboard</span>
+                    <span>Explore Public Snippets</span>
                 </Link>
             </motion.div>
 
@@ -114,18 +115,18 @@ export function HeroSection() {
                 className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-neutral-500 dark:text-neutral-400"
             >
                 <div className="flex items-center gap-1.5 font-medium">
-                    <Shield className="h-4 w-4 text-indigo-500" />
-                    <span>Client-side AES-256 Vault</span>
+                    <GitFork className="h-4 w-4 text-amber-500" />
+                    <span>Fork Lineage Tracking</span>
                 </div>
                 <div className="h-3 w-px bg-neutral-300 dark:bg-neutral-800" />
                 <div className="flex items-center gap-1.5 font-medium">
-                    <Zap className="h-4 w-4 text-amber-500" />
-                    <span>Instant Ctrl+K / ⌘K Search</span>
+                    <Search className="h-4 w-4 text-teal-500" />
+                    <span>Multi-Language Tag Search</span>
                 </div>
                 <div className="h-3 w-px bg-neutral-300 dark:bg-neutral-800" />
                 <div className="flex items-center gap-1.5 font-medium">
                     <Sparkles className="h-4 w-4 text-purple-500" />
-                    <span>Ray.so Style Image Export</span>
+                    <span>On-Demand AI Explanation</span>
                 </div>
             </motion.div>
         </div>

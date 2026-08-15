@@ -20,10 +20,10 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "  return debounced; }",
         ],
         tags: ["#react", "#hooks", "#performance"],
-        stars: 312,
-        copies: 1420,
-        createdAt: "2h ago",
-        author: { name: "Alex Rivera", handle: "alexr" },
+        stars: 0,
+        copies: 0,
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#3178C6", accent: "from-blue-500/20" },
     },
     {
@@ -40,10 +40,10 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "    if not await check_rate_limit(user_id): raise 429",
         ],
         tags: ["#fastapi", "#jwt", "#redis", "#security"],
-        stars: 254,
-        copies: 980,
-        createdAt: "5h ago",
-        author: { name: "Elena Rostova", handle: "elena" },
+        stars: 0,
+        copies: 0,
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#3776AB", accent: "from-sky-500/20" },
     },
     {
@@ -60,10 +60,10 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "        let permit = self.sem.clone().acquire_owned().await;",
         ],
         tags: ["#rust", "#tokio", "#concurrency", "#async"],
-        stars: 189,
-        copies: 640,
-        createdAt: "1d ago",
-        author: { name: "Marcus Chen", handle: "mchen" },
+        stars: 0,
+        copies: 0,
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#DEA584", accent: "from-orange-500/20" },
     },
     {
@@ -80,10 +80,10 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "-- Zero table locks during peak traffic",
         ],
         tags: ["#postgres", "#sql", "#database", "#devops"],
-        stars: 420,
-        copies: 2150,
-        createdAt: "2d ago",
-        author: { name: "Sarah Jenkins", handle: "sjenkins" },
+        stars: 0,
+        copies: 0,
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#336791", accent: "from-indigo-500/20" },
     },
     {
@@ -100,10 +100,10 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "}",
         ],
         tags: ["#go", "#http", "#networking", "#microservices"],
-        stars: 175,
-        copies: 510,
-        createdAt: "3d ago",
-        author: { name: "David Kim", handle: "dkim" },
+        stars: 0,
+        copies: 0,
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#00ADD8", accent: "from-cyan-500/20" },
     },
     {
@@ -120,10 +120,10 @@ export const SAMPLE_SNIPPETS: SnippetItem[] = [
             "USER node && CMD [\"node\", \"server.js\"]",
         ],
         tags: ["#docker", "#nextjs", "#devops", "#cloud"],
-        stars: 298,
-        copies: 1890,
-        createdAt: "4d ago",
-        author: { name: "Sophie Taylor", handle: "staylor" },
+        stars: 0,
+        copies: 0,
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
         gradientTheme: { glow: "#2496ED", accent: "from-blue-500/20" },
     },
 ];
@@ -176,13 +176,13 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
                 <div>
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
                         <Sparkles className="h-3.5 w-3.5" />
-                        <span>Community & Personal Snippet Library</span>
+                        <span>Example Snippets</span>
                     </div>
                     <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
-                        Curated Developer Snippets
+                        See What You Can Build
                     </h2>
                     <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 max-w-lg">
-                        Battle-tested recipes, architecture patterns, and security guards ready to copy with zero fluff.
+                        Curated seed snippets showcasing multi-language support, tagging, and code previews.
                     </p>
                 </div>
 

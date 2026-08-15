@@ -7,6 +7,7 @@ import {
     Check,
     Copy,
     FileCode,
+    GitFork,
     Lock,
     Sparkles,
     Star,
@@ -47,7 +48,7 @@ const SNIPPET_TABS: SnippetTab[] = [
         filename: "useAuth.ts",
         language: "TypeScript",
         langColor: "#3178C6",
-        description: "Zero-dependency JWT auth state hook with auto refresh",
+        description: "Zero-dependency JWT auth state hook with session persistence",
         tags: ["#react", "#auth", "#jwt", "#hooks"],
         stars: 184,
         lines: [
@@ -92,8 +93,8 @@ const SNIPPET_TABS: SnippetTab[] = [
                         <span className="text-yellow-300">string</span>;{" "}
                         <span className="text-blue-300">email</span>:{" "}
                         <span className="text-yellow-300">string</span>;{" "}
-                        <span className="text-blue-300">isEncrypted</span>:{" "}
-                        <span className="text-yellow-300">boolean</span>;
+                        <span className="text-blue-300">displayName</span>:{" "}
+                        <span className="text-yellow-300">string</span>;
                     </span>
                 ),
             },
@@ -104,7 +105,7 @@ const SNIPPET_TABS: SnippetTab[] = [
                 code: (
                     <>
                         <span className="text-neutral-500 italic">
-                            {"// 🔒 Automatic 256-bit AES vault token encryption"}
+                            {"// 🔗 JWT session with fork lineage & visibility tracking"}
                         </span>
                     </>
                 ),
@@ -587,8 +588,8 @@ export function InteractiveSnippetMockup() {
                         <span className="font-bold text-emerald-400">4,820</span>
                     </div>
                     <div className="flex items-center justify-between rounded-lg bg-neutral-900 px-3 py-1.5 border border-neutral-800/80">
-                        <span className="text-neutral-400">Encryption</span>
-                        <span className="font-bold text-indigo-400">AES-256</span>
+                        <span className="text-neutral-400">Visibility</span>
+                        <span className="font-bold text-emerald-400">Public</span>
                     </div>
                 </div>
 
@@ -640,9 +641,9 @@ export function InteractiveSnippetMockup() {
                 {/* Bottom Status Bar */}
                 <div className="flex h-7 items-center justify-between border-t border-neutral-800/80 bg-neutral-900 px-3 text-[11px] text-neutral-400">
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-indigo-400">
-                            <Lock className="h-3 w-3" />
-                            <span>AES-256 Vault Protected</span>
+                        <div className="flex items-center gap-1 text-amber-400">
+                            <GitFork className="h-3 w-3" />
+                            <span>Fork Lineage Active</span>
                         </div>
                         <div className="hidden sm:inline">UTF-8</div>
                         <div>{currentSnippet.language}</div>

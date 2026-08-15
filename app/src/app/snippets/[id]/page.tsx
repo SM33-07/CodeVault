@@ -150,7 +150,7 @@ export default function SnippetDetailPage({
     const isOwner = user?.id && snippet.ownerId === user.id;
 
     return (
-        <div className="min-h-screen bg-neutral-50/50 dark:bg-neutral-950 py-10 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-full bg-neutral-50/50 dark:bg-neutral-950 pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-5xl space-y-8">
                 {/* Back Navigation Bar */}
                 <div className="flex items-center justify-between">

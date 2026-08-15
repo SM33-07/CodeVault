@@ -101,7 +101,7 @@ export const api = {
                     "Gracefully handles edge cases and returns sanitized, structured results.",
                 ],
                 complexity: "Time: O(1) average lookup | Space: Minimal O(N) allocation",
-                securityNotes: "Includes zero-knowledge encryption safeguards and parameterized query/variable sanitization.",
+                securityNotes: "Includes input validation and parameterized query/variable sanitization.",
             },
         };
     },

@@ -210,7 +210,7 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
                             ) : (
                                 <>
                                     <Globe className="h-3 w-3 text-emerald-400" />
-                                    <span>{snippet.copies} copies</span>
+                                    <span>Public</span>
                                 </>
                             )}
                         </span>
