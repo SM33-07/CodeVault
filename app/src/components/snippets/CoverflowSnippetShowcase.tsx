@@ -1,0 +1,1022 @@
+"use client";
+
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+    ChevronLeft,
+    ChevronRight,
+    Copy,
+    Check,
+    GitFork,
+    Sparkles,
+    Code2,
+    Maximize2,
+    X,
+    ExternalLink,
+    Play,
+    Pause,
+    Clock,
+    Tag as TagIcon,
+    Shield,
+    Layers,
+} from "lucide-react";
+import { toast } from "sonner";
+import Link from "next/link";
+
+export interface ShowcaseSnippet {
+    id: string;
+    title: string;
+    description: string;
+    language: string;
+    langColor: string;
+    code: string;
+    codePreview: string[];
+    tags: string[];
+    createdAt: string;
+    author: { name: string; handle: string };
+    gradientTheme: { glow: string; accent: string };
+    aiExplanation: {
+        summary: string;
+        keyPoints: string[];
+        complexity: string;
+        securityNotes: string;
+    };
+    lineageTree: {
+        origin: string;
+        revisions: number;
+        parentAuthor: string;
+        branchName: string;
+    };
+}
+
+export const SHOWCASE_SNIPPETS: ShowcaseSnippet[] = [
+    {
+        id: "snip-1",
+        title: "useDebounce & useThrottle Hook",
+        description: "Custom React hooks for debouncing search queries and throttling rapid UI events with cleanup safety.",
+        language: "TypeScript",
+        langColor: "#3178C6",
+        code: `import { useState, useEffect, useRef } from 'react';
+
+export function useDebounce<T>(value: T, delay = 300): T {
+  const [debounced, setDebounced] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debounced;
+}
+
+export function useThrottle<T>(value: T, limit = 300): T {
+  const [throttled, setThrottled] = useState<T>(value);
+  const lastRan = useRef(Date.now());
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (Date.now() - lastRan.current >= limit) {
+        setThrottled(value);
+        lastRan.current = Date.now();
+      }
+    }, limit - (Date.now() - lastRan.current));
+
+    return () => clearTimeout(handler);
+  }, [value, limit]);
+
+  return throttled;
+}`,
+        codePreview: [
+            "export function useDebounce<T>(value: T, delay = 300): T {",
+            "  const [debounced, setDebounced] = useState<T>(value);",
+            "  useEffect(() => {",
+            "    const timer = setTimeout(() => setDebounced(value), delay);",
+            "    return () => clearTimeout(timer);",
+            "  }, [value, delay]);",
+            "  return debounced;",
+            "}",
+        ],
+        tags: ["#react", "#hooks", "#performance", "#frontend"],
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
+        gradientTheme: { glow: "#3178C6", accent: "from-blue-500/20" },
+        aiExplanation: {
+            summary: "Encapsulates reactive value throttling and debouncing in reusable React lifecycle hooks.",
+            keyPoints: [
+                "Clears pending timer handles on dependency change to prevent state updates on unmounted components.",
+                "Zero external runtime dependencies; purely uses React core primitives.",
+                "Type-safe generic parameter <T> preserves exact return signatures.",
+            ],
+            complexity: "Time: O(1) per render | Space: O(1) state memory",
+            securityNotes: "Includes state teardown cleanup to prevent memory leaks during rapid input unmounting.",
+        },
+        lineageTree: {
+            origin: "CodeVault React Standard Lib v1.0",
+            revisions: 3,
+            parentAuthor: "Core Team",
+            branchName: "main / hooks-v2",
+        },
+    },
+    {
+        id: "snip-2",
+        title: "FastAPI JWT & Token-Bucket Guard",
+        description: "Asynchronous middleware combining Redis token-bucket rate limiting with JWT auth verification.",
+        language: "Python",
+        langColor: "#3776AB",
+        code: `from fastapi import Request, HTTPException
+import jwt
+from redis.asyncio import Redis
+
+redis = Redis(host="localhost", port=6379, decode_responses=True)
+
+@app.middleware("http")
+async def rate_limit_jwt_guard(request: Request, call_next):
+    # 1. Bearer Token Verification
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid token")
+    
+    token = auth_header.split(" ")[1]
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload["sub"]
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    # 2. Redis Token-Bucket Rate Limiter (60 req/min)
+    rate_key = f"rate:{user_id}"
+    current_count = await redis.incr(rate_key)
+    if current_count == 1:
+        await redis.expire(rate_key, 60)
+    
+    if current_count > 60:
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+
+    return await call_next(request)`,
+        codePreview: [
+            "@app.middleware(\"http\")",
+            "async def rate_limit_jwt_guard(request: Request, call_next):",
+            "    token = request.headers.get(\"Authorization\").split(\" \")[1]",
+            "    user_id = jwt.decode(token, SECRET_KEY)[\"sub\"]",
+            "    # Redis atomic token bucket (60 req/min)",
+            "    if await redis.incr(f\"rate:{user_id}\") > 60:",
+            "        raise HTTPException(status_code=429, detail=\"Too Many Requests\")",
+            "    return await call_next(request)",
+        ],
+        tags: ["#fastapi", "#jwt", "#redis", "#security", "#backend"],
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
+        gradientTheme: { glow: "#3776AB", accent: "from-sky-500/20" },
+        aiExplanation: {
+            summary: "High-throughput asynchronous security gateway for FastAPI integrating JWT decoding with atomic Redis rate limiting.",
+            keyPoints: [
+                "Uses Redis atomic INCR with 60-second TTL to guarantee race-condition free throttling across cluster nodes.",
+                "Decodes HS256 JWT claims before passing downstream request context.",
+                "Short-circuits unauthorized requests prior to endpoint invocation.",
+            ],
+            complexity: "Time: O(1) Redis lookup | Space: O(1) per active user bucket",
+            securityNotes: "Enforces strict Bearer format validation and secret-key signature authentication.",
+        },
+        lineageTree: {
+            origin: "FastAPI Production Recipes",
+            revisions: 5,
+            parentAuthor: "Auth Architecture Group",
+            branchName: "security / token-bucket",
+        },
+    },
+    {
+        id: "snip-3",
+        title: "Tokio Async Semaphore Worker Pool",
+        description: "Zero-allocation concurrent bounded worker pool with graceful cancellation channels in Rust.",
+        language: "Rust",
+        langColor: "#DEA584",
+        code: `use tokio::sync::{Semaphore, broadcast};
+use std::sync::Arc;
+use std::future::Future;
+
+pub struct WorkerPool {
+    semaphore: Arc<Semaphore>,
+    shutdown_tx: broadcast::Sender<()>,
+}
+
+impl WorkerPool {
+    pub fn new(concurrency: usize) -> (Self, broadcast::Receiver<()>) {
+        let (shutdown_tx, shutdown_rx) = broadcast::channel(1);
+        (
+            Self {
+                semaphore: Arc::new(Semaphore::new(concurrency)),
+                shutdown_tx,
+            },
+            shutdown_rx,
+        )
+    }
+
+    pub async fn spawn<F, T>(&self, task: F)
+    where
+        F: Future<Output = T> + Send + 'static,
+        T: Send + 'static,
+    {
+        let permit = self.semaphore.clone().acquire_owned().await.unwrap();
+        tokio::spawn(async move {
+            let _permit = permit;
+            task.await;
+        });
+    }
+}`,
+        codePreview: [
+            "pub struct WorkerPool { semaphore: Arc<Semaphore> }",
+            "impl WorkerPool {",
+            "    pub async fn spawn<F, T>(&self, task: F) {",
+            "        let permit = self.semaphore.clone().acquire_owned().await;",
+            "        tokio::spawn(async move {",
+            "            let _permit = permit;",
+            "            task.await;",
+            "        });",
+            "    }",
+            "}",
+        ],
+        tags: ["#rust", "#tokio", "#concurrency", "#async", "#systems"],
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
+        gradientTheme: { glow: "#DEA584", accent: "from-orange-500/20" },
+        aiExplanation: {
+            summary: "Bounded asynchronous worker pool utilizing Tokio's acquire_owned semaphore to enforce strict concurrency limits.",
+            keyPoints: [
+                "Zero heap allocation for pool control metadata beyond the initial atomic reference counter.",
+                "Automatically drops the concurrency permit when the task's future completes or panics.",
+                "Integrates broadcast cancellation channels for zero-loss graceful shutdowns.",
+            ],
+            complexity: "Time: O(1) task dispatch | Space: O(Concurrency) bounded permits",
+            securityNotes: "Guarantees resource isolation to prevent unbounded task spawning and thread starvation.",
+        },
+        lineageTree: {
+            origin: "Tokio Concurrency Patterns",
+            revisions: 2,
+            parentAuthor: "Rust Core Contributors",
+            branchName: "concurrency / semaphore-bounded",
+        },
+    },
+    {
+        id: "snip-4",
+        title: "PostgreSQL Zero-Downtime Migration",
+        description: "Safe concurrent index creation and column alteration patterns for production Postgres databases.",
+        language: "SQL",
+        langColor: "#336791",
+        code: `-- 1. Add column with default without holding exclusive table locks
+ALTER TABLE snippets 
+ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT false;
+
+-- 2. Create index concurrently to prevent blocking active write operations
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_snippets_user_public 
+ON snippets (user_id, is_public) 
+WHERE is_deleted = false;
+
+-- 3. Add constraint as NOT VALID, then validate separately
+ALTER TABLE snippets 
+ADD CONSTRAINT check_content_length 
+CHECK (length(code_content) <= 100000) NOT VALID;
+
+ALTER TABLE snippets 
+VALIDATE CONSTRAINT check_content_length;`,
+        codePreview: [
+            "-- 1. Add column without locking whole table",
+            "ALTER TABLE snippets ADD COLUMN IF NOT EXISTS is_public BOOLEAN;",
+            "-- 2. Concurrent index creation (zero write locks)",
+            "CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_snippets_user",
+            "ON snippets (user_id, is_public) WHERE is_deleted = false;",
+            "-- 3. Safe two-phase constraint validation",
+            "ALTER TABLE snippets VALIDATE CONSTRAINT check_content_length;",
+        ],
+        tags: ["#postgres", "#sql", "#database", "#devops", "#migrations"],
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
+        gradientTheme: { glow: "#336791", accent: "from-indigo-500/20" },
+        aiExplanation: {
+            summary: "Production database migration script adhering to lock-free operational standards for high-traffic environments.",
+            keyPoints: [
+                "CONCURRENTLY flag on CREATE INDEX builds indexes via multiple table scans without acquiring ShareLock.",
+                "Two-stage constraint validation ensures zero table lock stalls during high-velocity write throughput.",
+                "Includes IF NOT EXISTS idempotency guards for repeatable CI/CD migration runs.",
+            ],
+            complexity: "Time: O(N) background scan | Space: O(Index) disk allocation",
+            securityNotes: "Guarantees zero downtime and prevents lock queue cascade timeouts on production databases.",
+        },
+        lineageTree: {
+            origin: "Postgres Enterprise Runbook",
+            revisions: 4,
+            parentAuthor: "Database Reliability Eng",
+            branchName: "migrations / zero-lock",
+        },
+    },
+    {
+        id: "snip-5",
+        title: "Go High-Throughput HTTP Client",
+        description: "Tuned HTTP transport with connection pooling, custom dialer timeout, and circuit breaker.",
+        language: "Go",
+        langColor: "#00ADD8",
+        code: `package client
+
+import (
+	"net"
+	"net/http"
+	"time"
+)
+
+var HTTPClient = &http.Client{
+	Timeout: 10 * time.Second,
+	Transport: &http.Transport{
+		DialContext: (&net.Dialer{
+			Timeout:   5 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		MaxIdleConns:          200,
+		MaxIdleConnsPerHost:   50,
+		MaxConnsPerHost:       100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   5 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+		DisableCompression:    false,
+	},
+}`,
+        codePreview: [
+            "var HTTPClient = &http.Client{",
+            "    Timeout: 10 * time.Second,",
+            "    Transport: &http.Transport{",
+            "        MaxIdleConns:        200,",
+            "        MaxIdleConnsPerHost: 50,",
+            "        IdleConnTimeout:     90 * time.Second,",
+            "        TLSHandshakeTimeout: 5 * time.Second,",
+            "    },",
+            "}",
+        ],
+        tags: ["#go", "#http", "#networking", "#microservices", "#backend"],
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
+        gradientTheme: { glow: "#00ADD8", accent: "from-cyan-500/20" },
+        aiExplanation: {
+            summary: "Production-tuned Go HTTP client configured to prevent connection leaks and socket exhaustion under microservice workloads.",
+            keyPoints: [
+                "Increases default MaxIdleConnsPerHost from 2 to 50 to maximize TCP keep-alive socket reuse.",
+                "Enforces strict TLS and Dialer timeouts to avoid hung goroutines on slow network edges.",
+                "Thread-safe singleton instance design for concurrent HTTP dispatch across goroutines.",
+            ],
+            complexity: "Time: O(1) connection reuse | Space: Bounded socket pool",
+            securityNotes: "TLS handshake timeouts mitigate slowloris connection stalls.",
+        },
+        lineageTree: {
+            origin: "Go Network Architecture Kit",
+            revisions: 3,
+            parentAuthor: "Cloud Infra Guild",
+            branchName: "networking / tuned-transport",
+        },
+    },
+    {
+        id: "snip-6",
+        title: "Multi-Stage Docker Node & Next.js",
+        description: "Ultra-lean production Dockerfile with Alpine base, standalone output, and non-root runner user.",
+        language: "Docker",
+        langColor: "#2496ED",
+        code: `# 1. Dependency Resolution Stage
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# 2. Builder Stage
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+# 3. Minimal Production Runner Stage
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 nodejs && \\
+    adduser --system --uid 1001 nextjs
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+USER nextjs
+EXPOSE 3000
+CMD ["node", "server.js"]`,
+        codePreview: [
+            "FROM node:20-alpine AS deps",
+            "WORKDIR /app && COPY package*.json ./ && RUN npm ci",
+            "FROM node:20-alpine AS builder",
+            "COPY . . && RUN npm run build",
+            "FROM node:20-alpine AS runner",
+            "USER nextjs",
+            "CMD [\"node\", \"server.js\"]",
+        ],
+        tags: ["#docker", "#nextjs", "#devops", "#cloud", "#containers"],
+        createdAt: "Example",
+        author: { name: "CodeVault Team", handle: "codevault" },
+        gradientTheme: { glow: "#2496ED", accent: "from-blue-500/20" },
+        aiExplanation: {
+            summary: "Three-stage container build producing a minimal footprint (~85MB) standalone Next.js production image.",
+            keyPoints: [
+                "Leverages Next.js standalone build artifacts to eliminate extraneous devDependencies from image layers.",
+                "Executes as an unprivileged nextjs system user (UID 1001) for defense-in-depth container security.",
+                "Multi-stage cache caching maximizes CI build pipeline speeds.",
+            ],
+            complexity: "Size: ~85MB container footprint vs ~1.2GB standard image",
+            securityNotes: "Non-root execution prevents container breakout and privilege escalation attacks.",
+        },
+        lineageTree: {
+            origin: "Container Security Handbook",
+            revisions: 6,
+            parentAuthor: "DevSecOps Team",
+            branchName: "docker / multi-stage-alpine",
+        },
+    },
+];
+
+const LANGUAGES = ["All", "TypeScript", "Python", "Rust", "SQL", "Go", "Docker"];
+
+export function CoverflowSnippetShowcase() {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [selectedLanguage, setSelectedLanguage] = useState("All");
+    const [selectedSnippet, setSelectedSnippet] = useState<ShowcaseSnippet | null>(null);
+    const [modalTab, setModalTab] = useState<"code" | "explain" | "lineage">("code");
+    const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [isAutoPlay, setIsAutoPlay] = useState(false);
+    const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Filtered snippets based on language selection
+    const visibleSnippets = React.useMemo(() => {
+        if (selectedLanguage === "All") return SHOWCASE_SNIPPETS;
+        return SHOWCASE_SNIPPETS.filter((s) => s.language === selectedLanguage);
+    }, [selectedLanguage]);
+
+    // Handle index bounds when filter changes
+    useEffect(() => {
+        setActiveIndex(0);
+    }, [selectedLanguage]);
+
+    const handleNext = useCallback(() => {
+        setActiveIndex((prev) => (prev + 1) % visibleSnippets.length);
+    }, [visibleSnippets.length]);
+
+    const handlePrev = useCallback(() => {
+        setActiveIndex((prev) => (prev - 1 + visibleSnippets.length) % visibleSnippets.length);
+    }, [visibleSnippets.length]);
+
+    // Autoplay timer
+    useEffect(() => {
+        if (isAutoPlay && !selectedSnippet) {
+            autoPlayRef.current = setInterval(handleNext, 4000);
+        } else if (autoPlayRef.current) {
+            clearInterval(autoPlayRef.current);
+        }
+        return () => {
+            if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+        };
+    }, [isAutoPlay, selectedSnippet, handleNext]);
+
+    // Handle keyboard navigation
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (selectedSnippet) {
+                if (e.key === "Escape") setSelectedSnippet(null);
+                return;
+            }
+            if (e.key === "ArrowLeft") handlePrev();
+            if (e.key === "ArrowRight") handleNext();
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [selectedSnippet, handlePrev, handleNext]);
+
+    const copyCode = (code: string, id: string) => {
+        navigator.clipboard.writeText(code);
+        setCopiedId(id);
+        toast.success("Code snippet copied to clipboard");
+        setTimeout(() => setCopiedId(null), 2000);
+    };
+
+    return (
+        <div className="relative w-full py-16 px-4 overflow-hidden select-none">
+            {/* Ambient Background Glow */}
+            <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
+                <div className="h-[450px] w-[700px] rounded-full bg-indigo-500/10 blur-[120px] dark:bg-indigo-600/15" />
+            </div>
+
+            <div className="mx-auto max-w-6xl space-y-10">
+                {/* Section Header */}
+                <div className="text-center space-y-3">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200/80 bg-indigo-50/80 px-3.5 py-1 text-xs font-semibold text-indigo-700 dark:border-indigo-800/80 dark:bg-indigo-950/60 dark:text-indigo-300">
+                        <Code2 className="h-3.5 w-3.5" />
+                        <span>Curated Code Library</span>
+                    </div>
+
+                    <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
+                        Battle-Tested Developer Snippets
+                    </h2>
+                    <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400 max-w-xl mx-auto">
+                        Explore syntax patterns across languages. Click any card to inspect full code, line-by-line explanations, and fork lineage.
+                    </p>
+                </div>
+
+                {/* Filter Pills Bar */}
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                    {LANGUAGES.map((lang) => {
+                        const count =
+                            lang === "All"
+                                ? SHOWCASE_SNIPPETS.length
+                                : SHOWCASE_SNIPPETS.filter((s) => s.language === lang).length;
+                        const isSelected = selectedLanguage === lang;
+
+                        return (
+                            <button
+                                key={lang}
+                                onClick={() => setSelectedLanguage(lang)}
+                                className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                                    isSelected
+                                        ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-105"
+                                        : "bg-white text-neutral-600 border border-neutral-200/80 hover:bg-neutral-100 dark:bg-neutral-900 dark:text-neutral-300 dark:border-neutral-800 dark:hover:bg-neutral-800"
+                                }`}
+                            >
+                                <span>{lang}</span>
+                                <span
+                                    className={`rounded-full px-1.5 py-0.2 text-[10px] ${
+                                        isSelected
+                                            ? "bg-indigo-700/80 text-white"
+                                            : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
+                                    }`}
+                                >
+                                    {count}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* 3D Coverflow Carousel Stage */}
+                <div className="relative flex items-center justify-center min-h-[460px] py-6 [perspective:1200px]">
+                    <div className="relative flex w-full max-w-4xl items-center justify-center">
+                        {visibleSnippets.map((snippet, index) => {
+                            const offset = index - activeIndex;
+                            const isCenter = offset === 0;
+                            const isVisible = Math.abs(offset) <= 2;
+
+                            if (!isVisible) return null;
+
+                            // Calculate 3D transforms based on offset
+                            const rotateY = offset * -25;
+                            const translateX = offset * 230;
+                            const scale = isCenter ? 1 : 1 - Math.abs(offset) * 0.15;
+                            const zIndex = 20 - Math.abs(offset) * 5;
+                            const opacity = isCenter ? 1 : Math.max(0.4, 1 - Math.abs(offset) * 0.35);
+
+                            return (
+                                <motion.div
+                                    key={snippet.id}
+                                    layoutId={`card-${snippet.id}`}
+                                    onClick={() => {
+                                        if (isCenter) {
+                                            setSelectedSnippet(snippet);
+                                            setModalTab("code");
+                                        } else {
+                                            setActiveIndex(index);
+                                        }
+                                    }}
+                                    animate={{
+                                        rotateY,
+                                        x: translateX,
+                                        scale,
+                                        zIndex,
+                                        opacity,
+                                    }}
+                                    transition={{
+                                        type: "spring",
+                                        stiffness: 260,
+                                        damping: 28,
+                                    }}
+                                    className={`absolute w-[320px] sm:w-[380px] cursor-pointer rounded-2xl border transition-shadow duration-300 ${
+                                        isCenter
+                                            ? "border-indigo-500/80 bg-white/95 dark:bg-neutral-900/95 shadow-2xl shadow-indigo-500/20 ring-2 ring-indigo-500/30"
+                                            : "border-neutral-200/70 bg-white/70 dark:border-neutral-800/70 dark:bg-neutral-900/70 shadow-lg hover:border-indigo-400/50"
+                                    }`}
+                                    style={{
+                                        transformStyle: "preserve-3d",
+                                        backdropFilter: "blur(12px)",
+                                    }}
+                                >
+                                    {/* Card Header */}
+                                    <div className="p-5 pb-3">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="flex items-center gap-2">
+                                                <span
+                                                    className="h-2.5 w-2.5 rounded-full"
+                                                    style={{ backgroundColor: snippet.langColor }}
+                                                />
+                                                <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">
+                                                    {snippet.language}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-semibold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                                                    Public
+                                                </span>
+                                                {isCenter && (
+                                                    <span className="flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600 dark:bg-indigo-950/80 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60">
+                                                        <Maximize2 className="h-2.5 w-2.5" />
+                                                        <span>Inspect</span>
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <h3 className="mt-3 text-base font-bold text-neutral-900 dark:text-white line-clamp-1">
+                                            {snippet.title}
+                                        </h3>
+                                        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
+                                            {snippet.description}
+                                        </p>
+                                    </div>
+
+                                    {/* Code Preview Box */}
+                                    <div className="mx-4 my-2 overflow-hidden rounded-xl border border-neutral-200/80 bg-neutral-950 p-3.5 text-[11px] font-mono text-neutral-300 dark:border-neutral-800 shadow-inner">
+                                        <div className="flex items-center gap-1.5 pb-2 mb-2 border-b border-neutral-800/80 text-[10px] text-neutral-500">
+                                            <div className="h-2 w-2 rounded-full bg-red-500/80" />
+                                            <div className="h-2 w-2 rounded-full bg-yellow-500/80" />
+                                            <div className="h-2 w-2 rounded-full bg-green-500/80" />
+                                            <span className="ml-2 truncate text-neutral-400">{snippet.title.toLowerCase().replace(/\s+/g, "_")}.{snippet.language.toLowerCase()}</span>
+                                        </div>
+                                        <div className="space-y-1 overflow-hidden">
+                                            {snippet.codePreview.slice(0, 5).map((line, i) => (
+                                                <div key={i} className="flex leading-relaxed">
+                                                    <span className="w-5 shrink-0 select-none text-neutral-600 text-right pr-2">
+                                                        {i + 1}
+                                                    </span>
+                                                    <span className="truncate text-indigo-300/90 font-mono">
+                                                        {line}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Card Footer */}
+                                    <div className="p-4 pt-2 flex items-center justify-between text-xs">
+                                        <div className="flex flex-wrap gap-1">
+                                            {snippet.tags.slice(0, 2).map((tag) => (
+                                                <span
+                                                    key={tag}
+                                                    className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600 dark:bg-neutral-800/80 dark:text-neutral-400"
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                            {snippet.tags.length > 2 && (
+                                                <span className="text-[10px] text-neutral-400 self-center">
+                                                    +{snippet.tags.length - 2}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1 group-hover:underline">
+                                            <span>Click to Expand</span>
+                                            <span>↗</span>
+                                        </span>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Carousel Controls Bar */}
+                <div className="flex items-center justify-between max-w-md mx-auto pt-2">
+                    <button
+                        onClick={handlePrev}
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 shadow-sm transition-all hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                        aria-label="Previous snippet"
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </button>
+
+                    {/* Progress Dots */}
+                    <div className="flex items-center gap-2">
+                        {visibleSnippets.map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setActiveIndex(idx)}
+                                className={`h-2 rounded-full transition-all duration-300 ${
+                                    idx === activeIndex
+                                        ? "w-7 bg-indigo-600 shadow-xs shadow-indigo-500/50"
+                                        : "w-2 bg-neutral-300 hover:bg-neutral-400 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+                                }`}
+                                aria-label={`Go to slide ${idx + 1}`}
+                            />
+                        ))}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setIsAutoPlay(!isAutoPlay)}
+                            className={`flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold transition-all ${
+                                isAutoPlay
+                                    ? "border-indigo-500 bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
+                                    : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
+                            }`}
+                            aria-label="Toggle autoplay"
+                            title={isAutoPlay ? "Pause Auto-play" : "Start Auto-play"}
+                        >
+                            {isAutoPlay ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
+                        </button>
+
+                        <button
+                            onClick={handleNext}
+                            className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 shadow-sm transition-all hover:bg-neutral-100 hover:scale-105 active:scale-95 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                            aria-label="Next snippet"
+                        >
+                            <ChevronRight className="h-5 w-5" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Click-to-Expand Snippet Inspection Modal */}
+            <AnimatePresence>
+                {selectedSnippet && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+                        {/* Backdrop Blur */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedSnippet(null)}
+                            className="fixed inset-0 bg-black/70 backdrop-blur-md"
+                        />
+
+                        {/* Modal Container */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            className="relative z-10 w-full max-w-3xl overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-950"
+                        >
+                            {/* Modal Header */}
+                            <div className="border-b border-neutral-200/80 bg-neutral-50/80 p-6 dark:border-neutral-800 dark:bg-neutral-900/80">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div>
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <span
+                                                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold text-white shadow-xs"
+                                                style={{ backgroundColor: selectedSnippet.langColor }}
+                                            >
+                                                <Code2 className="h-3.5 w-3.5" />
+                                                <span>{selectedSnippet.language}</span>
+                                            </span>
+
+                                            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60">
+                                                Public Snippet
+                                            </span>
+
+                                            <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                                By {selectedSnippet.author.name}
+                                            </span>
+                                        </div>
+
+                                        <h2 className="mt-3 text-xl sm:text-2xl font-extrabold text-neutral-900 dark:text-white">
+                                            {selectedSnippet.title}
+                                        </h2>
+                                        <p className="mt-1 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
+                                            {selectedSnippet.description}
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        onClick={() => setSelectedSnippet(null)}
+                                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
+                                        aria-label="Close modal"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </button>
+                                </div>
+
+                                {/* Modal Tab Navigation */}
+                                <div className="mt-6 flex flex-wrap items-center justify-between gap-3 pt-2">
+                                    <div className="flex items-center gap-1.5 rounded-xl bg-neutral-200/70 p-1 dark:bg-neutral-800">
+                                        <button
+                                            onClick={() => setModalTab("code")}
+                                            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                                                modalTab === "code"
+                                                    ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-900 dark:text-white"
+                                                    : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                                            }`}
+                                        >
+                                            <Code2 className="h-3.5 w-3.5" />
+                                            <span>Full Code</span>
+                                        </button>
+
+                                        <button
+                                            onClick={() => setModalTab("explain")}
+                                            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                                                modalTab === "explain"
+                                                    ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-900 dark:text-white"
+                                                    : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                                            }`}
+                                        >
+                                            <Sparkles className="h-3.5 w-3.5 text-purple-500" />
+                                            <span>AI Explanation</span>
+                                        </button>
+
+                                        <button
+                                            onClick={() => setModalTab("lineage")}
+                                            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                                                modalTab === "lineage"
+                                                    ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-900 dark:text-white"
+                                                    : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                                            }`}
+                                        >
+                                            <GitFork className="h-3.5 w-3.5 text-amber-500" />
+                                            <span>Fork Lineage</span>
+                                        </button>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => copyCode(selectedSnippet.code, selectedSnippet.id)}
+                                            className="flex items-center gap-1.5 rounded-xl border border-neutral-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 transition-all active:scale-95"
+                                        >
+                                            {copiedId === selectedSnippet.id ? (
+                                                <>
+                                                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                                    <span>Copied!</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Copy className="h-3.5 w-3.5" />
+                                                    <span>Copy Code</span>
+                                                </>
+                                            )}
+                                        </button>
+
+                                        <Link
+                                            href="/snippets"
+                                            onClick={() => setSelectedSnippet(null)}
+                                            className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700 transition-all active:scale-95"
+                                        >
+                                            <GitFork className="h-3.5 w-3.5" />
+                                            <span>Fork to Vault</span>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Modal Content Body */}
+                            <div className="p-6 max-h-[60vh] overflow-y-auto">
+                                {modalTab === "code" && (
+                                    <div className="space-y-4">
+                                        <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 p-4 font-mono text-xs text-neutral-200 shadow-inner">
+                                            <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-800 text-neutral-500 text-[11px]">
+                                                <span>Language: {selectedSnippet.language}</span>
+                                                <span>{selectedSnippet.code.split("\n").length} lines</span>
+                                            </div>
+                                            <pre className="overflow-x-auto leading-relaxed">
+                                                <code>{selectedSnippet.code}</code>
+                                            </pre>
+                                        </div>
+
+                                        {/* Tags */}
+                                        <div className="flex flex-wrap items-center gap-2 pt-2">
+                                            <span className="text-xs font-semibold text-neutral-500 flex items-center gap-1">
+                                                <TagIcon className="h-3 w-3" />
+                                                <span>Tags:</span>
+                                            </span>
+                                            {selectedSnippet.tags.map((tag) => (
+                                                <span
+                                                    key={tag}
+                                                    className="rounded-lg bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {modalTab === "explain" && (
+                                    <div className="space-y-5">
+                                        <div className="rounded-2xl border border-purple-200/80 bg-purple-50/50 p-5 dark:border-purple-900/60 dark:bg-purple-950/30 space-y-3">
+                                            <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300 font-bold text-sm">
+                                                <Sparkles className="h-4 w-4" />
+                                                <span>AI-Generated Overview</span>
+                                            </div>
+                                            <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                                                {selectedSnippet.aiExplanation.summary}
+                                            </p>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+                                                Key Architecture Points
+                                            </h4>
+                                            <ul className="space-y-2">
+                                                {selectedSnippet.aiExplanation.keyPoints.map((point, i) => (
+                                                    <li
+                                                        key={i}
+                                                        className="flex items-start gap-2.5 rounded-xl border border-neutral-200/80 bg-neutral-50/60 p-3 text-xs text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-300"
+                                                    >
+                                                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-[10px] font-bold text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+                                                            {i + 1}
+                                                        </span>
+                                                        <span className="leading-relaxed">{point}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                                            <div className="rounded-xl border border-neutral-200 p-3.5 dark:border-neutral-800 dark:bg-neutral-900">
+                                                <p className="text-[11px] font-bold text-neutral-500">Complexity Profile</p>
+                                                <p className="mt-1 text-xs font-mono font-semibold text-indigo-600 dark:text-indigo-400">
+                                                    {selectedSnippet.aiExplanation.complexity}
+                                                </p>
+                                            </div>
+                                            <div className="rounded-xl border border-neutral-200 p-3.5 dark:border-neutral-800 dark:bg-neutral-900">
+                                                <p className="text-[11px] font-bold text-neutral-500">Security & Integrity</p>
+                                                <p className="mt-1 text-xs text-neutral-700 dark:text-neutral-300">
+                                                    {selectedSnippet.aiExplanation.securityNotes}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {modalTab === "lineage" && (
+                                    <div className="space-y-6 py-2">
+                                        <div className="rounded-2xl border border-amber-200/80 bg-amber-50/50 p-5 dark:border-amber-900/60 dark:bg-amber-950/30">
+                                            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-bold text-sm">
+                                                <GitFork className="h-4 w-4" />
+                                                <span>Lineage Provenance Chain</span>
+                                            </div>
+                                            <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+                                                CodeVault preserves original authorship across all child forks and modifications.
+                                            </p>
+                                        </div>
+
+                                        {/* Visual Fork Tree */}
+                                        <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-indigo-200 dark:before:bg-indigo-900">
+                                            <div className="relative flex items-start gap-4">
+                                                <div className="absolute -left-6 mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white text-[10px] ring-4 ring-white dark:ring-neutral-950 font-bold">
+                                                    1
+                                                </div>
+                                                <div className="flex-1 rounded-xl border border-neutral-200 bg-white p-3.5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                                                    <p className="text-xs font-bold text-neutral-900 dark:text-white">
+                                                        Origin: {selectedSnippet.lineageTree.origin}
+                                                    </p>
+                                                    <p className="text-[11px] text-neutral-500">
+                                                        Created by {selectedSnippet.lineageTree.parentAuthor}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="relative flex items-start gap-4">
+                                                <div className="absolute -left-6 mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-white text-[10px] ring-4 ring-white dark:ring-neutral-950 font-bold">
+                                                    2
+                                                </div>
+                                                <div className="flex-1 rounded-xl border border-amber-300/80 bg-amber-50/40 p-3.5 shadow-xs dark:border-amber-800/80 dark:bg-neutral-900">
+                                                    <p className="text-xs font-bold text-amber-700 dark:text-amber-400">
+                                                        Branch: {selectedSnippet.lineageTree.branchName}
+                                                    </p>
+                                                    <p className="text-[11px] text-neutral-500">
+                                                        {selectedSnippet.lineageTree.revisions} community revisions & optimization patches
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="relative flex items-start gap-4">
+                                                <div className="absolute -left-6 mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white text-[10px] ring-4 ring-white dark:ring-neutral-950 font-bold">
+                                                    ✓
+                                                </div>
+                                                <div className="flex-1 rounded-xl border border-emerald-300/80 bg-emerald-50/40 p-3.5 shadow-xs dark:border-emerald-800/80 dark:bg-neutral-900">
+                                                    <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                                                        Active Head: {selectedSnippet.title}
+                                                    </p>
+                                                    <p className="text-[11px] text-neutral-500">
+                                                        Maintained by {selectedSnippet.author.name}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}

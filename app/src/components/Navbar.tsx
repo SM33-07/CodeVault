@@ -59,6 +59,10 @@ export default function CodeVaultNavbar() {
     const navItems = isAuthenticated
         ? [
             {
+                name: "Home",
+                link: "/",
+            },
+            {
                 name: "Dashboard",
                 link: "/dashboard",
             },
@@ -72,6 +76,10 @@ export default function CodeVaultNavbar() {
             },
         ]
         : [
+            {
+                name: "Home",
+                link: "/",
+            },
             {
                 name: "Library",
                 link: "/snippets",
