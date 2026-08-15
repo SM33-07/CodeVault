@@ -14,12 +14,11 @@ import {
     ChevronLeft,
     ChevronRight,
     Tag as TagIcon,
-    Terminal,
 } from "lucide-react";
 
 export function FeatureBentoGrid() {
-    // View Mode: 'grid' (2x2 symmetrical aligned grid) or 'stack' (3D morphing card stack)
-    const [viewMode, setViewMode] = useState<"grid" | "stack">("grid");
+    // View Mode: 'stack' (3D morphing card stack by default) or 'grid' (symmetrical 2x2 grid)
+    const [viewMode, setViewMode] = useState<"grid" | "stack">("stack");
     const [activeStackIndex, setActiveStackIndex] = useState(0);
 
     // Feature 1: Lineage State
@@ -74,7 +73,7 @@ export function FeatureBentoGrid() {
         setActiveStackIndex((prev) => (prev - 1 + 4) % 4);
     };
 
-    // Array of the 4 Feature Card Definitions
+    // 4 Feature Cards
     const featureCards = [
         {
             id: "lineage",
@@ -96,11 +95,10 @@ export function FeatureBentoGrid() {
                             <button
                                 key={rev.id}
                                 onClick={() => setActiveRevision(rev.id as any)}
-                                className={`rounded-xl p-2 text-left border transition-all text-xs ${
-                                    activeRevision === rev.id
-                                        ? "border-amber-500 bg-amber-50/70 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 shadow-xs font-bold"
-                                        : "border-neutral-200 bg-neutral-50/60 hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-800/40 text-neutral-600 dark:text-neutral-400"
-                                }`}
+                                className={`rounded-xl p-2 text-left border transition-all text-xs ${activeRevision === rev.id
+                                    ? "border-amber-500 bg-amber-50/70 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 shadow-xs font-bold"
+                                    : "border-neutral-200 bg-neutral-50/60 hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-800/40 text-neutral-600 dark:text-neutral-400"
+                                    }`}
                             >
                                 <p className="truncate text-[11px]">{rev.label}</p>
                                 <p className="text-[10px] text-neutral-400 truncate">{rev.author}</p>
@@ -178,11 +176,10 @@ export function FeatureBentoGrid() {
                             <div
                                 key={item.id}
                                 onClick={() => setSelectedIndex(idx)}
-                                className={`flex items-center justify-between rounded-xl p-2 text-xs cursor-pointer transition-all ${
-                                    selectedIndex === idx
-                                        ? "bg-teal-50 text-teal-900 border border-teal-200 dark:bg-teal-950/50 dark:text-teal-200 dark:border-teal-800"
-                                        : "hover:bg-neutral-50 dark:hover:bg-neutral-800/50 text-neutral-600 dark:text-neutral-300"
-                                }`}
+                                className={`flex items-center justify-between rounded-xl p-2 text-xs cursor-pointer transition-all ${selectedIndex === idx
+                                    ? "bg-teal-50 text-teal-900 border border-teal-200 dark:bg-teal-950/50 dark:text-teal-200 dark:border-teal-800"
+                                    : "hover:bg-neutral-50 dark:hover:bg-neutral-800/50 text-neutral-600 dark:text-neutral-300"
+                                    }`}
                             >
                                 <div className="flex items-center gap-2 truncate">
                                     <span className="rounded-md bg-neutral-200/70 dark:bg-neutral-800 px-1.5 py-0.5 text-[10px] font-mono">
@@ -293,11 +290,10 @@ export function FeatureBentoGrid() {
                                 <button
                                     key={tag}
                                     onClick={() => toggleTag(tag)}
-                                    className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all ${
-                                        isSelected
-                                            ? "bg-cyan-600 text-white shadow-xs scale-105"
-                                            : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                                    }`}
+                                    className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all ${isSelected
+                                        ? "bg-cyan-600 text-white shadow-xs scale-105"
+                                        : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                        }`}
                                 >
                                     {tag}
                                 </button>
@@ -339,11 +335,10 @@ export function FeatureBentoGrid() {
                 <div className="flex items-center gap-1 self-start md:self-auto rounded-2xl border border-neutral-200/80 bg-neutral-100/80 p-1 dark:border-neutral-800 dark:bg-neutral-900/80 backdrop-blur-md">
                     <button
                         onClick={() => setViewMode("grid")}
-                        className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
-                            viewMode === "grid"
-                                ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-white"
-                                : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                        }`}
+                        className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${viewMode === "grid"
+                            ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-white"
+                            : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                            }`}
                     >
                         <LayoutGrid className="h-3.5 w-3.5" />
                         <span>Grid View</span>
@@ -351,11 +346,10 @@ export function FeatureBentoGrid() {
 
                     <button
                         onClick={() => setViewMode("stack")}
-                        className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
-                            viewMode === "stack"
-                                ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-white"
-                                : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                        }`}
+                        className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${viewMode === "stack"
+                            ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-white"
+                            : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                            }`}
                     >
                         <Layers className="h-3.5 w-3.5" />
                         <span>Morphing Stack</span>
@@ -451,11 +445,10 @@ export function FeatureBentoGrid() {
                                             stiffness: 280,
                                             damping: 26,
                                         }}
-                                        className={`absolute w-full rounded-3xl border p-6 sm:p-7 shadow-2xl transition-shadow cursor-pointer ${
-                                            isTop
-                                                ? "border-indigo-500/80 bg-white/95 dark:bg-neutral-900/95 ring-2 ring-indigo-500/20"
-                                                : "border-neutral-200/70 bg-white/80 dark:border-neutral-800/70 dark:bg-neutral-900/80"
-                                        }`}
+                                        className={`absolute w-full rounded-3xl border p-6 sm:p-7 shadow-2xl transition-shadow cursor-pointer ${isTop
+                                            ? "border-indigo-500/80 bg-white/95 dark:bg-neutral-900/95 ring-2 ring-indigo-500/20"
+                                            : "border-neutral-200/70 bg-white/80 dark:border-neutral-800/70 dark:bg-neutral-900/80"
+                                            }`}
                                         style={{
                                             backdropFilter: "blur(12px)",
                                             transformStyle: "preserve-3d",
@@ -503,11 +496,10 @@ export function FeatureBentoGrid() {
                                     <button
                                         key={idx}
                                         onClick={() => setActiveStackIndex(idx)}
-                                        className={`h-2 rounded-full transition-all duration-300 ${
-                                            idx === activeStackIndex
-                                                ? "w-7 bg-indigo-600 shadow-xs shadow-indigo-500/50"
-                                                : "w-2 bg-neutral-300 hover:bg-neutral-400 dark:bg-neutral-700 dark:hover:bg-neutral-600"
-                                        }`}
+                                        className={`h-2 rounded-full transition-all duration-300 ${idx === activeStackIndex
+                                            ? "w-7 bg-indigo-600 shadow-xs shadow-indigo-500/50"
+                                            : "w-2 bg-neutral-300 hover:bg-neutral-400 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+                                            }`}
                                         aria-label={`Go to feature ${idx + 1}`}
                                     />
                                 ))}
