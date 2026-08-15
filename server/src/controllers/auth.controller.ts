@@ -109,4 +109,27 @@ export const authController = {
             );
         }
     },
+
+    oauthExchange: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { provider, code, redirectUri } = req.body;
+
+            if (!provider || !code) {
+                return res.status(400).json({ error: "Missing provider or code parameter." });
+            }
+
+            let result;
+            if (provider === "google") {
+                result = await oauthService.handleGoogleCallback(code, redirectUri);
+            } else if (provider === "github") {
+                result = await oauthService.handleGithubCallback(code, redirectUri);
+            } else {
+                return res.status(400).json({ error: `Unsupported OAuth provider: ${provider}` });
+            }
+
+            return res.status(200).json(result);
+        } catch (err: any) {
+            return res.status(400).json({ error: err.message || "OAuth exchange failed." });
+        }
+    },
 };

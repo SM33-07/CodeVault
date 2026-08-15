@@ -30,12 +30,12 @@ export const oauthService = {
         return `${rootUrl}?${qs.toString()}`;
     },
 
-    async handleGoogleCallback(code: string) {
+    async handleGoogleCallback(code: string, customRedirectUri?: string) {
         if (!env.googleClientId || !env.googleClientSecret) {
             throw new Error("Google OAuth credentials are not configured.");
         }
 
-        const redirectUri = `${env.serverUrl}/api/auth/google/callback`;
+        const redirectUri = customRedirectUri || `${env.serverUrl}/api/auth/google/callback`;
         const tokenUrl = "https://oauth2.googleapis.com/token";
 
         // 1. Exchange authorization code for access token
@@ -135,12 +135,12 @@ export const oauthService = {
         return `${rootUrl}?${qs.toString()}`;
     },
 
-    async handleGithubCallback(code: string) {
+    async handleGithubCallback(code: string, customRedirectUri?: string) {
         if (!env.githubClientId || !env.githubClientSecret) {
             throw new Error("GitHub OAuth credentials are not configured.");
         }
 
-        const redirectUri = `${env.serverUrl}/api/auth/github/callback`;
+        const redirectUri = customRedirectUri || `${env.serverUrl}/api/auth/github/callback`;
         const tokenUrl = "https://github.com/login/oauth/access_token";
 
         // 1. Exchange authorization code for access token

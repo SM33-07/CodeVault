@@ -25,4 +25,7 @@ router.get("/google/callback", authController.googleCallback);
 router.get("/github", authController.githubAuth);
 router.get("/github/callback", authController.githubCallback);
 
-export default router;
+// Programmatic OAuth Exchange (for Next.js App Router / serverless clients)
+router.post("/oauth-exchange", authController.oauthExchange);
+
+export default router;

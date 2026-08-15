@@ -121,8 +121,7 @@ export default function RegisterPage() {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleOAuth = (provider: "google" | "github") => {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4001";
-        window.location.href = `${apiUrl}/api/auth/${provider}`;
+        window.location.href = `/api/auth/${provider}`;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
