@@ -9,8 +9,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Prisma_ORM-336791.svg)](https://www.prisma.io/)
-[![Sprint](https://img.shields.io/badge/Sprint-5%2F6-orange.svg)](#-the-build-journey--sprint-roadmap)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Prisma_ORM-336791.svg)](https://www.prisma.io[![Sprint](https://img.shields.io/badge/Sprint-6%2F6%20Complete-brightgreen.svg)](#-the-build-journey--sprint-roadmap)
+[![Docker](https://img.shields.io/badge/Docker-Compose_Ready-2496ED.svg)](#-docker-quickstart)
 
 </div>
 
@@ -32,7 +32,7 @@ GitHub Gists give you storage, but not *structure*. Notes apps give you organiza
 | 😩 *"I want to save this from a colleague's repo but keep my own copy"* | 🔀 Fork any public snippet — full lineage tracked back to the original |
 | 😩 *"Which of my snippets are actually useful to others?"* | 📊 Built-in view counts and fork analytics per snippet |
 | 😩 *"I need to share my best work without giving away everything"* | 🔒 Public/private visibility — you control what the world sees |
-| 😩 *"What does this inherited regex actually do?"* | 🤖 Ask the AI — on-demand Claude-powered explanations *(coming Sprint 6)* |
+| 😩 *"What does this inherited regex actually do?"* | 🤖 Ask the AI — on-demand AI-assisted explanations with graceful fallback |
 
 ---
 
@@ -43,36 +43,47 @@ CodeVault follows a clean **three-tier architecture** — the frontend never tal
 ```
 ┌─────────────────────────────────────────────┐
 │            Next.js Dashboard                │
-│   Search · Library · Profiles · Editor      │    ← Sprint 6
+│   Search · Library · Profiles · Editor      │    ← Frontend (Port 3000)
 └───────────────────┬─────────────────────────┘
                     │  REST + JWT Bearer Token
 ┌───────────────────▼─────────────────────────┐
 │            Express API Layer                │
-│   Auth Middleware · Zod Validation · CORS   │    ← You are here
+│   Auth Middleware · Zod Validation · CORS   │    ← Backend (Port 4001)
 ├──────────┬────────────┬─────────────────────┤
-│  Auth    │  Snippet   │  Fork & Analytics   │
-│  Service │  Service   │  Services           │
+│  Auth    │  Snippet   │  Fork, Analytics &  │
+│  Service │  Service   │  AI Service         │
 │ (bcrypt) │ (CRUD+Search) │ (lineage+views)  │
 └──────────┴─────┬──────┴─────────────────────┘
                  │  Prisma ORM
 ┌────────────────▼────────────────────────────┐
 │          PostgreSQL Database                │
-│  Users · Snippets · Tags · SnippetTags      │
+│  Users · Snippets · Tags · SnippetTags      │    ← Database (Port 5432)
 └────────────────┬────────────────────────────┘
                  │  Server-side, on-demand
 ┌────────────────▼────────────────────────────┐
-│         Anthropic Claude API                │    ← Sprint 6
+│              Google Gemini AI               │    ← On-Demand AI Service
 │     (AI key never exposed to client)        │
 └─────────────────────────────────────────────┘
 ```
 
-> **Design principle**: The AI feature degrades gracefully — if Claude is unavailable, every other feature keeps working. CodeVault is a snippet manager first, AI tool second.
+> **Design principle**: The AI feature degrades gracefully — if the AI service is unavailable, every other feature keeps working. CodeVault is a snippet manager first, AI tool second.
 
 ---
 
 ## 🗺️ The Build Journey — Sprint Roadmap
 
 CodeVault isn't a weekend hackathon project that tries to do everything at once. It's built **sprint by sprint**, where each sprint introduces exactly one architectural concept on top of a fully working system.
+
+| Sprint | What Changed | What It Proved | Status |
+|:---:|---|---|:---:|
+| **1** | 🟢 Express + in-memory CRUD | *"Can I build a working REST API from scratch?"* | ✅ |
+| **2** | 🟢 PostgreSQL + Prisma ORM | *"Can I persist data and design a real schema?"* | ✅ |
+| **3** | 🟢 Relations + Zod validation | *"Can I model many-to-many relationships and reject bad input?"* | ✅ |
+| **4** | 🟢 JWT auth + ownership | *"Can I secure routes and enforce 'you can only edit your own stuff'?"* | ✅ |
+| **5** | 🟢 Search, forking, analytics | *"Can I build GitHub-style forking, multi-filter search, and view tracking?"* | ✅ |
+| **6** | 🟢 Next.js UI + Profiles + AI + Docker | *"Can I ship a polished product with a real UI, AI explanation, and Dockerization?"* | ✅ |
+
+> 📝 Automated smoke test suites are available for every sprint. Sprint 6 runs **20 tests** covering profiles, visibility rules, AI explanation, and ownership enforcement — all passing.e each sprint introduces exactly one architectural concept on top of a fully working system.
 
 | Sprint | What Changed | What It Proved | Status |
 |:---:|---|---|:---:|
@@ -147,7 +158,27 @@ CodeVault isn't a weekend hackathon project that tries to do everything at once.
 
 ---
 
-## 🚀 Getting Started
+## 🐳 Docker Quickstart
+
+CodeVault is packaged for multi-container deployment with Docker and Docker Compose.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/SM33-07/CodeVault.git
+cd CodeVault
+
+# 2. Launch the full stack (PostgreSQL + Express + Next.js)
+docker compose up --build
+```
+
+Once running:
+* **Frontend Web App**: `http://localhost:3000`
+* **Express REST API**: `http://localhost:4001`
+* **PostgreSQL Database**: `localhost:5432`
+
+---
+
+## 🚀 Local Development Setup
 
 ### Prerequisites
 
@@ -175,6 +206,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/codevault?schema=public"
 JWT_SECRET="replace-with-a-strong-random-string"
 JWT_EXPIRES_IN="7d"
 BCRYPT_SALT_ROUNDS=10
+GEMINI_API_KEY="your-gemini-api-key"
 ```
 
 ```bash
@@ -187,16 +219,18 @@ npm run dev
 # → CodeVault API running at http://localhost:4001
 ```
 
-### Verify Everything Works
+### Verify Everything Works (Sprint 6 Smoke Test)
 
 ```bash
-# Run the Sprint 5 smoke test (20 tests)
-npx ts-node-dev --transpile-only src/smoke-test-sprint5.ts
+# In the server directory, run the Sprint 6 automated smoke test suite (20 tests)
+npx ts-node-dev --transpile-only src/smoke-test-sprint6.ts
 ```
 
 You should see:
 ```
-=== ALL 20 SPRINT-5 SMOKE TESTS PASSED! ===
+======================================================
+=== ALL 20 SPRINT-6 SMOKE TESTS PASSED (100%) ===
+======================================================
 ```
 
 ---
