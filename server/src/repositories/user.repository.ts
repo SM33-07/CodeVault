@@ -20,12 +20,10 @@ export async function findById(id: string) {
 }
 
 export async function findByProvider(provider: string, providerId: string) {
-    return prisma.user.findUnique({
+    return prisma.user.findFirst({
         where: {
-            provider_providerId: {
-                provider,
-                providerId,
-            },
+            provider,
+            providerId,
         },
     });
 }
