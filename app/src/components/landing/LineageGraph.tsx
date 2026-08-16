@@ -149,7 +149,7 @@ export function LineageGraph() {
                 className="relative mx-auto mt-10 w-full max-w-4xl rounded-3xl border border-neutral-200/80 bg-bg-surface/85 p-6 md:p-8 shadow-xl backdrop-blur-xl dark:border-neutral-800/80 hover:shadow-2xl hover:shadow-violet/20 hover:border-violet/40"
             >
                 {/* Header / Lineage Thesis Badge */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-neutral-200/60 dark:border-neutral-800/60">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-neutral-200/60 dark:border-neutral-800/60">
                     <div className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 text-violet border border-violet/30 shadow-xs">
                             <GitFork className="h-4 w-4" />
@@ -187,6 +187,27 @@ export function LineageGraph() {
                             <Sparkles className="h-3.5 w-3.5" />
                             <span>Simulate Fork</span>
                         </button>
+                    </div>
+                </div>
+
+                {/* Interactive Lineage Instruction Strip */}
+                <div className="mt-4 rounded-2xl border border-violet/25 bg-gradient-to-r from-violet/[0.07] via-cobalt/[0.04] to-transparent p-3.5 text-xs text-text-secondary flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-violet/20 text-violet font-bold text-xs border border-violet/30 shadow-xs">
+                            💡
+                        </span>
+                        <div className="space-y-0.5">
+                            <span className="font-bold text-text-primary text-xs flex items-center gap-2">
+                                How Fork Lineage Works
+                                <span className="text-[10px] text-violet font-mono font-normal">Interactive Simulation</span>
+                            </span>
+                            <p className="text-[11px] text-text-secondary leading-relaxed">
+                                Click <strong>&quot;Simulate Fork&quot;</strong> above to spawn a custom mutation (e.g. Rust WASM or Go Routine) and watch CodeVault instantly connect a bidirectional ancestry link back to <strong className="text-violet">useAuth.ts (#root)</strong>.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 font-mono text-[10px] text-text-secondary bg-bg-surface/80 px-2.5 py-1.5 rounded-lg border border-neutral-200/60 dark:border-neutral-800 shrink-0">
+                        <span className="text-violet font-bold">1. Root</span> → <span className="text-cobalt font-bold">2. Fork</span> → <span className="text-emerald-400 font-bold">3. Diff Trace</span>
                     </div>
                 </div>
 
@@ -436,18 +457,17 @@ export function LineageGraph() {
                                     </div>
                                 </div>
 
-                                {/* Custom Diff Modifier */}
-                                <div className="space-y-2 pt-2">
-                                    <label className="text-[11px] font-bold uppercase tracking-wider text-text-secondary block">
-                                        Custom Mutation Diff Note:
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={customDiff || SIMULATION_PRESETS[selectedPresetIdx].forkDiff}
-                                        onChange={(e) => setCustomDiff(e.target.value)}
-                                        placeholder="e.g. + Added Redis cache & rate limit layer"
-                                        className="w-full rounded-xl border border-neutral-300 dark:border-neutral-700 bg-bg-base px-3 py-2 text-xs text-text-primary focus:border-violet focus:outline-none focus:ring-1 focus:ring-violet font-mono"
-                                    />
+                                {/* Simulation Workflow Guide */}
+                                <div className="rounded-xl border border-violet/20 bg-violet/5 p-3 text-[11px] text-text-secondary space-y-1.5">
+                                    <span className="font-bold text-violet flex items-center gap-1.5 text-xs">
+                                        <GitFork className="h-3.5 w-3.5" />
+                                        How CodeVault Provenance Works:
+                                    </span>
+                                    <ul className="space-y-1 text-[11px] list-disc list-inside">
+                                        <li><strong>Parent Anchor:</strong> Fork branches from <code className="text-violet font-mono">useAuth.ts</code> (#root by CodeVault Core).</li>
+                                        <li><strong>Immutable Attribution:</strong> Your mutation diff is tracked while preserving root author credit.</li>
+                                        <li><strong>Real-time Graph:</strong> The visual tree updates instantly with a glowing connecting laser beam.</li>
+                                    </ul>
                                 </div>
                             </div>
 

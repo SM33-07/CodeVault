@@ -94,7 +94,7 @@ export function HeroSection() {
                         </p>
                         <div className="mt-1 flex items-center justify-between text-[9px] text-text-secondary">
                             <span>Depth: <strong className="text-mint">3 forks</strong></span>
-                            <span className="text-violet/80">Click copy</span>
+                            <span className="text-violet font-semibold group-hover:underline">1-click copy</span>
                         </div>
                     </div>
                 </motion.div>
@@ -104,12 +104,12 @@ export function HeroSection() {
                     initial={{ x: -10 }}
                     animate={{ x: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    whileHover={{ scale: 1.05, y: -3, rotateZ: -1 }}
+                    whileHover={{ scale: 1.06, y: -3, rotateZ: -1 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={(e) => handleCopy("vault", "state: ENCRYPTED_LOCAL // Air-gapped Zero Telemetry", "Vault Enclave", e)}
-                    className="absolute top-44 left-0 xl:-left-12 2xl:-left-20 z-20 cursor-pointer animate-float-3 text-left max-w-[210px]"
+                    className="absolute top-44 left-0 xl:-left-12 2xl:-left-20 z-20 cursor-pointer animate-float-3 text-left max-w-[210px] group"
                 >
-                    <div className="rounded-xl border border-neutral-200/80 bg-bg-surface/85 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg shadow-mint/10 backdrop-blur-md dark:border-neutral-800/80 dark:bg-bg-surface/80 hover:border-mint hover:shadow-xl hover:shadow-mint/25 transition-all duration-200">
+                    <div className="rounded-xl border border-neutral-200/80 bg-bg-surface/85 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg shadow-mint/10 backdrop-blur-md dark:border-neutral-800/80 dark:bg-bg-surface/80 group-hover:border-mint group-hover:shadow-xl group-hover:shadow-mint/25 transition-all duration-200">
                         <div className="flex items-center justify-between gap-2 pb-1 mb-1 border-b border-neutral-200/60 dark:border-neutral-700/40 text-[10px] text-emerald-400">
                             <span className="flex items-center gap-1 font-bold">
                                 <Shield className="h-3 w-3 text-emerald-400" />
@@ -120,7 +120,7 @@ export function HeroSection() {
                                 {copiedId === "vault" ? (
                                     <Check className="h-3 w-3 text-emerald-400" />
                                 ) : (
-                                    <Copy className="h-3 w-3 opacity-50" />
+                                    <Copy className="h-3 w-3 opacity-50 group-hover:opacity-100" />
                                 )}
                             </div>
                         </div>
@@ -129,7 +129,7 @@ export function HeroSection() {
                         </p>
                         <div className="mt-1 flex items-center justify-between text-[9px] text-text-secondary">
                             <span>Air-gapped local</span>
-                            <span className="text-emerald-400/80">Click copy</span>
+                            <span className="text-emerald-400 font-semibold group-hover:underline">1-click copy</span>
                         </div>
                     </div>
                 </motion.div>
@@ -142,12 +142,12 @@ export function HeroSection() {
                     initial={{ x: 10 }}
                     animate={{ x: 0 }}
                     transition={{ duration: 0.5, delay: 0.15 }}
-                    whileHover={{ scale: 1.05, y: -3, rotateZ: 1 }}
+                    whileHover={{ scale: 1.06, y: -3, rotateZ: 1 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={(e) => handleCopy("cli", "$ cv pull #snip-rbac-jwt", "CLI Pull", e)}
-                    className="absolute top-16 right-0 xl:-right-12 2xl:-right-20 z-20 cursor-pointer animate-float-2 text-left max-w-[210px]"
+                    className="absolute top-16 right-0 xl:-right-12 2xl:-right-20 z-20 cursor-pointer animate-float-2 text-left max-w-[210px] group"
                 >
-                    <div className="rounded-xl border border-neutral-200/80 bg-bg-surface/85 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg shadow-cobalt/10 backdrop-blur-md dark:border-neutral-800/80 dark:bg-bg-surface/80 hover:border-cobalt hover:shadow-xl hover:shadow-cobalt/25 transition-all duration-200">
+                    <div className="rounded-xl border border-neutral-200/80 bg-bg-surface/85 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg shadow-cobalt/10 backdrop-blur-md dark:border-neutral-800/80 dark:bg-bg-surface/80 group-hover:border-cobalt group-hover:shadow-xl group-hover:shadow-cobalt/25 transition-all duration-200">
                         <div className="flex items-center justify-between gap-2 pb-1 mb-1 border-b border-neutral-200/60 dark:border-neutral-700/40 text-[10px] text-cobalt">
                             <span className="flex items-center gap-1 font-bold">
                                 <Terminal className="h-3 w-3 text-cobalt" />
@@ -160,7 +160,7 @@ export function HeroSection() {
                                 {copiedId === "cli" ? (
                                     <Check className="h-3 w-3 text-emerald-400" />
                                 ) : (
-                                    <Copy className="h-3 w-3 opacity-50" />
+                                    <Copy className="h-3 w-3 opacity-50 group-hover:opacity-100" />
                                 )}
                             </div>
                         </div>
@@ -169,7 +169,7 @@ export function HeroSection() {
                         </p>
                         <div className="mt-1 flex items-center justify-between text-[9px] text-text-secondary">
                             <span>PostgreSQL CTE</span>
-                            <span className="text-cobalt/80">Click copy</span>
+                            <span className="text-cobalt font-semibold group-hover:underline">1-click copy</span>
                         </div>
                     </div>
                 </motion.div>
@@ -179,12 +179,12 @@ export function HeroSection() {
                     initial={{ x: 10 }}
                     animate={{ x: 0 }}
                     transition={{ duration: 0.5, delay: 0.25 }}
-                    whileHover={{ scale: 1.05, y: -3, rotateZ: 1 }}
+                    whileHover={{ scale: 1.06, y: -3, rotateZ: 1 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={(e) => handleCopy("guard", "const auth = await verifyJwt(token, secret);", "verifyJwt()", e)}
-                    className="absolute top-44 right-0 xl:-right-12 2xl:-right-20 z-20 cursor-pointer animate-float-1 text-left max-w-[210px]"
+                    className="absolute top-44 right-0 xl:-right-12 2xl:-right-20 z-20 cursor-pointer animate-float-1 text-left max-w-[210px] group"
                 >
-                    <div className="rounded-xl border border-neutral-200/80 bg-bg-surface/85 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg shadow-violet/10 backdrop-blur-md dark:border-neutral-800/80 dark:bg-bg-surface/80 hover:border-violet hover:shadow-xl hover:shadow-violet/25 transition-all duration-200">
+                    <div className="rounded-xl border border-neutral-200/80 bg-bg-surface/85 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg shadow-violet/10 backdrop-blur-md dark:border-neutral-800/80 dark:bg-bg-surface/80 group-hover:border-violet group-hover:shadow-xl group-hover:shadow-violet/25 transition-all duration-200">
                         <div className="flex items-center justify-between gap-2 pb-1 mb-1 border-b border-neutral-200/60 dark:border-neutral-700/40 text-[10px] text-violet">
                             <span className="flex items-center gap-1 font-bold">
                                 <Lock className="h-3 w-3 text-violet" />
@@ -197,7 +197,7 @@ export function HeroSection() {
                                 {copiedId === "guard" ? (
                                     <Check className="h-3 w-3 text-emerald-400" />
                                 ) : (
-                                    <Copy className="h-3 w-3 opacity-50" />
+                                    <Copy className="h-3 w-3 opacity-50 group-hover:opacity-100" />
                                 )}
                             </div>
                         </div>
@@ -206,7 +206,7 @@ export function HeroSection() {
                         </p>
                         <div className="mt-1 flex items-center justify-between text-[9px] text-text-secondary">
                             <span>Ownership Guard</span>
-                            <span className="text-violet/80">Click copy</span>
+                            <span className="text-violet font-semibold group-hover:underline">1-click copy</span>
                         </div>
                     </div>
                 </motion.div>
