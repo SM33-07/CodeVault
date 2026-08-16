@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GitFork, Sparkles, User, ArrowUpRight, Code, ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import { GitFork, Sparkles, User, ArrowUpRight, Code, ShieldCheck, Plus, X, Check, RefreshCw, Layers } from "lucide-react";
+import { toast } from "sonner";
 
 interface LineageNode {
     id: string;
@@ -13,6 +13,7 @@ interface LineageNode {
     langColor: string;
     forkDiff: string;
     isOrigin?: boolean;
+    isSimulated?: boolean;
 }
 
 const ORIGIN_NODE: LineageNode = {
@@ -25,7 +26,7 @@ const ORIGIN_NODE: LineageNode = {
     isOrigin: true,
 };
 
-const FORK_NODES: LineageNode[] = [
+const DEFAULT_FORKS: LineageNode[] = [
     {
         id: "fork-1",
         title: "useAuthWithSession.ts",
@@ -52,29 +53,70 @@ const FORK_NODES: LineageNode[] = [
     },
 ];
 
+const SIMULATION_PRESETS = [
+    {
+        title: "useAuthRustWasm.rs",
+        language: "Rust",
+        langColor: "#DEA584",
+        forkDiff: "+ Compiled to ultra high-speed WebAssembly core",
+        author: "You (Rustacean)",
+    },
+    {
+        title: "useAuthGoRoutine.go",
+        language: "Go",
+        langColor: "#00ADD8",
+        forkDiff: "+ Non-blocking worker pool with channels",
+        author: "You (Go Engineer)",
+    },
+    {
+        title: "useAuthElixirAgent.ex",
+        language: "Elixir",
+        langColor: "#6E4A7E",
+        forkDiff: "+ Distributed GenServer state reconciliation",
+        author: "You (OTP Alchemist)",
+    },
+];
+
 export function LineageGraph() {
     const [selectedNode, setSelectedNode] = useState<string | null>(null);
     const [hoveredNode, setHoveredNode] = useState<string | null>(null);
     const [tilt, setTilt] = useState({ x: 0, y: 0 });
-    const [forkList, setForkList] = useState<LineageNode[]>(FORK_NODES);
-    const [simulated, setSimulated] = useState<boolean>(false);
+    const [forkList, setForkList] = useState<LineageNode[]>(DEFAULT_FORKS);
+    const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+    const [selectedPresetIdx, setSelectedPresetIdx] = useState(0);
+    const [customTitle, setCustomTitle] = useState("");
+    const [customDiff, setCustomDiff] = useState("");
+    const [hasSimulated, setHasSimulated] = useState(false);
 
-    const handleSimulateFork = () => {
-        if (!simulated) {
-            const newFork: LineageNode = {
-                id: "fork-simulated",
-                title: "useAuthRustWasm.rs",
-                author: "You (Simulated)",
-                language: "Rust",
-                langColor: "#DEA584",
-                forkDiff: "+ Compiled to high-speed WebAssembly core",
-            };
-            setForkList([FORK_NODES[0], newFork, FORK_NODES[2]]);
-            setSimulated(true);
-        } else {
-            setForkList(FORK_NODES);
-            setSimulated(false);
-        }
+    const handleOpenSimulator = () => {
+        setIsSimulatorOpen(true);
+    };
+
+    const handleExecuteFork = () => {
+        const preset = SIMULATION_PRESETS[selectedPresetIdx];
+        const newFork: LineageNode = {
+            id: `fork-simulated-${Date.now()}`,
+            title: customTitle.trim() || preset.title,
+            author: preset.author,
+            language: preset.language,
+            langColor: preset.langColor,
+            forkDiff: customDiff.trim() || preset.forkDiff,
+            isSimulated: true,
+        };
+
+        // Replace the center card with the new simulated node
+        setForkList([DEFAULT_FORKS[0], newFork, DEFAULT_FORKS[2]]);
+        setHasSimulated(true);
+        setIsSimulatorOpen(false);
+        setSelectedNode(newFork.id);
+        toast.success(`✨ Created fork: ${newFork.title} linked to useAuth.ts!`);
+    };
+
+    const handleResetGraph = () => {
+        setForkList(DEFAULT_FORKS);
+        setHasSimulated(false);
+        setSelectedNode(null);
+        toast.info("Lineage graph reset to default.");
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -82,8 +124,8 @@ export function LineageGraph() {
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         setTilt({
-            x: -y * 8,
-            y: x * 10,
+            x: -y * 6,
+            y: x * 8,
         });
     };
 
@@ -93,256 +135,342 @@ export function LineageGraph() {
     };
 
     return (
-        <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{
-                transform: `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-                transition: "transform 0.25s ease-out, box-shadow 0.3s ease-out",
-            }}
-            className="relative mx-auto mt-10 w-full max-w-4xl rounded-3xl border border-neutral-200/80 bg-bg-surface/85 p-6 md:p-8 shadow-xl backdrop-blur-xl dark:border-neutral-800/80 hover:shadow-2xl hover:shadow-violet/20 hover:border-violet/40"
-        >
-            {/* Header / Lineage Thesis Badge */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-neutral-200/60 dark:border-neutral-800/60">
-                <div className="flex items-center gap-2.5">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 text-violet border border-violet/30 shadow-xs">
-                        <GitFork className="h-4 w-4" />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-sm font-bold text-text-primary">
-                                Provenance & Fork Lineage Graph
-                            </h3>
-                            <span className="rounded-full bg-violet/10 px-2 py-0.5 text-[10px] font-semibold text-violet border border-violet/20">
-                                Signature Provenance
-                            </span>
+        <>
+            <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                    transform: `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+                    transition: "transform 0.25s ease-out, box-shadow 0.3s ease-out",
+                }}
+                className="relative mx-auto mt-10 w-full max-w-4xl rounded-3xl border border-neutral-200/80 bg-bg-surface/85 p-6 md:p-8 shadow-xl backdrop-blur-xl dark:border-neutral-800/80 hover:shadow-2xl hover:shadow-violet/20 hover:border-violet/40"
+            >
+                {/* Header / Lineage Thesis Badge */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-neutral-200/60 dark:border-neutral-800/60">
+                    <div className="flex items-center gap-2.5">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 text-violet border border-violet/30 shadow-xs">
+                            <GitFork className="h-4 w-4" />
                         </div>
-                        <p className="text-xs text-text-secondary">
-                            Every fork visibly traces back to its original author and source.
-                        </p>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-sm font-bold text-text-primary">
+                                    Provenance & Fork Lineage Graph
+                                </h3>
+                                <span className="rounded-full bg-violet/10 px-2 py-0.5 text-[10px] font-semibold text-violet border border-violet/20">
+                                    Signature Provenance
+                                </span>
+                            </div>
+                            <p className="text-xs text-text-secondary">
+                                Every fork visibly traces back to its original author and source.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                        {hasSimulated ? (
+                            <button
+                                onClick={handleResetGraph}
+                                className="inline-flex items-center gap-1.5 rounded-full bg-bg-elevated px-3 py-1.5 text-xs font-semibold text-text-secondary hover:text-text-primary hover:bg-neutral-200 dark:hover:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 transition-all shadow-xs"
+                            >
+                                <RefreshCw className="h-3 w-3" />
+                                <span>Reset Graph</span>
+                            </button>
+                        ) : null}
+
+                        <button
+                            onClick={handleOpenSimulator}
+                            className="sheen-button inline-flex items-center gap-1.5 rounded-full bg-violet px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-violet/25 hover:bg-violet-hover hover:scale-105 active:scale-95 transition-all"
+                        >
+                            <Sparkles className="h-3.5 w-3.5" />
+                            <span>Simulate Fork</span>
+                        </button>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={handleSimulateFork}
-                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all shadow-xs ${
-                            simulated
-                                ? "bg-violet text-white shadow-violet/30"
-                                : "bg-violet/10 text-violet hover:bg-violet/20 border border-violet/30"
+                {/* Tree Container */}
+                <div className="relative mt-8 flex flex-col items-center">
+                    {/* 1. Origin Node with Entrance Animation & Hover State */}
+                    <motion.div
+                        variants={{
+                            hidden: { scale: 0.92, y: -15, opacity: 0 },
+                            visible: { scale: 1, y: 0, opacity: 1, transition: { duration: 0.45, ease: "easeOut" } },
+                        }}
+                        onMouseEnter={() => setHoveredNode("origin")}
+                        onMouseLeave={() => setHoveredNode(null)}
+                        className={`relative z-10 w-full max-w-sm rounded-2xl border-2 transition-all duration-300 bg-gradient-to-br from-violet/15 via-bg-surface to-bg-surface p-4 shadow-lg ${
+                            hoveredNode === "origin"
+                                ? "border-violet bg-violet/20 shadow-violet/25 scale-[1.02]"
+                                : "border-violet/70 shadow-violet/10"
                         }`}
                     >
-                        <Sparkles className="h-3.5 w-3.5" />
-                        <span>{simulated ? "Reset Graph" : "Simulate Fork"}</span>
-                    </button>
-                    <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-text-secondary">
-                        <span className="flex h-2 w-2 rounded-full bg-mint animate-pulse" />
-                        <span className="text-mint font-semibold">Realtime Lineage</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Tree Container */}
-            <div className="relative mt-8 flex flex-col items-center">
-                {/* 1. Origin Node with Entrance Animation & Hover State */}
-                <motion.div
-                    variants={{
-                        hidden: { scale: 0.92, y: -15, opacity: 0 },
-                        visible: { scale: 1, y: 0, opacity: 1, transition: { duration: 0.45, ease: "easeOut" } },
-                    }}
-                    onMouseEnter={() => setHoveredNode("origin")}
-                    onMouseLeave={() => setHoveredNode(null)}
-                    className={`relative z-10 w-full max-w-sm rounded-2xl border-2 transition-all duration-300 bg-gradient-to-br from-violet/15 via-bg-surface to-bg-surface p-4 shadow-lg ${
-                        hoveredNode === "origin"
-                            ? "border-violet bg-violet/20 shadow-violet/25 scale-[1.02]"
-                            : "border-violet/70 shadow-violet/10"
-                    }`}
-                >
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <span className="flex h-2 w-2 rounded-full bg-violet animate-ping" />
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-violet">
-                                Origin Source Root
+                        <div className="flex items-center justify-between">
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-violet/20 px-2.5 py-0.5 text-[10px] font-bold text-violet border border-violet/30">
+                                <Sparkles className="h-3 w-3 animate-spin text-violet" style={{ animationDuration: "8s" }} />
+                                ORIGIN SNIPPET (#root)
+                            </span>
+                            <span className="rounded-md bg-bg-elevated px-1.5 py-0.5 text-[10px] font-mono text-text-secondary">
+                                {ORIGIN_NODE.language}
                             </span>
                         </div>
-                        <span className="rounded-md bg-bg-elevated px-2 py-0.5 text-[10px] font-mono font-medium text-text-secondary">
-                            {ORIGIN_NODE.language}
-                        </span>
-                    </div>
 
-                    <h4 className="mt-2 text-sm font-bold text-text-primary">
-                        {ORIGIN_NODE.title}
-                    </h4>
-                    <p className="mt-1 text-xs text-text-secondary">
-                        {ORIGIN_NODE.forkDiff}
-                    </p>
+                        <h4 className="mt-2 text-sm font-bold text-text-primary">
+                            {ORIGIN_NODE.title}
+                        </h4>
 
-                    <div className="mt-3 flex items-center justify-between border-t border-neutral-200/60 dark:border-neutral-800 pt-2 text-[11px] text-text-secondary">
-                        <span className="flex items-center gap-1 font-medium text-text-primary">
-                            <User className="h-3 w-3 text-violet" />
-                            {ORIGIN_NODE.author}
-                        </span>
-                        <motion.span
-                            animate={{ opacity: [1, 0.55, 1] }}
-                            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-                            className="text-violet font-semibold"
+                        <p className="mt-1 text-xs text-text-secondary">
+                            {ORIGIN_NODE.forkDiff}
+                        </p>
+
+                        <div className="mt-3 flex items-center justify-between border-t border-neutral-200/60 dark:border-neutral-800 pt-2 text-[11px] text-text-secondary">
+                            <span className="flex items-center gap-1">
+                                <User className="h-3 w-3 text-text-secondary" />
+                                {ORIGIN_NODE.author}
+                            </span>
+                            <span className="flex items-center gap-1 font-semibold text-violet">
+                                <GitFork className="h-3 w-3" />
+                                3 Active Branches
+                            </span>
+                        </div>
+
+                        {/* Origin Bottom Connector Dot */}
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-3.5 w-3.5 rounded-full border-2 border-violet bg-bg-surface shadow-sm flex items-center justify-center z-20">
+                            <div className="h-1.5 w-1.5 rounded-full bg-violet" />
+                        </div>
+                    </motion.div>
+
+                    {/* 2. Precision Mathematical Connecting Branch Lines */}
+                    <div className="relative h-16 w-full max-w-2xl my-1 pointer-events-none">
+                        <svg
+                            className="absolute inset-0 h-full w-full overflow-visible"
+                            viewBox="0 0 100 100"
+                            preserveAspectRatio="none"
                         >
-                            3 Active Lineages
-                        </motion.span>
+                            <defs>
+                                <linearGradient id="lineageGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.9" />
+                                    <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.5" />
+                                </linearGradient>
+                                <linearGradient id="lineageActiveGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stopColor="#C4B5FD" stopOpacity="1" />
+                                    <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.9" />
+                                </linearGradient>
+                                <linearGradient id="lineageSimulatedGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stopColor="#10B981" stopOpacity="1" />
+                                    <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.9" />
+                                </linearGradient>
+                            </defs>
+
+                            {/* Branch to Fork 1 (Left Card: 16%) */}
+                            <motion.path
+                                d="M 50 0 C 50 45, 16 55, 16 100"
+                                fill="none"
+                                stroke={hoveredNode === "fork-1" ? "url(#lineageActiveGlow)" : "url(#lineageGlow)"}
+                                strokeWidth={hoveredNode === "fork-1" ? "3.5" : "2"}
+                                strokeDasharray={hoveredNode === "fork-1" ? "none" : "4 2"}
+                            />
+
+                            {/* Branch to Fork 2 (Center Card: 50%) */}
+                            <motion.path
+                                d="M 50 0 L 50 100"
+                                fill="none"
+                                stroke={hasSimulated ? "url(#lineageSimulatedGlow)" : hoveredNode === "fork-2" ? "#A78BFA" : "#7C3AED"}
+                                strokeWidth={hasSimulated ? "3.5" : hoveredNode === "fork-2" ? "3.5" : "2"}
+                            />
+
+                            {/* Branch to Fork 3 (Right Card: 84%) */}
+                            <motion.path
+                                d="M 50 0 C 50 45, 84 55, 84 100"
+                                fill="none"
+                                stroke={hoveredNode === "fork-3" ? "url(#lineageActiveGlow)" : "url(#lineageGlow)"}
+                                strokeWidth={hoveredNode === "fork-3" ? "3.5" : "2"}
+                                strokeDasharray={hoveredNode === "fork-3" ? "none" : "4 2"}
+                            />
+                        </svg>
                     </div>
 
-                    {/* Origin Bottom Connector Dot */}
-                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-3.5 w-3.5 rounded-full border-2 border-violet bg-bg-surface shadow-md shadow-violet/30 flex items-center justify-center z-20">
-                        <div className="h-1.5 w-1.5 rounded-full bg-violet" />
-                    </div>
-                </motion.div>
-
-                {/* 2. SVG Animated Lineage Threads Perfectly Aligned to Column Centers */}
-                <div className="relative w-full h-20 md:h-24 my-1 hidden md:block">
-                    <svg
-                        className="w-full h-full overflow-visible pointer-events-none"
-                        viewBox="0 0 100 100"
-                        preserveAspectRatio="none"
-                    >
-                        <defs>
-                            <linearGradient id="lineageGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.9" />
-                                <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.5" />
-                            </linearGradient>
-                            <linearGradient id="lineageActiveGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stopColor="#C4B5FD" stopOpacity="1" />
-                                <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.9" />
-                            </linearGradient>
-                        </defs>
-
-                        {/* Branch to Fork 1 (Left Card: 16%) */}
-                        <motion.path
-                            d="M 50 0 C 50 45, 16 55, 16 100"
-                            fill="none"
-                            stroke={hoveredNode === "fork-1" ? "url(#lineageActiveGlow)" : "url(#lineageGlow)"}
-                            strokeWidth={hoveredNode === "fork-1" ? "3.5" : "2"}
-                            strokeDasharray={hoveredNode === "fork-1" ? "none" : "4 2"}
-                            variants={{
-                                hidden: { pathLength: 0, opacity: 0 },
-                                visible: { pathLength: 1, opacity: 1, transition: { duration: 1.1, ease: "easeOut", delay: 0.3 } },
-                            }}
-                        />
-
-                        {/* Branch to Fork 2 (Center Card: 50%) */}
-                        <motion.path
-                            d="M 50 0 L 50 100"
-                            fill="none"
-                            stroke={hoveredNode === "fork-2" ? "#A78BFA" : "#7C3AED"}
-                            strokeWidth={hoveredNode === "fork-2" ? "3.5" : "2"}
-                            variants={{
-                                hidden: { pathLength: 0, opacity: 0 },
-                                visible: { pathLength: 1, opacity: 1, transition: { duration: 0.9, ease: "easeOut", delay: 0.45 } },
-                            }}
-                        />
-
-                        {/* Branch to Fork 3 (Right Card: 84%) */}
-                        <motion.path
-                            d="M 50 0 C 50 45, 84 55, 84 100"
-                            fill="none"
-                            stroke={hoveredNode === "fork-3" ? "url(#lineageActiveGlow)" : "url(#lineageGlow)"}
-                            strokeWidth={hoveredNode === "fork-3" ? "3.5" : "2"}
-                            strokeDasharray={hoveredNode === "fork-3" ? "none" : "4 2"}
-                            variants={{
-                                hidden: { pathLength: 0, opacity: 0 },
-                                visible: { pathLength: 1, opacity: 1, transition: { duration: 1.1, ease: "easeOut", delay: 0.6 } },
-                            }}
-                        />
-                    </svg>
-                </div>
-
-                {/* 3. Fork Nodes Row with Overshoot Spring Entrance & Interactive Tooltips */}
-                <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-4">
-                    {forkList.map((fork, idx) => (
-                        <motion.div
-                            key={fork.id}
-                            variants={{
-                                hidden: { y: 30, opacity: 0, scale: 0.92 },
-                                visible: {
-                                    y: 0,
-                                    opacity: 1,
-                                    scale: 1,
-                                    transition: {
-                                        type: "spring",
-                                        stiffness: 280,
-                                        damping: 20,
-                                        delay: 0.9 + idx * 0.14,
-                                    },
-                                },
-                            }}
-                            whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
-                            onMouseEnter={() => setHoveredNode(fork.id)}
-                            onMouseLeave={() => setHoveredNode(null)}
-                            onClick={() => setSelectedNode(fork.id)}
-                            className={`group relative cursor-pointer rounded-2xl border bg-bg-surface p-4 transition-all duration-300 ${
-                                selectedNode === fork.id
-                                    ? "border-violet shadow-xl shadow-violet/20 ring-2 ring-violet/30"
-                                    : hoveredNode === fork.id
-                                    ? "border-violet/80 bg-violet/[0.04] shadow-lg shadow-violet/15"
-                                    : "border-neutral-200/80 hover:border-violet/60 dark:border-neutral-800 shadow-sm"
-                            }`}
-                        >
-                            {/* Interactive Tooltip Popover */}
-                            <AnimatePresence>
-                                {hoveredNode === fork.id && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 6, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                                        transition={{ duration: 0.15 }}
-                                        className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap rounded-lg bg-neutral-900 px-3 py-1.5 text-[11px] font-semibold text-white shadow-xl border border-violet/40 dark:bg-neutral-800"
-                                    >
-                                        <span>Inspect {fork.forkDiff}</span>
-                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-900 dark:border-t-neutral-800" />
-                                    </motion.div>
+                    {/* 3. Fork Nodes Row with Interactive Tooltips */}
+                    <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-4">
+                        {forkList.map((fork, idx) => (
+                            <motion.div
+                                key={fork.id}
+                                whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
+                                onMouseEnter={() => setHoveredNode(fork.id)}
+                                onMouseLeave={() => setHoveredNode(null)}
+                                onClick={() => setSelectedNode(fork.id)}
+                                className={`group relative cursor-pointer rounded-2xl border bg-bg-surface p-4 transition-all duration-300 ${
+                                    fork.isSimulated
+                                        ? "border-emerald-500 shadow-xl shadow-emerald-500/20 bg-emerald-500/[0.04] ring-2 ring-emerald-500/40"
+                                        : selectedNode === fork.id
+                                        ? "border-violet shadow-xl shadow-violet/20 ring-2 ring-violet/30"
+                                        : hoveredNode === fork.id
+                                        ? "border-violet/80 bg-violet/[0.04] shadow-lg shadow-violet/15"
+                                        : "border-neutral-200/80 hover:border-violet/60 dark:border-neutral-800 shadow-sm"
+                                }`}
+                            >
+                                {/* Simulated Badge */}
+                                {fork.isSimulated && (
+                                    <span className="absolute -top-3 right-3 rounded-full bg-emerald-500 px-2 py-0.5 text-[9px] font-bold text-white shadow-xs">
+                                        ✨ LIVE FORK
+                                    </span>
                                 )}
-                            </AnimatePresence>
 
-                            {/* Lineage Node Connector Dot */}
-                            <div className={`absolute -top-2 left-1/2 -translate-x-1/2 h-3.5 w-3.5 rounded-full border-2 bg-bg-surface shadow-sm flex items-center justify-center transition-all z-20 ${
-                                hoveredNode === fork.id ? "border-violet scale-125 ring-2 ring-violet/40" : "border-violet"
-                            }`}>
-                                <div className="h-1.5 w-1.5 rounded-full bg-violet" />
+                                {/* Lineage Node Connector Dot */}
+                                <div className={`absolute -top-2 left-1/2 -translate-x-1/2 h-3.5 w-3.5 rounded-full border-2 bg-bg-surface shadow-sm flex items-center justify-center transition-all z-20 ${
+                                    fork.isSimulated ? "border-emerald-500 scale-125 ring-2 ring-emerald-500/40" : "border-violet"
+                                }`}>
+                                    <div className={`h-1.5 w-1.5 rounded-full ${fork.isSimulated ? "bg-emerald-500" : "bg-violet"}`} />
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-violet">
+                                        <GitFork className="h-3 w-3 text-violet" />
+                                        Fork #{idx + 1}
+                                    </span>
+                                    <span className="rounded-md bg-bg-elevated px-1.5 py-0.5 text-[10px] font-mono text-text-secondary">
+                                        {fork.language}
+                                    </span>
+                                </div>
+
+                                <h5 className="mt-2 text-xs font-bold text-text-primary line-clamp-1 group-hover:text-violet transition-colors">
+                                    {fork.title}
+                                </h5>
+
+                                <p className="mt-1 text-[11px] text-text-secondary line-clamp-2 leading-relaxed">
+                                    {fork.forkDiff}
+                                </p>
+
+                                <div className="mt-3 flex items-center justify-between border-t border-neutral-200/60 dark:border-neutral-800 pt-2 text-[11px] text-text-secondary">
+                                    <span className="flex items-center gap-1 text-text-secondary">
+                                        <User className="h-3 w-3 text-text-secondary" />
+                                        {fork.author}
+                                    </span>
+                                    <span className="text-[10px] font-medium text-violet">
+                                        Linked to Core
+                                    </span>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* Interactive Fork Simulator Modal */}
+            <AnimatePresence>
+                {isSimulatorOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsSimulatorOpen(false)}
+                            className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                        />
+
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                            className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-neutral-200/80 bg-bg-surface p-6 shadow-2xl backdrop-blur-2xl dark:border-neutral-800/80 dark:bg-bg-surface/95 z-10"
+                        >
+                            {/* Modal Header */}
+                            <div className="flex items-center justify-between pb-4 border-b border-neutral-200/60 dark:border-neutral-800/60">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 text-violet border border-violet/30 shadow-xs">
+                                        <Sparkles className="h-4 w-4" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-text-primary">
+                                            Interactive Fork Simulator
+                                        </h3>
+                                        <p className="text-[11px] text-text-secondary">
+                                            Spawn a mutation branch connected to useAuth.ts
+                                        </p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setIsSimulatorOpen(false)}
+                                    className="flex h-7 w-7 items-center justify-center rounded-lg text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
                             </div>
 
-                            <div className="flex items-center justify-between">
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-violet">
-                                    <GitFork className="h-3 w-3 text-violet" />
-                                    Fork #{idx + 1}
-                                </span>
-                                <span className="rounded-md bg-bg-elevated px-1.5 py-0.5 text-[10px] font-mono text-text-secondary">
-                                    {fork.language}
-                                </span>
+                            {/* Modal Body: Preset Selection */}
+                            <div className="mt-4 space-y-4">
+                                <div>
+                                    <label className="text-[11px] font-bold uppercase tracking-wider text-text-secondary block mb-2">
+                                        Select Template Preset:
+                                    </label>
+                                    <div className="grid grid-cols-1 gap-2">
+                                        {SIMULATION_PRESETS.map((preset, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => {
+                                                    setSelectedPresetIdx(idx);
+                                                    setCustomTitle(preset.title);
+                                                    setCustomDiff(preset.forkDiff);
+                                                }}
+                                                className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
+                                                    selectedPresetIdx === idx
+                                                        ? "border-violet bg-violet/10 text-text-primary shadow-xs"
+                                                        : "border-neutral-200/60 dark:border-neutral-800 bg-bg-elevated/50 text-text-secondary hover:border-violet/40 hover:text-text-primary"
+                                                }`}
+                                            >
+                                                <div>
+                                                    <span className="text-xs font-bold font-mono text-text-primary block">
+                                                        {preset.title}
+                                                    </span>
+                                                    <span className="text-[11px] text-text-secondary block mt-0.5">
+                                                        {preset.forkDiff}
+                                                    </span>
+                                                </div>
+                                                <span className="rounded-md bg-bg-surface px-2 py-0.5 text-[10px] font-bold text-violet border border-violet/20 font-mono">
+                                                    {preset.language}
+                                                </span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Custom Diff Modifier */}
+                                <div className="space-y-2 pt-2">
+                                    <label className="text-[11px] font-bold uppercase tracking-wider text-text-secondary block">
+                                        Custom Mutation Diff Note:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={customDiff || SIMULATION_PRESETS[selectedPresetIdx].forkDiff}
+                                        onChange={(e) => setCustomDiff(e.target.value)}
+                                        placeholder="e.g. + Added Redis cache & rate limit layer"
+                                        className="w-full rounded-xl border border-neutral-300 dark:border-neutral-700 bg-bg-base px-3 py-2 text-xs text-text-primary focus:border-violet focus:outline-none focus:ring-1 focus:ring-violet font-mono"
+                                    />
+                                </div>
                             </div>
 
-                            <h5 className="mt-2 text-xs font-bold text-text-primary line-clamp-1 group-hover:text-violet transition-colors">
-                                {fork.title}
-                            </h5>
-
-                            <p className="mt-1 text-[11px] text-text-secondary line-clamp-2 leading-relaxed">
-                                {fork.forkDiff}
-                            </p>
-
-                            <div className="mt-3 flex items-center justify-between border-t border-neutral-200/60 dark:border-neutral-800 pt-2 text-[11px] text-text-secondary">
-                                <span className="flex items-center gap-1 text-text-secondary">
-                                    <User className="h-3 w-3 text-text-secondary" />
-                                    {fork.author}
-                                </span>
-                                <span className="text-[10px] font-medium text-violet">
-                                    Linked to CodeVault Core
-                                </span>
+                            {/* Modal Actions */}
+                            <div className="mt-6 pt-4 border-t border-neutral-200/60 dark:border-neutral-800/60 flex items-center justify-end gap-2">
+                                <button
+                                    onClick={() => setIsSimulatorOpen(false)}
+                                    className="rounded-full px-4 py-2 text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleExecuteFork}
+                                    className="sheen-button inline-flex items-center gap-1.5 rounded-full bg-violet px-5 py-2 text-xs font-bold text-white shadow-lg shadow-violet/25 hover:bg-violet-hover active:scale-95 transition-all"
+                                >
+                                    <Sparkles className="h-3.5 w-3.5" />
+                                    <span>Execute & Trace Lineage</span>
+                                </button>
                             </div>
                         </motion.div>
-                    ))}
-                </div>
-            </div>
-        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+        </>
     );
 }
