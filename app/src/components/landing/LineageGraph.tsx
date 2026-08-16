@@ -262,52 +262,106 @@ export function LineageGraph() {
                         </div>
                     </motion.div>
 
-                    {/* 2. Precision Mathematical Connecting Branch Lines */}
-                    <div className="relative h-16 w-full max-w-2xl my-1 pointer-events-none">
+                    {/* 2. Precision Mathematical Connecting Branch Lines with non-scaling-stroke */}
+                    <div className="relative h-14 w-full my-1 pointer-events-none hidden md:block">
                         <svg
                             className="absolute inset-0 h-full w-full overflow-visible"
                             viewBox="0 0 100 100"
                             preserveAspectRatio="none"
                         >
                             <defs>
-                                <linearGradient id="lineageGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.9" />
-                                    <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.5" />
-                                </linearGradient>
-                                <linearGradient id="lineageActiveGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stopColor="#C4B5FD" stopOpacity="1" />
-                                    <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.9" />
-                                </linearGradient>
-                                <linearGradient id="lineageSimulatedGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stopColor="#10B981" stopOpacity="1" />
-                                    <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.9" />
-                                </linearGradient>
+                                <filter id="glowViolet" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="2" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                                <filter id="glowEmerald" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="2" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
                             </defs>
 
-                            {/* Branch to Fork 1 (Left Card: 16%) */}
-                            <motion.path
-                                d="M 50 0 C 50 45, 16 55, 16 100"
+                            {/* Branch to Fork 1 (Left Card Center: 16.67%) */}
+                            <path
+                                d="M 50 0 C 50 50, 16.67 50, 16.67 100"
                                 fill="none"
-                                stroke={hoveredNode === "fork-1" ? "url(#lineageActiveGlow)" : "url(#lineageGlow)"}
-                                strokeWidth={hoveredNode === "fork-1" ? "3.5" : "2"}
-                                strokeDasharray={hoveredNode === "fork-1" ? "none" : "4 2"}
+                                vectorEffect="non-scaling-stroke"
+                                stroke={
+                                    hoveredNode === "fork-1"
+                                        ? "#C4B5FD"
+                                        : hoveredNode === "origin"
+                                        ? "#A78BFA"
+                                        : "#7C3AED"
+                                }
+                                strokeWidth={hoveredNode === "fork-1" || hoveredNode === "origin" ? 3 : 2}
+                                strokeOpacity={
+                                    hoveredNode === "fork-1" || hoveredNode === "origin"
+                                        ? 1
+                                        : hoveredNode
+                                        ? 0.25
+                                        : 0.7
+                                }
+                                filter={hoveredNode === "fork-1" ? "url(#glowViolet)" : undefined}
+                                className="transition-all duration-200"
                             />
 
-                            {/* Branch to Fork 2 (Center Card: 50%) */}
-                            <motion.path
+                            {/* Branch to Fork 2 (Center Card Center: 50%) */}
+                            <path
                                 d="M 50 0 L 50 100"
                                 fill="none"
-                                stroke={hasSimulated ? "url(#lineageSimulatedGlow)" : hoveredNode === "fork-2" ? "#A78BFA" : "#7C3AED"}
-                                strokeWidth={hasSimulated ? "3.5" : hoveredNode === "fork-2" ? "3.5" : "2"}
+                                vectorEffect="non-scaling-stroke"
+                                stroke={
+                                    hasSimulated
+                                        ? "#10B981"
+                                        : hoveredNode === forkList[1]?.id
+                                        ? "#C4B5FD"
+                                        : hoveredNode === "origin"
+                                        ? "#A78BFA"
+                                        : "#7C3AED"
+                                }
+                                strokeWidth={
+                                    hasSimulated || hoveredNode === forkList[1]?.id || hoveredNode === "origin"
+                                        ? 3
+                                        : 2
+                                }
+                                strokeOpacity={
+                                    hasSimulated || hoveredNode === forkList[1]?.id || hoveredNode === "origin"
+                                        ? 1
+                                        : hoveredNode
+                                        ? 0.25
+                                        : 0.7
+                                }
+                                filter={
+                                    hasSimulated
+                                        ? "url(#glowEmerald)"
+                                        : hoveredNode === forkList[1]?.id
+                                        ? "url(#glowViolet)"
+                                        : undefined
+                                }
+                                className="transition-all duration-200"
                             />
 
-                            {/* Branch to Fork 3 (Right Card: 84%) */}
-                            <motion.path
-                                d="M 50 0 C 50 45, 84 55, 84 100"
+                            {/* Branch to Fork 3 (Right Card Center: 83.33%) */}
+                            <path
+                                d="M 50 0 C 50 50, 83.33 50, 83.33 100"
                                 fill="none"
-                                stroke={hoveredNode === "fork-3" ? "url(#lineageActiveGlow)" : "url(#lineageGlow)"}
-                                strokeWidth={hoveredNode === "fork-3" ? "3.5" : "2"}
-                                strokeDasharray={hoveredNode === "fork-3" ? "none" : "4 2"}
+                                vectorEffect="non-scaling-stroke"
+                                stroke={
+                                    hoveredNode === forkList[2]?.id
+                                        ? "#C4B5FD"
+                                        : hoveredNode === "origin"
+                                        ? "#A78BFA"
+                                        : "#7C3AED"
+                                }
+                                strokeWidth={hoveredNode === forkList[2]?.id || hoveredNode === "origin" ? 3 : 2}
+                                strokeOpacity={
+                                    hoveredNode === forkList[2]?.id || hoveredNode === "origin"
+                                        ? 1
+                                        : hoveredNode
+                                        ? 0.25
+                                        : 0.7
+                                }
+                                filter={hoveredNode === forkList[2]?.id ? "url(#glowViolet)" : undefined}
+                                className="transition-all duration-200"
                             />
                         </svg>
                     </div>
