@@ -93,7 +93,7 @@ export default function CodeVaultNavbar() {
                         <button
                             type="button"
                             onClick={toggleTheme}
-                            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
                             aria-label="Toggle theme"
                         >
                             {theme === "dark" ? (
@@ -113,12 +113,12 @@ export default function CodeVaultNavbar() {
                                 className={isScrolled ? "p-1 rounded-full border border-neutral-200/80 dark:border-neutral-700/80" : "flex items-center"}
                                 title={displayName}
                             >
-                                <span className={isScrolled ? "flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold dark:bg-neutral-700" : "mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold dark:bg-neutral-700"}>
+                                <span className={isScrolled ? "flex h-7 w-7 items-center justify-center rounded-full bg-bg-elevated text-xs font-semibold text-text-primary border border-neutral-700/50" : "mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-bg-elevated text-xs font-semibold text-text-primary border border-neutral-700/50"}>
                                     {(displayName ?? "?").charAt(0).toUpperCase()}
                                 </span>
 
                                 {!isScrolled && (
-                                    <span className="max-w-[140px] truncate">
+                                    <span className="max-w-[140px] truncate text-text-primary">
                                         {displayName}
                                     </span>
                                 )}
@@ -137,7 +137,7 @@ export default function CodeVaultNavbar() {
                             <button
                                 type="button"
                                 onClick={handleLogout}
-                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
                                 aria-label="Logout"
                             >
                                 <LogOut className="h-4 w-4" />
@@ -174,7 +174,7 @@ export default function CodeVaultNavbar() {
                             <button
                                 type="button"
                                 onClick={toggleTheme}
-                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
                                 aria-label="Toggle theme"
                             >
                                 {theme === "dark" ? (
@@ -203,7 +203,7 @@ export default function CodeVaultNavbar() {
                             key={`mobile-link-${index}`}
                             href={item.link}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex w-full items-center px-3 py-2 text-sm font-medium rounded-lg text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 transition-colors"
+                            className="flex w-full items-center px-3 py-2 text-sm font-medium rounded-lg text-text-secondary hover:text-cobalt hover:bg-bg-elevated transition-colors"
                         >
                             <span>{item.name}</span>
                         </Link>

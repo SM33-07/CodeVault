@@ -438,47 +438,47 @@ export function InteractiveSnippetMockup() {
 
 
     return (
-        <div className="flex h-full w-full bg-neutral-950 text-neutral-200 select-none overflow-hidden">
+        <div className="flex h-full w-full bg-bg-base text-text-primary select-none overflow-hidden">
             {/* Left Mini Sidebar (SaaS Dashboard layout) */}
-            <div className="hidden md:flex w-48 shrink-0 flex-col border-r border-neutral-800/80 bg-neutral-900/60 p-3">
+            <div className="hidden md:flex w-48 shrink-0 flex-col border-r border-neutral-800/80 bg-bg-surface p-3">
                 {/* Brand */}
                 <div className="flex items-center gap-2 px-2 py-2 mb-3">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-indigo-600 font-mono text-[10px] font-bold text-white shadow-xs">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-cobalt to-violet font-mono text-[10px] font-bold text-white shadow-xs">
                         CV
                     </div>
-                    <span className="text-xs font-bold text-white tracking-tight">
+                    <span className="text-xs font-bold text-text-primary tracking-tight">
                         CodeVault
                     </span>
                 </div>
 
                 {/* Nav Items */}
                 <div className="space-y-1 text-xs">
-                    <div className="flex items-center gap-2.5 rounded-lg bg-indigo-600/20 px-2.5 py-1.5 font-medium text-indigo-300 border border-indigo-500/30">
+                    <div className="flex items-center gap-2.5 rounded-lg bg-cobalt/15 px-2.5 py-1.5 font-medium text-cobalt border border-cobalt/30">
                         <LayoutDashboard className="h-3.5 w-3.5" />
                         <span>Dashboard</span>
                     </div>
-                    <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-200 transition-colors">
+                    <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors">
                         <FolderKanban className="h-3.5 w-3.5" />
                         <span>My Snippets</span>
                     </div>
-                    <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-200 transition-colors">
-                        <Lock className="h-3.5 w-3.5 text-indigo-400" />
+                    <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors">
+                        <Lock className="h-3.5 w-3.5 text-cobalt" />
                         <span>Private Vault</span>
                     </div>
-                    <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-200 transition-colors">
-                        <GitFork className="h-3.5 w-3.5 text-amber-400" />
+                    <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors">
+                        <GitFork className="h-3.5 w-3.5 text-violet" />
                         <span>Forked</span>
                     </div>
                 </div>
 
                 {/* Snippet Count */}
-                <div className="mt-auto rounded-xl bg-neutral-900 p-3 border border-neutral-800">
-                    <div className="flex items-center justify-between text-[11px] text-neutral-400 mb-1.5">
+                <div className="mt-auto rounded-xl bg-bg-elevated p-3 border border-neutral-800">
+                    <div className="flex items-center justify-between text-[11px] text-text-secondary mb-1.5">
                         <span>My Snippets</span>
-                        <span className="font-semibold text-white">{SNIPPET_TABS.length}</span>
+                        <span className="font-semibold text-text-primary">{SNIPPET_TABS.length}</span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-neutral-800 overflow-hidden">
-                        <div className="h-full w-[60%] rounded-full bg-indigo-500" />
+                        <div className="h-full w-[60%] rounded-full bg-cobalt" />
                     </div>
                 </div>
             </div>
@@ -486,14 +486,14 @@ export function InteractiveSnippetMockup() {
             {/* Main Content Area */}
             <div className="flex flex-1 flex-col overflow-hidden">
                 {/* Top IDE / Dashboard Window Header */}
-                <div className="flex h-12 items-center justify-between border-b border-neutral-800 bg-neutral-900/90 px-4">
+                <div className="flex h-12 items-center justify-between border-b border-neutral-800 bg-bg-surface px-4">
                     {/* macOS Window Controls */}
                     <div className="flex items-center gap-2">
                         <div className="h-3 w-3 rounded-full bg-red-500/80 hover:opacity-100 transition-opacity cursor-pointer" />
                         <div className="h-3 w-3 rounded-full bg-yellow-500/80 hover:opacity-100 transition-opacity cursor-pointer" />
                         <div className="h-3 w-3 rounded-full bg-green-500/80 hover:opacity-100 transition-opacity cursor-pointer" />
-                        <div className="ml-3 hidden sm:flex items-center gap-1.5 text-xs text-neutral-400 font-mono">
-                            <ShieldCheck className="h-3.5 w-3.5 text-indigo-400" />
+                        <div className="ml-3 hidden sm:flex items-center gap-1.5 text-xs text-text-secondary font-mono">
+                            <ShieldCheck className="h-3.5 w-3.5 text-cobalt" />
                             <span>Vault Studio v1.0</span>
                         </div>
                     </div>
@@ -508,8 +508,8 @@ export function InteractiveSnippetMockup() {
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`group relative flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                                         isActive
-                                            ? "bg-neutral-800 text-white shadow-sm"
-                                            : "text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-200"
+                                            ? "bg-bg-elevated text-text-primary shadow-sm"
+                                            : "text-text-secondary hover:bg-bg-elevated hover:text-text-primary"
                                     }`}
                                 >
                                     <span
@@ -520,7 +520,7 @@ export function InteractiveSnippetMockup() {
                                     {isActive && (
                                         <motion.div
                                             layoutId="activeTabGlow"
-                                            className="absolute inset-0 rounded-lg border border-indigo-500/30"
+                                            className="absolute inset-0 rounded-lg border border-cobalt/40"
                                         />
                                     )}
                                 </button>
@@ -531,10 +531,10 @@ export function InteractiveSnippetMockup() {
                     {/* Action Buttons */}
                     <div className="flex items-center gap-2">
                         <span
-                            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-neutral-400"
+                            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-text-secondary"
                             title="Fork count"
                         >
-                            <GitFork className="h-3.5 w-3.5" />
+                            <GitFork className="h-3.5 w-3.5 text-violet" />
                             <span className="hidden sm:inline">
                                 {currentSnippet.forkCount}
                             </span>
@@ -542,11 +542,11 @@ export function InteractiveSnippetMockup() {
 
                         <button
                             onClick={handleCopy}
-                            className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1 text-xs font-semibold text-white shadow-sm transition-all duration-200 hover:bg-indigo-500 hover:shadow-indigo-500/25 active:scale-95"
+                            className="flex items-center gap-1.5 rounded-md bg-cobalt px-3 py-1 text-xs font-semibold text-white shadow-sm transition-all duration-200 hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95"
                         >
                             {copied ? (
                                 <>
-                                    <Check className="h-3.5 w-3.5 text-emerald-300" />
+                                    <Check className="h-3.5 w-3.5 text-emerald-400" />
                                     <span>Copied!</span>
                                 </>
                             ) : (
@@ -559,26 +559,26 @@ export function InteractiveSnippetMockup() {
                     </div>
                 </div>
 
-                {/* KPI Metrics Row inside Mockup (like SaaS Template) */}
-                <div className="grid grid-cols-3 gap-2 border-b border-neutral-800 bg-neutral-900/40 p-2.5 text-xs">
-                    <div className="flex items-center justify-between rounded-lg bg-neutral-900 px-3 py-1.5 border border-neutral-800/80">
-                        <span className="text-neutral-400">Snippets</span>
-                        <span className="font-bold text-white">{SNIPPET_TABS.length}</span>
+                {/* KPI Metrics Row inside Mockup */}
+                <div className="grid grid-cols-3 gap-2 border-b border-neutral-800 bg-bg-surface/50 p-2.5 text-xs">
+                    <div className="flex items-center justify-between rounded-lg bg-bg-surface px-3 py-1.5 border border-neutral-800/80">
+                        <span className="text-text-secondary">Snippets</span>
+                        <span className="font-bold text-text-primary">{SNIPPET_TABS.length}</span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-neutral-900 px-3 py-1.5 border border-neutral-800/80">
-                        <span className="text-neutral-400">Forks</span>
-                        <span className="font-bold text-emerald-400">{currentSnippet.forkCount}</span>
+                    <div className="flex items-center justify-between rounded-lg bg-bg-surface px-3 py-1.5 border border-neutral-800/80">
+                        <span className="text-text-secondary">Forks</span>
+                        <span className="font-bold text-violet">{currentSnippet.forkCount}</span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-neutral-900 px-3 py-1.5 border border-neutral-800/80">
-                        <span className="text-neutral-400">Visibility</span>
+                    <div className="flex items-center justify-between rounded-lg bg-bg-surface px-3 py-1.5 border border-neutral-800/80">
+                        <span className="text-text-secondary">Visibility</span>
                         <span className="font-bold text-emerald-400">Public</span>
                     </div>
                 </div>
 
                 {/* Sub-bar with description & tags */}
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800/80 bg-neutral-950/60 px-4 py-2 text-xs">
-                    <div className="flex items-center gap-2 text-neutral-400">
-                        <span className="font-medium text-neutral-300">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800/80 bg-bg-base px-4 py-2 text-xs">
+                    <div className="flex items-center gap-2 text-text-secondary">
+                        <span className="font-medium text-text-primary">
                             {currentSnippet.description}
                         </span>
                     </div>
@@ -586,7 +586,7 @@ export function InteractiveSnippetMockup() {
                         {currentSnippet.tags.map((tag) => (
                             <span
                                 key={tag}
-                                className="rounded-full bg-neutral-900 border border-neutral-800 px-2 py-0.5 text-[11px] text-neutral-400"
+                                className="rounded-full bg-bg-elevated border border-neutral-800 px-2 py-0.5 text-[11px] text-text-secondary hover:border-cobalt hover:text-cobalt transition-colors"
                             >
                                 {tag}
                             </span>
@@ -595,7 +595,7 @@ export function InteractiveSnippetMockup() {
                 </div>
 
                 {/* Code Body */}
-                <div className="relative flex-1 overflow-auto p-4 font-mono text-xs md:text-sm leading-relaxed">
+                <div className="relative flex-1 overflow-auto p-4 font-mono text-xs md:text-sm leading-relaxed bg-bg-base">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentSnippet.id}
@@ -621,9 +621,9 @@ export function InteractiveSnippetMockup() {
                 </div>
 
                 {/* Bottom Status Bar */}
-                <div className="flex h-7 items-center justify-between border-t border-neutral-800/80 bg-neutral-900 px-3 text-[11px] text-neutral-400">
+                <div className="flex h-7 items-center justify-between border-t border-neutral-800/80 bg-bg-surface px-3 text-[11px] text-text-secondary">
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-amber-400">
+                        <div className="flex items-center gap-1 text-violet font-medium">
                             <GitFork className="h-3 w-3" />
                             <span>Fork Lineage Active</span>
                         </div>
@@ -632,8 +632,8 @@ export function InteractiveSnippetMockup() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-emerald-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <div className="flex items-center gap-1 text-mint font-medium">
+                            <span className="h-1.5 w-1.5 rounded-full bg-mint animate-pulse" />
                             <span>Instant Ctrl+K / ⌘K Ready</span>
                         </div>
                     </div>

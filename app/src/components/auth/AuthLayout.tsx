@@ -44,18 +44,18 @@ function FloatingOrb({
 // Animated code lines for the right panel
 function AnimatedCodePreview() {
     const codeLines = [
-        { indent: 0, width: "60%", color: "bg-indigo-400/30" },
-        { indent: 1, width: "80%", color: "bg-purple-400/20" },
-        { indent: 1, width: "50%", color: "bg-violet-400/25" },
-        { indent: 2, width: "70%", color: "bg-indigo-300/20" },
-        { indent: 2, width: "40%", color: "bg-purple-300/15" },
-        { indent: 1, width: "30%", color: "bg-violet-400/20" },
-        { indent: 0, width: "20%", color: "bg-indigo-400/25" },
-        { indent: 0, width: "65%", color: "bg-purple-400/20" },
-        { indent: 1, width: "55%", color: "bg-violet-300/20" },
-        { indent: 1, width: "75%", color: "bg-indigo-400/15" },
-        { indent: 2, width: "45%", color: "bg-purple-400/25" },
-        { indent: 0, width: "25%", color: "bg-violet-400/20" },
+        { indent: 0, width: "60%", color: "bg-cobalt/30" },
+        { indent: 1, width: "80%", color: "bg-violet/20" },
+        { indent: 1, width: "50%", color: "bg-cobalt/25" },
+        { indent: 2, width: "70%", color: "bg-cobalt/20" },
+        { indent: 2, width: "40%", color: "bg-violet/15" },
+        { indent: 1, width: "30%", color: "bg-cobalt/20" },
+        { indent: 0, width: "20%", color: "bg-violet/25" },
+        { indent: 0, width: "65%", color: "bg-cobalt/20" },
+        { indent: 1, width: "55%", color: "bg-violet/20" },
+        { indent: 1, width: "75%", color: "bg-cobalt/15" },
+        { indent: 2, width: "45%", color: "bg-violet/25" },
+        { indent: 0, width: "25%", color: "bg-cobalt/20" },
     ];
 
     return (
@@ -120,7 +120,7 @@ export default function AuthLayout({
             {/* Left Panel - Form */}
             <div className="relative flex w-full flex-col items-center justify-center px-6 py-8 sm:px-10 lg:w-1/2 lg:px-16">
                 {/* Subtle background pattern */}
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 dark:from-neutral-950 dark:via-neutral-900 dark:to-indigo-950/20" />
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-blue-50/20 dark:from-bg-base dark:via-bg-surface dark:to-bg-base" />
 
                 <motion.div
                     initial={{ y: 15 }}
@@ -182,7 +182,7 @@ export default function AuthLayout({
                         {footerText}{" "}
                         <Link
                             href={footerLinkHref}
-                            className="font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
+                            className="font-semibold text-cobalt hover:text-cobalt-hover transition-colors"
                         >
                             {footerLinkText}
                         </Link>
@@ -193,15 +193,15 @@ export default function AuthLayout({
             {/* Right Panel - Visual */}
             <div className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:items-center lg:justify-center py-8">
                 {/* Animated mesh gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#080B10] via-[#11161F] to-[#171E29]" />
 
                 {/* Animated grid pattern */}
                 <div
                     className="absolute inset-0 opacity-20"
                     style={{
                         backgroundImage: `
-                            linear-gradient(rgba(99, 102, 241, 0.15) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(99, 102, 241, 0.15) 1px, transparent 1px)
+                            linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px)
                         `,
                         backgroundSize: "40px 40px",
                     }}
@@ -209,15 +209,15 @@ export default function AuthLayout({
 
                 {/* Floating gradient orbs */}
                 <FloatingOrb
-                    className="absolute left-[15%] top-[20%] h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"
+                    className="absolute left-[15%] top-[20%] h-72 w-72 rounded-full bg-cobalt/15 blur-3xl"
                     delay={0}
                 />
                 <FloatingOrb
-                    className="absolute right-[10%] top-[50%] h-96 w-96 rounded-full bg-purple-500/15 blur-3xl"
+                    className="absolute right-[10%] top-[50%] h-96 w-96 rounded-full bg-violet/12 blur-3xl"
                     delay={2}
                 />
                 <FloatingOrb
-                    className="absolute bottom-[15%] left-[30%] h-64 w-64 rounded-full bg-violet-500/20 blur-3xl"
+                    className="absolute bottom-[15%] left-[30%] h-64 w-64 rounded-full bg-cobalt/15 blur-3xl"
                     delay={4}
                 />
 
@@ -235,7 +235,7 @@ export default function AuthLayout({
                             alt="CodeVault"
                             width={320}
                             height={80}
-                            className="h-14 sm:h-16 w-auto object-contain drop-shadow-[0_0_30px_rgba(99,102,241,0.4)]"
+                            className="h-14 sm:h-16 w-auto object-contain drop-shadow-[0_0_30px_rgba(59,130,246,0.35)]"
                             priority
                         />
                     </motion.div>
@@ -274,7 +274,7 @@ export default function AuthLayout({
                 </div>
 
                 {/* Edge glow */}
-                <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-indigo-500/50 to-transparent" />
+                <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-cobalt/40 to-transparent" />
             </div>
         </div>
     );

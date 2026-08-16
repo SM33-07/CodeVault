@@ -27,6 +27,7 @@ import {
     Filter,
     ChevronDown,
     Eye,
+    GitFork,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth-store";
@@ -99,8 +100,8 @@ export default function DashboardPage() {
                 handle: "@vault_owner",
             },
             gradientTheme: {
-                glow: "from-indigo-500/20 to-purple-500/20",
-                accent: "text-indigo-500",
+                glow: "from-cobalt/20 to-violet/20",
+                accent: "text-cobalt",
             },
             tags: newTags
                 ? newTags
@@ -166,20 +167,20 @@ export default function DashboardPage() {
     ];
 
     return (
-        <div className="flex h-[calc(100vh-4rem)] w-full bg-neutral-50 dark:bg-neutral-950 overflow-hidden">
+        <div className="flex h-[calc(100vh-4rem)] w-full bg-bg-base overflow-hidden">
             {/* 1. Left Sidebar (Efferd Dashboard 2 inspired) */}
-            <aside className="hidden lg:flex w-64 shrink-0 flex-col border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/70 p-4">
+            <aside className="hidden lg:flex w-64 shrink-0 flex-col border-r border-neutral-200 dark:border-neutral-800 bg-bg-surface p-4">
                 {/* Brand / Workspace Capsule */}
-                <div className="flex items-center gap-2.5 px-3 py-2 mb-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200/80 dark:border-neutral-800">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-xs">
+                <div className="flex items-center gap-2.5 px-3 py-2 mb-3 rounded-xl bg-bg-elevated border border-neutral-200/80 dark:border-neutral-800">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cobalt text-white shadow-xs">
                         <Shield className="h-4 w-4" />
                     </div>
                     <div className="truncate">
-                        <p className="text-xs font-bold text-neutral-900 dark:text-white truncate">
+                        <p className="text-xs font-bold text-text-primary truncate">
                             {user?.displayName || "Personal Vault"}
                         </p>
-                        <p className="text-[10px] text-emerald-500 font-semibold flex items-center gap-1">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <p className="text-[10px] text-mint font-semibold flex items-center gap-1">
+                            <span className="h-1.5 w-1.5 rounded-full bg-mint animate-pulse" />
                             Online
                         </p>
                     </div>
@@ -188,19 +189,19 @@ export default function DashboardPage() {
                 {/* Primary Navigation */}
                 <div className="space-y-6 flex-1 overflow-y-auto pr-1">
                     <div>
-                        <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-2">
+                        <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-text-secondary mb-2">
                             Product
                         </p>
-                        <nav className="space-y-1">
+                        <nav className="space-y-1.5">
                             <button
                                 onClick={() => setActiveNav("dashboard")}
                                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
                                     activeNav === "dashboard"
-                                        ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
-                                        : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800/60"
+                                        ? "border-l-[3px] border-cobalt bg-cobalt/15 text-cobalt shadow-xs"
+                                        : "text-text-secondary hover:bg-bg-elevated hover:text-text-primary"
                                 }`}
                             >
-                                <LayoutDashboard className="h-4 w-4" />
+                                <LayoutDashboard className="h-4 w-4 text-cobalt shrink-0" />
                                 <span>Dashboard</span>
                             </button>
 
@@ -208,13 +209,13 @@ export default function DashboardPage() {
                                 onClick={() => setActiveNav("snippets")}
                                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
                                     activeNav === "snippets"
-                                        ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
-                                        : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800/60"
+                                        ? "border-l-[3px] border-emerald-500 bg-emerald-500/15 text-emerald-400 shadow-xs"
+                                        : "text-text-secondary hover:bg-bg-elevated hover:text-text-primary"
                                 }`}
                             >
-                                <FolderKanban className="h-4 w-4" />
+                                <FolderKanban className="h-4 w-4 text-emerald-400 shrink-0" />
                                 <span>My Snippets</span>
-                                <span className="ml-auto rounded-full bg-neutral-200/70 dark:bg-neutral-800 px-2 py-0.5 text-[10px] font-bold">
+                                <span className="ml-auto rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
                                     {snippets.length}
                                 </span>
                             </button>
@@ -223,14 +224,29 @@ export default function DashboardPage() {
                                 onClick={() => setActiveNav("vault")}
                                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
                                     activeNav === "vault"
-                                        ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
-                                        : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800/60"
+                                        ? "border-l-[3px] border-slate-400 bg-slate-500/15 text-slate-300 shadow-xs"
+                                        : "text-text-secondary hover:bg-bg-elevated hover:text-text-primary"
                                 }`}
                             >
-                                <Lock className="h-4 w-4 text-indigo-500" />
+                                <Lock className="h-4 w-4 text-slate-400 shrink-0" />
                                 <span>Private Snippets</span>
-                                <span className="ml-auto rounded-full bg-indigo-100 dark:bg-indigo-950 px-2 py-0.5 text-[10px] font-bold text-indigo-600 dark:text-indigo-400">
+                                <span className="ml-auto rounded-full bg-bg-elevated border border-neutral-700/40 px-2 py-0.5 text-[10px] font-bold text-text-secondary">
                                     {privateCount}
+                                </span>
+                            </button>
+
+                            <button
+                                onClick={() => setActiveNav("lineage")}
+                                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
+                                    activeNav === "lineage"
+                                        ? "border-l-[3px] border-violet bg-violet/15 text-violet shadow-xs"
+                                        : "text-text-secondary hover:bg-bg-elevated hover:text-text-primary"
+                                }`}
+                            >
+                                <GitFork className="h-4 w-4 text-violet shrink-0" />
+                                <span>Fork Lineage</span>
+                                <span className="ml-auto rounded-full bg-violet/10 border border-violet/20 px-2 py-0.5 text-[10px] font-bold text-violet">
+                                    Tree
                                 </span>
                             </button>
 
@@ -238,31 +254,31 @@ export default function DashboardPage() {
                                 onClick={() => setActiveNav("starred")}
                                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
                                     activeNav === "starred"
-                                        ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
-                                        : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800/60"
+                                        ? "border-l-[3px] border-amber-400 bg-amber-500/15 text-amber-400 shadow-xs"
+                                        : "text-text-secondary hover:bg-bg-elevated hover:text-text-primary"
                                 }`}
                             >
-                                <Star className="h-4 w-4 text-amber-500" />
+                                <Star className="h-4 w-4 text-amber-400 shrink-0" />
                                 <span>Favorites</span>
                             </button>
                         </nav>
                     </div>
 
                     <div>
-                        <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-2">
+                        <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-text-secondary mb-2">
                             Workspace
                         </p>
                         <nav className="space-y-1">
-                            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800/60 transition-colors">
-                                <Users className="h-4 w-4" />
+                            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors">
+                                <Users className="h-4 w-4 text-cobalt/80" />
                                 <span>Team & Shares</span>
                             </button>
-                            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800/60 transition-colors">
-                                <Key className="h-4 w-4" />
+                            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors">
+                                <Key className="h-4 w-4 text-amber-400/80" />
                                 <span>API Tokens</span>
                             </button>
-                            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800/60 transition-colors">
-                                <Settings className="h-4 w-4" />
+                            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors">
+                                <Settings className="h-4 w-4 text-text-secondary" />
                                 <span>Settings</span>
                             </button>
                         </nav>
@@ -271,16 +287,16 @@ export default function DashboardPage() {
 
                 {/* Bottom User Profile Capsule */}
                 <div className="mt-auto pt-3 border-t border-neutral-200 dark:border-neutral-800">
-                    <div className="flex items-center justify-between rounded-xl bg-neutral-100 dark:bg-neutral-800/70 p-2.5">
+                    <div className="flex items-center justify-between rounded-xl bg-bg-elevated p-2.5">
                         <div className="flex items-center gap-2.5 overflow-hidden">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white shadow-xs">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cobalt to-violet text-xs font-bold text-white shadow-xs">
                                 {(user?.displayName || user?.email || "U").charAt(0).toUpperCase()}
                             </div>
                             <div className="truncate text-xs">
-                                <p className="font-semibold text-neutral-900 dark:text-white truncate">
+                                <p className="font-semibold text-text-primary truncate">
                                     {user?.displayName || "Developer"}
                                 </p>
-                                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 truncate">
+                                <p className="text-[10px] text-text-secondary truncate">
                                     {user?.email || "developer@codevault.dev"}
                                 </p>
                             </div>
@@ -291,7 +307,7 @@ export default function DashboardPage() {
                                 clearAuth();
                                 router.push("/login");
                             }}
-                            className="p-1.5 text-neutral-400 hover:text-red-500 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                            className="p-1.5 text-text-secondary hover:text-red-500 rounded-lg hover:bg-bg-surface transition-colors"
                             title="Sign out"
                         >
                             <LogOut className="h-4 w-4" />
@@ -302,29 +318,30 @@ export default function DashboardPage() {
 
             {/* 2. Main Dashboard Content Area */}
             <div className="flex flex-1 flex-col overflow-hidden">
-                {/* Compact Top Action Bar (Shortened Developer Overview) */}
-                <header className="flex h-14 shrink-0 items-center justify-between border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/60 px-6">
+                {/* Compact Top Action Bar */}
+                <header className="flex h-14 shrink-0 items-center justify-between border-b border-neutral-200 dark:border-neutral-800 bg-bg-surface px-6">
                     <div className="flex items-center gap-3">
-                        <h2 className="text-sm font-bold text-neutral-900 dark:text-white">
+                        <h2 className="text-sm font-bold text-text-primary">
                             Overview
                         </h2>
-                        <span className="hidden sm:inline rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-                            ● Connected
+                        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full badge-mint px-2.5 py-0.5 text-[10px] font-semibold">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span>● Connected</span>
                         </span>
                     </div>
 
                     <div className="flex items-center gap-3">
                         {/* Compact Search input with Ctrl+K shortcut */}
                         <div className="relative hidden md:block w-60">
-                            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
+                            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-secondary" />
                             <input
                                 type="text"
                                 placeholder="Search snippets (Ctrl+K)..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full rounded-xl border border-neutral-200 bg-neutral-50 py-1.5 pl-8 pr-12 text-xs text-neutral-900 outline-none transition-all focus:border-indigo-500 focus:bg-white dark:border-neutral-800 dark:bg-neutral-800 dark:text-white dark:focus:bg-neutral-900"
+                                className="w-full rounded-xl border border-neutral-200 bg-bg-elevated py-1.5 pl-8 pr-12 text-xs text-text-primary outline-none transition-all focus:border-cobalt dark:border-neutral-800"
                             />
-                            <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-neutral-200 bg-white px-1.5 py-0.5 text-[9px] font-mono text-neutral-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">
+                            <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-neutral-200 bg-bg-surface px-1.5 py-0.5 text-[9px] font-mono text-text-secondary dark:border-neutral-700">
                                 Ctrl+K
                             </kbd>
                         </div>
@@ -332,7 +349,7 @@ export default function DashboardPage() {
                         {/* Create New Snippet Button */}
                         <Link
                             href="/snippets/new"
-                            className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs shadow-indigo-500/20 transition-all hover:bg-indigo-700 active:scale-95"
+                            className="flex items-center gap-1.5 rounded-xl bg-cobalt px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs shadow-cobalt/20 transition-all hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95"
                         >
                             <Plus className="h-3.5 w-3.5" />
                             <span>New Snippet</span>
@@ -342,80 +359,84 @@ export default function DashboardPage() {
 
                 {/* Scrollable Dashboard Body */}
                 <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
-                    {/* 3. KPI Metrics Grid (Efferd Dashboard 2 style) */}
+                    {/* 3. KPI Metrics Grid with Distinct Restrained Tints */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60">
+                        {/* 1. Total Snippets: Cobalt */}
+                        <div className="rounded-2xl border border-neutral-200/80 bg-bg-surface p-4 shadow-xs dark:border-neutral-800 transition-all hover:border-cobalt/50">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                <span className="text-xs font-medium text-text-secondary">
                                     Total Snippets
                                 </span>
-                                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
-                                    <Code2 className="h-3.5 w-3.5" />
+                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-cobalt/15 border border-cobalt/25 text-cobalt shadow-xs">
+                                    <Code2 className="h-4 w-4" />
                                 </div>
                             </div>
                             <div className="mt-2.5 flex items-baseline gap-2">
-                                <span className="text-xl font-bold text-neutral-900 dark:text-white">
+                                <span className="text-xl font-bold text-text-primary">
                                     {snippets.length}
                                 </span>
-                                <span className="text-[11px] font-semibold text-emerald-500">
+                                <span className="text-[11px] font-semibold text-cobalt">
                                     +12% this month
                                 </span>
                             </div>
                         </div>
 
-                        <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60">
+                        {/* 2. Total Views: Mint */}
+                        <div className="rounded-2xl border border-neutral-200/80 bg-bg-surface p-4 shadow-xs dark:border-neutral-800 transition-all hover:border-emerald-500/50">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                <span className="text-xs font-medium text-text-secondary">
                                     Total Views
                                 </span>
-                                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">
-                                    <TrendingUp className="h-3.5 w-3.5" />
+                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 shadow-xs">
+                                    <TrendingUp className="h-4 w-4" />
                                 </div>
                             </div>
                             <div className="mt-2.5 flex items-baseline gap-2">
-                                <span className="text-xl font-bold text-neutral-900 dark:text-white">
+                                <span className="text-xl font-bold text-text-primary">
                                     {totalViews.toLocaleString()}
                                 </span>
-                                <span className="text-[11px] font-semibold text-emerald-500">
+                                <span className="text-[11px] font-semibold text-emerald-400">
                                     +24% vs last week
                                 </span>
                             </div>
                         </div>
 
-                        <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60">
+                        {/* 3. Private Snippets: Restrained Slate/Gray */}
+                        <div className="rounded-2xl border border-neutral-200/80 bg-bg-surface p-4 shadow-xs dark:border-neutral-800 transition-all hover:border-slate-500/50">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                <span className="text-xs font-medium text-text-secondary">
                                     Private Snippets
                                 </span>
-                                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400">
-                                    <Shield className="h-3.5 w-3.5" />
+                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-500/15 border border-slate-600/30 text-slate-400 shadow-xs">
+                                    <Shield className="h-4 w-4" />
                                 </div>
                             </div>
                             <div className="mt-2.5 flex items-baseline gap-2">
-                                <span className="text-xl font-bold text-neutral-900 dark:text-white">
+                                <span className="text-xl font-bold text-text-primary">
                                     {privateCount}
                                 </span>
-                                <span className="text-[11px] font-semibold text-purple-600 dark:text-purple-400">
+                                <span className="text-[11px] font-semibold text-text-secondary">
                                     Hidden from public
                                 </span>
                             </div>
                         </div>
 
-                        <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/60">
+                        {/* 4. Public Shares / Forks: Violet */}
+                        <div className="rounded-2xl border border-neutral-200/80 bg-bg-surface p-4 shadow-xs dark:border-neutral-800 transition-all hover:border-violet/50">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                <span className="text-xs font-medium text-text-secondary">
                                     Public Shares
                                 </span>
-                                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400">
-                                    <Globe className="h-3.5 w-3.5" />
+                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 border border-violet/25 text-violet shadow-xs">
+                                    <Globe className="h-4 w-4" />
                                 </div>
                             </div>
                             <div className="mt-2.5 flex items-baseline gap-2">
-                                <span className="text-xl font-bold text-neutral-900 dark:text-white">
+                                <span className="text-xl font-bold text-text-primary">
                                     {snippets.length - privateCount}
                                 </span>
-                                <span className="text-[11px] font-semibold text-neutral-500">
-                                    Live links
+                                <span className="text-[11px] font-semibold text-violet">
+                                    Live shared links
                                 </span>
                             </div>
                         </div>
@@ -431,8 +452,8 @@ export default function DashboardPage() {
                                     onClick={() => setActiveTab("all")}
                                     className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                                         activeTab === "all"
-                                            ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-900 dark:text-white"
-                                            : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
+                                            ? "bg-bg-surface text-text-primary shadow-xs"
+                                            : "text-text-secondary hover:text-text-primary"
                                     }`}
                                 >
                                     All ({snippets.length})
@@ -441,19 +462,19 @@ export default function DashboardPage() {
                                     onClick={() => setActiveTab("private")}
                                     className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                                         activeTab === "private"
-                                            ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-900 dark:text-white"
-                                            : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
+                                            ? "bg-bg-surface text-text-primary shadow-xs"
+                                            : "text-text-secondary hover:text-text-primary"
                                     }`}
                                 >
-                                    <Lock className="h-3 w-3 text-indigo-500" />
+                                    <Lock className="h-3 w-3 text-cobalt" />
                                     <span>Private ({privateCount})</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveTab("starred")}
                                     className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                                         activeTab === "starred"
-                                            ? "bg-white text-neutral-900 shadow-xs dark:bg-neutral-900 dark:text-white"
-                                            : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
+                                            ? "bg-bg-surface text-text-primary shadow-xs"
+                                            : "text-text-secondary hover:text-text-primary"
                                     }`}
                                 >
                                     <Star className="h-3 w-3 text-amber-500" />
@@ -463,11 +484,11 @@ export default function DashboardPage() {
 
                             {/* Language Filter */}
                             <div className="flex items-center gap-2">
-                                <Filter className="h-3.5 w-3.5 text-neutral-400" />
+                                <Filter className="h-3.5 w-3.5 text-text-secondary" />
                                 <select
                                     value={selectedLanguage}
                                     onChange={(e) => setSelectedLanguage(e.target.value)}
-                                    className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-xs font-medium text-neutral-800 outline-none dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-200"
+                                    className="rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-1.5 text-xs font-medium text-text-primary outline-none dark:border-neutral-800"
                                 >
                                     {languagesList.map((lang) => (
                                         <option key={lang} value={lang}>
@@ -483,12 +504,12 @@ export default function DashboardPage() {
                             {filteredSnippets.map((snippet) => (
                                 <div
                                     key={snippet.id}
-                                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 hover:bg-neutral-50/80 dark:hover:bg-neutral-800/40 transition-colors"
+                                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 hover:bg-bg-elevated/40 transition-colors"
                                 >
                                     <div className="flex items-start sm:items-center gap-3">
                                         <div
                                             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white font-mono text-xs font-bold shadow-xs"
-                                            style={{ backgroundColor: snippet.langColor || "#6366F1" }}
+                                            style={{ backgroundColor: snippet.langColor || "#3B82F6" }}
                                         >
                                             {snippet.language.slice(0, 2).toUpperCase()}
                                         </div>
@@ -497,19 +518,19 @@ export default function DashboardPage() {
                                             <div className="flex items-center gap-2">
                                                 <Link
                                                     href={`/snippets/${snippet.id}`}
-                                                    className="font-bold text-xs sm:text-sm text-neutral-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                                                    className="font-bold text-xs sm:text-sm text-text-primary hover:text-cobalt transition-colors"
                                                 >
                                                     {snippet.title}
                                                 </Link>
                                                 {snippet.isPrivate && (
-                                                    <span className="flex items-center gap-1 rounded bg-amber-50 dark:bg-amber-950/60 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-300">
+                                                    <span className="flex items-center gap-1 rounded bg-cobalt/10 border border-cobalt/20 px-1.5 py-0.5 text-[10px] font-medium text-cobalt">
                                                         <Lock className="h-2.5 w-2.5" />
                                                         Private
                                                     </span>
                                                 )}
                                             </div>
 
-                                            <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-1 mt-0.5">
+                                            <p className="text-xs text-text-secondary line-clamp-1 mt-0.5">
                                                 {snippet.description}
                                             </p>
 
@@ -517,12 +538,12 @@ export default function DashboardPage() {
                                                 {snippet.tags.map((t) => (
                                                     <span
                                                         key={t}
-                                                        className="rounded bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 text-[10px] text-neutral-500"
+                                                        className="rounded bg-bg-elevated px-1.5 py-0.5 text-[10px] text-text-secondary border border-neutral-800/50"
                                                     >
                                                         {t}
                                                     </span>
                                                 ))}
-                                                <span className="text-[10px] text-neutral-400 ml-2">
+                                                <span className="text-[10px] text-text-secondary ml-2">
                                                     • {snippet.language}
                                                 </span>
                                             </div>
@@ -533,16 +554,16 @@ export default function DashboardPage() {
                                     <div className="flex items-center gap-2 self-end sm:self-center">
                                         <button
                                             onClick={(e) => handleCopy(snippet, e)}
-                                            className="flex items-center gap-1.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-3 py-1.5 text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all shadow-xs"
+                                            className="flex items-center gap-1.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-bg-surface px-3 py-1.5 text-xs font-semibold text-text-primary hover:bg-bg-elevated transition-all shadow-xs"
                                         >
                                             {copiedId === snippet.id ? (
                                                 <>
-                                                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                                    <Check className="h-3.5 w-3.5 text-mint" />
                                                     <span>Copied</span>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Copy className="h-3.5 w-3.5 text-neutral-400" />
+                                                    <Copy className="h-3.5 w-3.5 text-text-secondary" />
                                                     <span>Copy</span>
                                                 </>
                                             )}
@@ -550,7 +571,7 @@ export default function DashboardPage() {
 
                                         <button
                                             onClick={(e) => handleDelete(snippet.id, e)}
-                                            className="p-1.5 text-neutral-400 hover:text-red-500 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                                            className="p-1.5 text-text-secondary hover:text-red-500 rounded-lg hover:bg-bg-elevated transition-colors"
                                             title="Delete snippet"
                                         >
                                             <Trash2 className="h-4 w-4" />
@@ -560,7 +581,7 @@ export default function DashboardPage() {
                             ))}
 
                             {filteredSnippets.length === 0 && (
-                                <div className="p-8 text-center text-xs text-neutral-500">
+                                <div className="p-8 text-center text-xs text-text-secondary">
                                     No snippets match the selected criteria.
                                 </div>
                             )}
@@ -585,25 +606,25 @@ export default function DashboardPage() {
                             initial={{ opacity: 0, scale: 0.95, y: 10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            className="relative w-full max-w-xl rounded-3xl border border-neutral-200 bg-white p-6 shadow-2xl dark:border-neutral-800 dark:bg-neutral-900 max-h-[90vh] overflow-y-auto"
+                            className="relative w-full max-w-xl rounded-3xl border border-neutral-200 bg-bg-surface p-6 shadow-2xl dark:border-neutral-800 max-h-[90vh] overflow-y-auto"
                         >
                             <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-800">
                                 <div className="flex items-center gap-2.5">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-500/20">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cobalt text-white shadow-md shadow-cobalt/20">
                                         <Plus className="h-5 w-5" />
                                     </div>
                                     <div>
-                                        <h3 className="text-base font-bold text-neutral-900 dark:text-white">
+                                        <h3 className="text-base font-bold text-text-primary">
                                             Create New Snippet
                                         </h3>
-                                        <p className="text-xs text-neutral-500">
+                                        <p className="text-xs text-text-secondary">
                                             Add a reusable code snippet to your vault.
                                         </p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => setIsCreateOpen(false)}
-                                    className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                    className="rounded-lg p-1.5 text-text-secondary hover:bg-bg-elevated"
                                 >
                                     <X className="h-4 w-4" />
                                 </button>
@@ -612,7 +633,7 @@ export default function DashboardPage() {
                             <form onSubmit={handleCreateSnippet} className="mt-4 space-y-4">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
-                                        <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+                                        <label className="block text-xs font-semibold text-text-primary mb-1">
                                             Title *
                                         </label>
                                         <input
@@ -621,17 +642,17 @@ export default function DashboardPage() {
                                             onChange={(e) => setNewTitle(e.target.value)}
                                             placeholder="e.g. useDebounce hook"
                                             required
-                                            className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs text-neutral-900 outline-none focus:border-indigo-500 focus:bg-white dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                            className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+                                        <label className="block text-xs font-semibold text-text-primary mb-1">
                                             Language
                                         </label>
                                         <select
                                             value={newLanguage}
                                             onChange={(e) => setNewLanguage(e.target.value)}
-                                            className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs text-neutral-900 outline-none dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                            className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none dark:border-neutral-800"
                                         >
                                             {languagesList.filter((l) => l !== "All").map((lang) => (
                                                 <option key={lang} value={lang}>
@@ -643,7 +664,7 @@ export default function DashboardPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+                                    <label className="block text-xs font-semibold text-text-primary mb-1">
                                         Tags (comma-separated)
                                     </label>
                                     <input
@@ -651,12 +672,12 @@ export default function DashboardPage() {
                                         value={newTags}
                                         onChange={(e) => setNewTags(e.target.value)}
                                         placeholder="e.g. react, hooks, utility"
-                                        className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs text-neutral-900 outline-none focus:border-indigo-500 focus:bg-white dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                        className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+                                    <label className="block text-xs font-semibold text-text-primary mb-1">
                                         Description
                                     </label>
                                     <input
@@ -664,12 +685,12 @@ export default function DashboardPage() {
                                         value={newDescription}
                                         onChange={(e) => setNewDescription(e.target.value)}
                                         placeholder="Short summary of snippet purpose..."
-                                        className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs text-neutral-900 outline-none focus:border-indigo-500 focus:bg-white dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                        className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+                                    <label className="block text-xs font-semibold text-text-primary mb-1">
                                         Code Body *
                                     </label>
                                     <textarea
@@ -678,19 +699,19 @@ export default function DashboardPage() {
                                         onChange={(e) => setNewCode(e.target.value)}
                                         placeholder="Paste or write your code here..."
                                         required
-                                        className="w-full rounded-xl border border-neutral-200 bg-neutral-950 p-3 font-mono text-xs text-neutral-200 outline-none focus:border-indigo-500 dark:border-neutral-800"
+                                        className="w-full rounded-xl border border-neutral-200 bg-bg-base p-3 font-mono text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
                                     />
                                 </div>
 
                                 {/* Visibility Toggle */}
-                                <div className="flex items-center justify-between rounded-xl bg-indigo-50/50 p-3 border border-indigo-100 dark:bg-indigo-950/30 dark:border-indigo-900/40">
+                                <div className="flex items-center justify-between rounded-xl bg-bg-elevated p-3 border border-neutral-200 dark:border-neutral-800">
                                     <div className="flex items-center gap-2.5">
-                                        <Lock className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                                        <Lock className="h-4 w-4 text-cobalt" />
                                         <div>
-                                            <p className="text-xs font-semibold text-neutral-900 dark:text-white">
+                                            <p className="text-xs font-semibold text-text-primary">
                                                 Private Snippet
                                             </p>
-                                            <p className="text-[10px] text-neutral-500">
+                                            <p className="text-[10px] text-text-secondary">
                                                 Hidden from public snippet library.
                                             </p>
                                         </div>
@@ -699,7 +720,7 @@ export default function DashboardPage() {
                                         type="checkbox"
                                         checked={isPrivate}
                                         onChange={(e) => setIsPrivate(e.target.checked)}
-                                        className="h-4 w-4 rounded accent-indigo-600 cursor-pointer"
+                                        className="h-4 w-4 rounded accent-cobalt cursor-pointer"
                                     />
                                 </div>
 
@@ -707,13 +728,13 @@ export default function DashboardPage() {
                                     <button
                                         type="button"
                                         onClick={() => setIsCreateOpen(false)}
-                                        className="rounded-xl px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                                        className="rounded-xl px-4 py-2 text-xs font-semibold text-text-secondary hover:bg-bg-elevated"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        className="rounded-xl bg-indigo-600 px-5 py-2 text-xs font-semibold text-white shadow-md hover:bg-indigo-700 active:scale-95 transition-all"
+                                        className="rounded-xl bg-cobalt px-5 py-2 text-xs font-semibold text-white shadow-md hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95 transition-all"
                                     >
                                         Save to Vault
                                     </button>

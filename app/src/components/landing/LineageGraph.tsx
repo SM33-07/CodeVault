@@ -56,30 +56,30 @@ export function LineageGraph() {
     const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
     return (
-        <div className="relative mx-auto mt-10 w-full max-w-4xl rounded-3xl border border-neutral-200/80 bg-white/70 p-6 md:p-8 shadow-xl backdrop-blur-xl dark:border-neutral-800/80 dark:bg-neutral-900/60">
+        <div className="relative mx-auto mt-10 w-full max-w-4xl rounded-3xl border border-neutral-200/80 bg-bg-surface/80 p-6 md:p-8 shadow-xl backdrop-blur-xl dark:border-neutral-800/80">
             {/* Header / Lineage Thesis Badge */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-neutral-200/60 dark:border-neutral-800/60">
                 <div className="flex items-center gap-2.5">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 text-violet border border-violet/30">
                         <GitFork className="h-4 w-4" />
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
+                            <h3 className="text-sm font-bold text-text-primary">
                                 Provenance & Fork Lineage Graph
                             </h3>
-                            <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                                --cv-lineage
+                            <span className="rounded-full bg-violet/10 px-2 py-0.5 text-[10px] font-semibold text-violet border border-violet/20">
+                                --color-violet
                             </span>
                         </div>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                        <p className="text-xs text-text-secondary">
                             Every fork visibly traces back to its original author and source.
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
-                    <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <div className="flex items-center gap-2 text-xs font-mono text-text-secondary">
+                    <span className="flex h-2 w-2 rounded-full bg-mint animate-pulse" />
                     <span>Realtime Lineage Thread</span>
                 </div>
             </div>
@@ -91,39 +91,39 @@ export function LineageGraph() {
                     initial={{ scale: 0.96, y: -10 }}
                     animate={{ scale: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="relative z-10 w-full max-w-sm rounded-2xl border-2 border-amber-500/60 bg-gradient-to-br from-amber-500/10 via-white to-white p-4 shadow-lg dark:from-amber-950/40 dark:via-neutral-900 dark:to-neutral-900 dark:border-amber-500/50"
+                    className="relative z-10 w-full max-w-sm rounded-2xl border-2 border-violet/70 bg-gradient-to-br from-violet/15 via-bg-surface to-bg-surface p-4 shadow-lg shadow-violet/10"
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <span className="flex h-2 w-2 rounded-full bg-amber-500" />
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                            <span className="flex h-2 w-2 rounded-full bg-violet" />
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-violet">
                                 Origin Source
                             </span>
                         </div>
-                        <span className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 text-[10px] font-mono font-medium text-neutral-600 dark:text-neutral-300">
+                        <span className="rounded-md bg-bg-elevated px-2 py-0.5 text-[10px] font-mono font-medium text-text-secondary">
                             {ORIGIN_NODE.language}
                         </span>
                     </div>
 
-                    <h4 className="mt-2 text-sm font-bold text-neutral-900 dark:text-white">
+                    <h4 className="mt-2 text-sm font-bold text-text-primary">
                         {ORIGIN_NODE.title}
                     </h4>
-                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                    <p className="mt-1 text-xs text-text-secondary">
                         {ORIGIN_NODE.forkDiff}
                     </p>
 
-                    <div className="mt-3 flex items-center justify-between border-t border-neutral-100 dark:border-neutral-800 pt-2 text-[11px] text-neutral-400">
-                        <span className="flex items-center gap-1 font-medium text-neutral-600 dark:text-neutral-300">
-                            <User className="h-3 w-3 text-amber-500" />
+                    <div className="mt-3 flex items-center justify-between border-t border-neutral-200/60 dark:border-neutral-800 pt-2 text-[11px] text-text-secondary">
+                        <span className="flex items-center gap-1 font-medium text-text-primary">
+                            <User className="h-3 w-3 text-violet" />
                             {ORIGIN_NODE.author}
                         </span>
-                        <span className="text-amber-600 dark:text-amber-400 font-semibold">
+                        <span className="text-violet font-semibold">
                             3 Active Lineages
                         </span>
                     </div>
                 </motion.div>
 
-                {/* 2. SVG Animated Lineage Threads (Amber Draw-In) */}
+                {/* 2. SVG Animated Lineage Threads (Violet Signature Draw-In) */}
                 <div className="relative w-full h-20 md:h-24 my-1">
                     <svg
                         className="w-full h-full overflow-visible pointer-events-none"
@@ -132,8 +132,8 @@ export function LineageGraph() {
                     >
                         <defs>
                             <linearGradient id="lineageGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stopColor="#E0A458" stopOpacity="0.9" />
-                                <stop offset="100%" stopColor="#E0A458" stopOpacity="0.4" />
+                                <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.9" />
+                                <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.4" />
                             </linearGradient>
                         </defs>
 
@@ -153,7 +153,7 @@ export function LineageGraph() {
                         <motion.path
                             d="M 400 0 L 400 100"
                             fill="none"
-                            stroke="#E0A458"
+                            stroke="#7C3AED"
                             strokeWidth="2.5"
                             initial={{ pathLength: 0 }}
                             animate={{ pathLength: 1 }}
@@ -184,41 +184,41 @@ export function LineageGraph() {
                             transition={{ duration: 0.4, delay: 0.2 + idx * 0.1 }}
                             whileHover={{ y: -3, transition: { duration: 0.2 } }}
                             onClick={() => setSelectedNode(fork.id)}
-                            className={`group relative cursor-pointer rounded-2xl border bg-white p-4 transition-all duration-300 dark:bg-neutral-900 ${
+                            className={`group relative cursor-pointer rounded-2xl border bg-bg-surface p-4 transition-all duration-300 ${
                                 selectedNode === fork.id
-                                    ? "border-amber-500 shadow-lg shadow-amber-500/10 ring-2 ring-amber-500/20"
-                                    : "border-neutral-200/80 hover:border-amber-400/60 dark:border-neutral-800 dark:hover:border-amber-500/40 shadow-sm hover:shadow-md"
+                                    ? "border-violet shadow-lg shadow-violet/15 ring-2 ring-violet/20"
+                                    : "border-neutral-200/80 hover:border-violet/60 dark:border-neutral-800 dark:hover:border-violet/50 shadow-sm hover:shadow-md"
                             }`}
                         >
                             {/* Lineage Node Connector Dot */}
-                            <div className="absolute -top-2 left-1/2 -translate-x-1/2 h-3.5 w-3.5 rounded-full border-2 border-amber-500 bg-white dark:bg-neutral-900 shadow-sm flex items-center justify-center">
-                                <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                            <div className="absolute -top-2 left-1/2 -translate-x-1/2 h-3.5 w-3.5 rounded-full border-2 border-violet bg-bg-surface shadow-sm flex items-center justify-center">
+                                <div className="h-1.5 w-1.5 rounded-full bg-violet" />
                             </div>
 
                             <div className="flex items-center justify-between">
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-violet">
                                     <GitFork className="h-3 w-3" />
                                     Fork #{idx + 1}
                                 </span>
-                                <span className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 text-[10px] font-mono text-neutral-600 dark:text-neutral-400">
+                                <span className="rounded-md bg-bg-elevated px-1.5 py-0.5 text-[10px] font-mono text-text-secondary">
                                     {fork.language}
                                 </span>
                             </div>
 
-                            <h5 className="mt-2 text-xs font-bold text-neutral-900 dark:text-white line-clamp-1 group-hover:text-amber-500 transition-colors">
+                            <h5 className="mt-2 text-xs font-bold text-text-primary line-clamp-1 group-hover:text-violet transition-colors">
                                 {fork.title}
                             </h5>
 
-                            <p className="mt-1 text-[11px] text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
+                            <p className="mt-1 text-[11px] text-text-secondary line-clamp-2 leading-relaxed">
                                 {fork.forkDiff}
                             </p>
 
-                            <div className="mt-3 flex items-center justify-between border-t border-neutral-100 dark:border-neutral-800 pt-2 text-[11px] text-neutral-400">
-                                <span className="flex items-center gap-1 text-neutral-600 dark:text-neutral-300">
-                                    <User className="h-3 w-3 text-neutral-400" />
+                            <div className="mt-3 flex items-center justify-between border-t border-neutral-200/60 dark:border-neutral-800 pt-2 text-[11px] text-text-secondary">
+                                <span className="flex items-center gap-1 text-text-secondary">
+                                    <User className="h-3 w-3 text-text-secondary" />
                                     {fork.author}
                                 </span>
-                                <span className="text-[10px] font-medium text-amber-600/80 dark:text-amber-400/80">
+                                <span className="text-[10px] font-medium text-violet">
                                     Linked to CodeVault Core
                                 </span>
                             </div>

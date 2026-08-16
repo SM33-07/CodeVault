@@ -14,15 +14,15 @@ export function HeroSection() {
                     className="absolute inset-0 opacity-40 dark:opacity-30"
                     style={{
                         background:
-                            "radial-gradient(ellipse 90% 60% at 50% 10%, rgba(99, 102, 241, 0.35), rgba(168, 85, 247, 0.15), transparent 75%)",
+                            "radial-gradient(ellipse 80% 50% at 50% 10%, rgba(59, 130, 246, 0.12), rgba(124, 58, 237, 0.10), transparent 70%)",
                     }}
                 />
                 <div
-                    className="absolute inset-0 opacity-20 dark:opacity-15"
+                    className="absolute inset-0 opacity-20 dark:opacity-10"
                     style={{
                         backgroundImage: `
-                            linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px)
+                            linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px)
                         `,
                         backgroundSize: "48px 48px",
                     }}
@@ -37,15 +37,15 @@ export function HeroSection() {
             >
                 <Link
                     href="/register"
-                    className="group inline-flex items-center gap-2 rounded-full border border-indigo-200/80 bg-white/80 px-4 py-1.5 text-xs font-medium text-neutral-800 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-indigo-300 hover:bg-white hover:shadow-md hover:-translate-y-0.5 dark:border-indigo-900/60 dark:bg-neutral-900/80 dark:text-neutral-200 dark:hover:border-indigo-700 dark:hover:bg-neutral-900"
+                    className="group inline-flex items-center gap-2 rounded-full border border-violet/30 bg-bg-surface/80 px-4 py-1.5 text-xs font-medium text-text-primary shadow-sm backdrop-blur-md transition-all duration-300 hover:border-violet hover:shadow-md hover:-translate-y-0.5 dark:border-violet/25"
                 >
-                    <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
-                    <span className="font-semibold text-indigo-600 dark:text-indigo-400">
+                    <span className="flex h-2 w-2 rounded-full bg-violet animate-pulse" />
+                    <span className="font-semibold text-violet">
                         CodeVault v1.0
                     </span>
-                    <span className="text-neutral-300 dark:text-neutral-700">•</span>
+                    <span className="text-neutral-400 dark:text-neutral-600">•</span>
                     <span>Self-Hostable Snippet Manager</span>
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 text-neutral-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 text-text-secondary group-hover:text-violet" />
                 </Link>
             </motion.div>
 
@@ -54,10 +54,10 @@ export function HeroSection() {
                 initial={{ y: 12 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.45, delay: 0.05 }}
-                className="mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-6xl md:text-7xl dark:text-white"
+                className="mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-text-primary sm:text-6xl md:text-7xl"
             >
                 Every fork remembers <br />
-                <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-cobalt to-violet bg-clip-text text-transparent">
                     where it came from.
                 </span>
             </motion.h1>
@@ -67,16 +67,16 @@ export function HeroSection() {
                 initial={{ y: 12 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.45, delay: 0.1 }}
-                className="mt-5 max-w-2xl text-base md:text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed"
+                className="mt-5 max-w-2xl text-base md:text-lg text-text-secondary leading-relaxed"
             >
                 The self-hostable home for code snippets. Save reusable functions,
                 trace fork lineages back to original authors, search across languages
                 and tags, and generate on-demand AI explanations — all with{" "}
-                <kbd className="rounded-md border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-xs font-mono font-semibold text-neutral-800 shadow-xs dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+                <kbd className="rounded-md border border-neutral-300 bg-bg-elevated px-2 py-0.5 text-xs font-mono font-semibold text-text-primary shadow-xs dark:border-neutral-700">
                     Ctrl + K
                 </kbd>{" "}
                 or{" "}
-                <kbd className="rounded-md border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-xs font-mono font-semibold text-neutral-800 shadow-xs dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+                <kbd className="rounded-md border border-neutral-300 bg-bg-elevated px-2 py-0.5 text-xs font-mono font-semibold text-text-primary shadow-xs dark:border-neutral-700">
                     ⌘K
                 </kbd>
                 .
@@ -91,7 +91,7 @@ export function HeroSection() {
             >
                 <Link
                     href="/register"
-                    className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/35 hover:-translate-y-0.5 active:scale-95"
+                    className="inline-flex items-center gap-2 rounded-full bg-cobalt px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-cobalt/25 transition-all duration-200 hover:bg-cobalt-hover active:bg-cobalt-active hover:shadow-xl hover:shadow-cobalt/35 hover:-translate-y-0.5 active:scale-95"
                 >
                     <Sparkles className="h-4 w-4" />
                     <span>Get Started Free</span>
@@ -100,9 +100,9 @@ export function HeroSection() {
 
                 <Link
                     href="/snippets"
-                    className="inline-flex items-center gap-2 rounded-full border border-neutral-300/80 bg-white/70 px-7 py-3.5 text-sm font-semibold text-neutral-800 shadow-sm backdrop-blur-md transition-all duration-200 hover:bg-neutral-100 hover:border-neutral-400 hover:-translate-y-0.5 dark:border-neutral-800 dark:bg-neutral-900/70 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                    className="inline-flex items-center gap-2 rounded-full border border-neutral-300/80 bg-bg-surface/80 px-7 py-3.5 text-sm font-semibold text-text-primary shadow-sm backdrop-blur-md transition-all duration-200 hover:border-cobalt hover:-translate-y-0.5 dark:border-neutral-800"
                 >
-                    <Terminal className="h-4 w-4 text-neutral-500" />
+                    <Terminal className="h-4 w-4 text-text-secondary" />
                     <span>Explore Public Snippets</span>
                 </Link>
             </motion.div>
@@ -112,20 +112,20 @@ export function HeroSection() {
                 initial={{ y: 10 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.45, delay: 0.2 }}
-                className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-neutral-500 dark:text-neutral-400"
+                className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-text-secondary"
             >
                 <div className="flex items-center gap-1.5 font-medium">
-                    <GitFork className="h-4 w-4 text-amber-500" />
+                    <GitFork className="h-4 w-4 text-violet" />
                     <span>Fork Lineage Tracking</span>
                 </div>
                 <div className="h-3 w-px bg-neutral-300 dark:bg-neutral-800" />
                 <div className="flex items-center gap-1.5 font-medium">
-                    <Search className="h-4 w-4 text-teal-500" />
+                    <Search className="h-4 w-4 text-cobalt" />
                     <span>Multi-Language Tag Search</span>
                 </div>
                 <div className="h-3 w-px bg-neutral-300 dark:bg-neutral-800" />
                 <div className="flex items-center gap-1.5 font-medium">
-                    <Sparkles className="h-4 w-4 text-purple-500" />
+                    <Sparkles className="h-4 w-4 text-mint" />
                     <span>On-Demand AI Explanation</span>
                 </div>
             </motion.div>

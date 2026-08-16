@@ -22,7 +22,7 @@ import { FeatureBentoGrid } from "@/components/landing/FeatureBentoGrid";
 
 export default function HomePage() {
     return (
-        <div className="flex flex-col min-h-screen bg-neutral-50/50 dark:bg-neutral-950">
+        <div className="flex flex-col min-h-screen bg-bg-base">
             {/* 1. Hero & 3D Container Scroll */}
             <section className="relative w-full">
                 <ContainerScroll
@@ -33,12 +33,12 @@ export default function HomePage() {
             </section>
 
             {/* 2. Signature Visual Element: The Lineage Thread */}
-            <section className="relative w-full px-4 py-8 border-t border-neutral-200/60 dark:border-neutral-800/60 bg-gradient-to-b from-transparent via-amber-500/[0.02] to-transparent">
+            <section className="relative w-full px-4 py-8 border-t border-neutral-200/60 dark:border-neutral-800/60 bg-gradient-to-b from-transparent via-violet/5 to-transparent">
                 <div className="mx-auto max-w-5xl text-center space-y-2 mb-2">
-                    <span className="text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                    <span className="text-xs font-bold uppercase tracking-widest text-violet">
                         The Signature Differentiator
                     </span>
-                    <h2 className="text-2xl md:text-3xl font-extrabold text-neutral-900 dark:text-white">
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-text-primary">
                         Every Fork Remembers Its Roots
                     </h2>
                 </div>
@@ -46,38 +46,38 @@ export default function HomePage() {
             </section>
 
             {/* 3. 3D Coverflow Interactive Snippet Showcase with Click-to-Expand Modal */}
-            <section className="relative w-full border-t border-neutral-200/60 dark:border-neutral-800/60 bg-white/40 dark:bg-neutral-900/30">
+            <section className="relative w-full border-t border-neutral-200/60 dark:border-neutral-800/60 bg-bg-surface/30">
                 <CoverflowSnippetShowcase />
             </section>
 
-            {/* 3. Interactive Feature Bento Grid with Live Micro-Widgets */}
+            {/* 4. Interactive Feature Bento Grid with Live Micro-Widgets */}
             <FeatureBentoGrid />
 
-            {/* 3. Call to Action Banner */}
+            {/* 5. Call to Action Banner */}
             <section className="mx-auto max-w-5xl px-4 py-16 w-full">
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 p-8 md:p-12 text-center text-white shadow-2xl shadow-indigo-500/20">
+                <div className="relative overflow-hidden rounded-3xl border border-neutral-200/80 dark:border-neutral-800 bg-bg-surface p-8 md:p-12 text-center text-text-primary shadow-2xl">
                     {/* Background glow accents */}
-                    <div className="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
-                    <div className="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-purple-400/20 blur-2xl" />
+                    <div className="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-cobalt/10 blur-3xl" />
+                    <div className="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-violet/10 blur-3xl" />
 
                     <div className="relative z-10">
-                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-text-primary">
                             Start building your personal code vault today
                         </h2>
-                        <p className="mt-3 text-indigo-100 max-w-xl mx-auto text-sm md:text-base">
+                        <p className="mt-3 text-text-secondary max-w-xl mx-auto text-sm md:text-base">
                             Organize, fork, and rediscover your code — with lineage tracking and AI explanations built in.
                         </p>
 
                         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                             <Link
                                 href="/register"
-                                className="rounded-full bg-white px-8 py-3 text-sm font-bold text-indigo-600 shadow-lg transition-all duration-200 hover:bg-indigo-50 hover:scale-105 active:scale-95"
+                                className="rounded-full bg-cobalt px-8 py-3 text-sm font-bold text-white shadow-lg shadow-cobalt/25 transition-all duration-200 hover:bg-cobalt-hover hover:scale-105 active:bg-cobalt-active active:scale-95"
                             >
                                 Create Free Account
                             </Link>
                             <Link
                                 href="/login"
-                                className="rounded-full border border-white/30 bg-white/10 px-8 py-3 text-sm font-semibold text-white backdrop-blur-md transition-all duration-200 hover:bg-white/20"
+                                className="rounded-full border border-neutral-300 dark:border-neutral-700 bg-bg-elevated px-8 py-3 text-sm font-semibold text-text-primary backdrop-blur-md transition-all duration-200 hover:border-cobalt hover:text-cobalt"
                             >
                                 Sign In
                             </Link>
@@ -87,17 +87,17 @@ export default function HomePage() {
             </section>
 
             {/* Footer */}
-            <footer className="mt-auto border-t border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-950 px-4 py-8 text-center text-xs text-neutral-500">
+            <footer className="mt-auto border-t border-neutral-200 dark:border-neutral-800 bg-bg-surface px-4 py-8 text-center text-xs text-text-secondary">
                 <div className="mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-between gap-4">
                     <p>© 2026 CodeVault. Store. Fork. Discover. Code.</p>
                     <div className="flex items-center gap-6">
-                        <Link href="/login" className="hover:text-neutral-800 dark:hover:text-neutral-300 transition-colors">
+                        <Link href="/login" className="hover:text-cobalt transition-colors">
                             Sign In
                         </Link>
-                        <Link href="/register" className="hover:text-neutral-800 dark:hover:text-neutral-300 transition-colors">
+                        <Link href="/register" className="hover:text-cobalt transition-colors">
                             Register
                         </Link>
-                        <span className="text-neutral-400">⌘K to search</span>
+                        <span className="text-text-secondary">⌘K to search</span>
                     </div>
                 </div>
             </footer>

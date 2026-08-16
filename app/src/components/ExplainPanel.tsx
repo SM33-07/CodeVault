@@ -55,17 +55,17 @@ export function ExplainPanel({ snippetId, codeBody, language }: ExplainPanelProp
     };
 
     return (
-        <div className="rounded-2xl border border-indigo-200/60 bg-gradient-to-br from-indigo-50/40 via-white to-purple-50/30 p-6 dark:border-indigo-900/40 dark:from-neutral-900 dark:via-neutral-900/90 dark:to-indigo-950/30 shadow-sm">
+        <div className="rounded-2xl border border-neutral-200/80 bg-bg-surface p-6 dark:border-neutral-800 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-500/25">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cobalt text-white shadow-md shadow-cobalt/25">
                         <Sparkles className="h-4 w-4" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
+                        <h3 className="text-sm font-bold text-text-primary">
                             AI Code Intelligence
                         </h3>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                        <p className="text-xs text-text-secondary">
                             On-demand natural language breakdown powered by Claude / Gemini.
                         </p>
                     </div>
@@ -74,7 +74,7 @@ export function ExplainPanel({ snippetId, codeBody, language }: ExplainPanelProp
                 {!explanation && !isLoading && (
                     <button
                         onClick={handleExplain}
-                        className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-indigo-500/25 hover:bg-indigo-700 active:scale-95 transition-all"
+                        className="inline-flex items-center gap-2 rounded-xl bg-cobalt px-4 py-2 text-xs font-semibold text-white shadow-md shadow-cobalt/25 hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95 transition-all"
                     >
                         <Sparkles className="h-3.5 w-3.5" />
                         <span>✨ Explain this Code</span>
@@ -84,12 +84,12 @@ export function ExplainPanel({ snippetId, codeBody, language }: ExplainPanelProp
 
             {/* Loading State (NFR-2: Immediate feedback) */}
             {isLoading && (
-                <div className="mt-5 rounded-xl bg-white/70 dark:bg-neutral-800/60 p-6 border border-indigo-100 dark:border-indigo-900/40 text-center space-y-3">
-                    <Loader2 className="mx-auto h-6 w-6 animate-spin text-indigo-600 dark:text-indigo-400" />
-                    <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                <div className="mt-5 rounded-xl bg-bg-elevated p-6 border border-neutral-200 dark:border-neutral-800 text-center space-y-3">
+                    <Loader2 className="mx-auto h-6 w-6 animate-spin text-cobalt" />
+                    <p className="text-xs font-semibold text-text-primary">
                         Analyzing syntax, algorithms, and complexity...
                     </p>
-                    <p className="text-[11px] text-neutral-400">
+                    <p className="text-[11px] text-text-secondary">
                         Synthesizing natural language developer explanation
                     </p>
                 </div>
@@ -118,11 +118,11 @@ export function ExplainPanel({ snippetId, codeBody, language }: ExplainPanelProp
                     <motion.div
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mt-5 space-y-4 rounded-xl bg-white/80 dark:bg-neutral-950/70 p-5 border border-neutral-200/80 dark:border-neutral-800 text-xs leading-relaxed"
+                        className="mt-5 space-y-4 rounded-xl bg-bg-elevated p-5 border border-neutral-200/80 dark:border-neutral-800 text-xs leading-relaxed"
                     >
                         {/* Summary */}
                         <div>
-                            <span className="font-bold text-neutral-900 dark:text-white uppercase tracking-wider text-[10px] text-indigo-600 dark:text-indigo-400">
+                            <span className="font-bold uppercase tracking-wider text-[10px] text-cobalt">
                                 Overview
                             </span>
                             <TextGenerate
@@ -131,17 +131,17 @@ export function ExplainPanel({ snippetId, codeBody, language }: ExplainPanelProp
                                         ? explanation.summary
                                         : JSON.stringify(explanation.summary)
                                 }
-                                className="mt-1 text-neutral-700 dark:text-neutral-300"
+                                className="mt-1 text-text-primary"
                             />
                         </div>
 
                         {/* Breakdown */}
                         {Array.isArray(explanation.breakdown) && (
-                            <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800">
-                                <span className="font-bold text-neutral-900 dark:text-white uppercase tracking-wider text-[10px] text-indigo-600 dark:text-indigo-400">
+                            <div className="pt-2 border-t border-neutral-200/60 dark:border-neutral-800">
+                                <span className="font-bold uppercase tracking-wider text-[10px] text-cobalt">
                                     Execution Flow & Key Components
                                 </span>
-                                <ul className="mt-2 space-y-1.5 list-disc pl-4 text-neutral-600 dark:text-neutral-400">
+                                <ul className="mt-2 space-y-1.5 list-disc pl-4 text-text-secondary">
                                     {explanation.breakdown.map((item: string, idx: number) => (
                                         <li key={idx}>{item}</li>
                                     ))}
@@ -151,16 +151,16 @@ export function ExplainPanel({ snippetId, codeBody, language }: ExplainPanelProp
 
                         {/* Complexity / Security */}
                         {(explanation.complexity || explanation.securityNotes) && (
-                            <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 flex flex-wrap gap-4 text-[11px] text-neutral-500">
+                            <div className="pt-2 border-t border-neutral-200/60 dark:border-neutral-800 flex flex-wrap gap-4 text-[11px] text-text-secondary">
                                 {explanation.complexity && (
                                     <div className="flex items-center gap-1.5">
-                                        <Zap className="h-3.5 w-3.5 text-amber-500" />
+                                        <Zap className="h-3.5 w-3.5 text-cobalt" />
                                         <span>{explanation.complexity}</span>
                                     </div>
                                 )}
                                 {explanation.securityNotes && (
                                     <div className="flex items-center gap-1.5">
-                                        <Shield className="h-3.5 w-3.5 text-indigo-500" />
+                                        <Shield className="h-3.5 w-3.5 text-mint" />
                                         <span>{explanation.securityNotes}</span>
                                     </div>
                                 )}

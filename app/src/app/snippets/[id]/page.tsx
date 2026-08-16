@@ -112,10 +112,10 @@ export default function SnippetDetailPage({
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-neutral-50/50 dark:bg-neutral-950 p-8 flex items-center justify-center">
+            <div className="min-h-screen bg-bg-base p-8 flex items-center justify-center">
                 <div className="text-center space-y-3">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent mx-auto" />
-                    <p className="text-xs text-neutral-500">Loading code snippet...</p>
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-cobalt border-t-transparent mx-auto" />
+                    <p className="text-xs text-text-secondary">Loading code snippet...</p>
                 </div>
             </div>
         );
@@ -123,16 +123,16 @@ export default function SnippetDetailPage({
 
     if (!snippet) {
         return (
-            <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 p-8 flex flex-col items-center justify-center text-center">
-                <h2 className="text-lg font-bold text-neutral-800 dark:text-neutral-200">
+            <div className="min-h-screen bg-bg-base p-8 flex flex-col items-center justify-center text-center">
+                <h2 className="text-lg font-bold text-text-primary">
                     Snippet Not Found
                 </h2>
-                <p className="text-xs text-neutral-500 mt-1">
+                <p className="text-xs text-text-secondary mt-1">
                     This snippet may be private or has been removed.
                 </p>
                 <Link
                     href="/snippets"
-                    className="mt-4 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white"
+                    className="mt-4 rounded-xl bg-cobalt px-4 py-2 text-xs font-semibold text-white hover:bg-cobalt-hover"
                 >
                     Back to Library
                 </Link>
@@ -151,13 +151,13 @@ export default function SnippetDetailPage({
     const isOwner = user?.id && snippet.ownerId === user.id;
 
     return (
-        <div className="min-h-full bg-neutral-50/50 dark:bg-neutral-950 pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-full bg-bg-base pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-5xl space-y-8">
                 {/* Back Navigation Bar */}
                 <div className="flex items-center justify-between">
                     <Link
                         href="/snippets"
-                        className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-600 hover:text-indigo-600 dark:text-neutral-400 dark:hover:text-indigo-400 transition-colors"
+                        className="inline-flex items-center gap-2 text-xs font-semibold text-text-secondary hover:text-cobalt transition-colors"
                     >
                         <ArrowLeft className="h-4 w-4" />
                         <span>Back to Snippet Library</span>
@@ -169,20 +169,20 @@ export default function SnippetDetailPage({
                             <button
                                 onClick={handleFork}
                                 disabled={isForking}
-                                className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-300 bg-white px-3.5 py-2 text-xs font-semibold text-neutral-700 shadow-xs hover:border-indigo-400 hover:text-indigo-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200 transition-all"
+                                className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-300 bg-bg-surface px-3.5 py-2 text-xs font-semibold text-text-primary shadow-xs hover:border-violet hover:text-violet dark:border-neutral-800 transition-all"
                             >
-                                <GitFork className="h-3.5 w-3.5" />
+                                <GitFork className="h-3.5 w-3.5 text-violet" />
                                 <span>{isForking ? "Forking..." : "Fork Snippet"}</span>
                             </button>
                         )}
 
                         <button
                             onClick={handleCopy}
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700 active:scale-95 transition-all"
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-cobalt px-4 py-2 text-xs font-semibold text-white shadow-md shadow-cobalt/20 hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95 transition-all"
                         >
                             {copied ? (
                                 <>
-                                    <Check className="h-3.5 w-3.5 text-emerald-300" />
+                                    <Check className="h-3.5 w-3.5 text-mint" />
                                     <span>Copied!</span>
                                 </>
                             ) : (
@@ -196,51 +196,52 @@ export default function SnippetDetailPage({
                 </div>
 
                 {/* Main Header & Metadata Card */}
-                <div className="rounded-3xl border border-neutral-200/80 bg-white p-6 sm:p-8 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                <div className="rounded-3xl border border-neutral-200/80 bg-bg-surface p-6 sm:p-8 shadow-xs dark:border-neutral-800">
                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <span className="rounded-md bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">
+                        <span className="rounded-md bg-bg-elevated border border-neutral-200 dark:border-neutral-800 px-3 py-1 text-xs font-bold text-text-primary">
                             {languageStr}
                         </span>
 
                         {snippet.visibility === "private" || snippet.isPrivate ? (
-                            <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
-                                <Lock className="h-3 w-3" />
-                                Private Vault
+                            <span className="inline-flex items-center gap-1.5 rounded-md badge-cobalt px-2.5 py-1 text-xs font-semibold">
+                                <Lock className="h-3.5 w-3.5" />
+                                <span>Private Vault</span>
                             </span>
                         ) : (
-                            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
-                                <Globe className="h-3 w-3" />
-                                Public
+                            <span className="inline-flex items-center gap-1.5 rounded-md badge-mint px-2.5 py-1 text-xs font-semibold">
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                <Globe className="h-3.5 w-3.5" />
+                                <span>Public</span>
                             </span>
                         )}
 
                         {snippet.forkedFromId && (
-                            <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                                <GitFork className="h-3 w-3" />
-                                Forked Snippet
+                            <span className="inline-flex items-center gap-1.5 rounded-md badge-violet px-2.5 py-1 text-xs font-semibold text-violet">
+                                <GitFork className="h-3.5 w-3.5 text-violet" />
+                                <span>Forked Snippet</span>
                             </span>
                         )}
                     </div>
 
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 dark:text-white">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary">
                         {titleStr}
                     </h1>
 
                     {snippet.forkedFromId && (
-                        <div className="mt-3 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-3 text-xs text-neutral-700 dark:text-neutral-300">
-                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                        <div className="mt-3 flex items-center gap-3 rounded-xl border border-violet/30 bg-violet/5 p-3 text-xs text-text-primary">
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-violet/20 text-violet">
                                 <GitFork className="h-4 w-4" />
                             </div>
                             <div className="flex-1 flex flex-wrap items-center justify-between gap-2">
                                 <span>
-                                    <strong className="text-amber-600 dark:text-amber-400 font-semibold">Fork Lineage:</strong> This snippet originates from parent snippet{" "}
-                                    <code className="font-mono text-[11px] bg-amber-500/15 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded">
+                                    <strong className="text-violet font-semibold">Fork Lineage:</strong> This snippet originates from parent snippet{" "}
+                                    <code className="font-mono text-[11px] bg-violet/15 text-violet px-1.5 py-0.5 rounded">
                                         {snippet.forkedFromId.slice(0, 8)}...
                                     </code>
                                 </span>
                                 <Link
                                     href={`/snippets/${snippet.forkedFromId}`}
-                                    className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:underline"
+                                    className="inline-flex items-center gap-1 font-semibold text-violet hover:underline"
                                 >
                                     <span>View Parent Source</span>
                                     <ArrowRight className="h-3 w-3" />
@@ -249,7 +250,7 @@ export default function SnippetDetailPage({
                         </div>
                     )}
 
-                    <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                    <p className="mt-2 text-sm text-text-secondary leading-relaxed">
                         {snippet.description || "No description provided for this snippet."}
                     </p>
 
@@ -260,7 +261,7 @@ export default function SnippetDetailPage({
                                 <Link
                                     key={tag}
                                     href={`/snippets?tag=${encodeURIComponent(tag.replace("#", ""))}`}
-                                    className="rounded-lg bg-neutral-100 dark:bg-neutral-800 px-2.5 py-1 text-xs font-medium text-neutral-600 hover:text-indigo-600 dark:text-neutral-400 transition-colors"
+                                    className="rounded-lg bg-bg-elevated border border-neutral-200 dark:border-neutral-800 px-2.5 py-1 text-xs font-medium text-text-secondary hover:border-cobalt hover:text-cobalt transition-colors"
                                 >
                                     {tag.startsWith("#") ? tag : `#${tag}`}
                                 </Link>
@@ -269,26 +270,26 @@ export default function SnippetDetailPage({
                     )}
 
                     {/* Stats strip */}
-                    <div className="mt-6 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex flex-wrap items-center gap-6 text-xs text-neutral-500 dark:text-neutral-400">
+                    <div className="mt-6 pt-4 border-t border-neutral-200/60 dark:border-neutral-800 flex flex-wrap items-center gap-6 text-xs text-text-secondary">
                         <div className="flex items-center gap-1.5">
-                            <User className="h-4 w-4 text-neutral-400" />
+                            <User className="h-4 w-4 text-text-secondary" />
                             <span>
                                 By{" "}
-                                <strong className="text-neutral-700 dark:text-neutral-300">
+                                <strong className="text-text-primary">
                                     {snippet.author?.name || snippet.owner?.displayName || "Developer"}
                                 </strong>
                             </span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                            <Eye className="h-4 w-4 text-neutral-400" />
-                            <span>{snippet.viewCount || 0} views</span>
+                            <Eye className="h-4 w-4 text-emerald-400" />
+                            <span><strong className="text-text-primary font-semibold">{snippet.viewCount || 0}</strong> views</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                            <GitFork className="h-4 w-4 text-neutral-400" />
-                            <span>{snippet.forkCount || 0} forks</span>
+                            <GitFork className="h-4 w-4 text-violet" />
+                            <span><strong className="text-violet font-semibold">{snippet.forkCount || 0}</strong> forks</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                            <Calendar className="h-4 w-4 text-neutral-400" />
+                            <Calendar className="h-4 w-4 text-text-secondary" />
                             <span>{snippet.createdAt || "Recently"}</span>
                         </div>
                     </div>

@@ -168,12 +168,12 @@ export default function LoginPage() {
                 >
                     <label
                         htmlFor="login-email"
-                        className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+                        className="mb-1.5 block text-sm font-medium text-text-primary"
                     >
                         Email
                     </label>
                     <div className="relative">
-                        <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                        <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
                         <input
                             id="login-email"
                             type="email"
@@ -181,7 +181,7 @@ export default function LoginPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             autoComplete="email"
-                            className="w-full rounded-xl border border-neutral-200 bg-white py-3 pl-11 pr-4 text-sm text-neutral-900 shadow-sm outline-none transition-all duration-200 placeholder:text-neutral-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-indigo-500"
+                            className="w-full rounded-xl border border-neutral-200 bg-bg-surface py-3 pl-11 pr-4 text-sm text-text-primary shadow-sm outline-none transition-all duration-200 placeholder:text-text-secondary focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 dark:border-neutral-800"
                         />
                     </div>
                 </motion.div>
@@ -194,12 +194,12 @@ export default function LoginPage() {
                 >
                     <label
                         htmlFor="login-password"
-                        className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+                        className="mb-1.5 block text-sm font-medium text-text-primary"
                     >
                         Password
                     </label>
                     <div className="relative">
-                        <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                        <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
                         <input
                             id="login-password"
                             type={showPassword ? "text" : "password"}
@@ -207,12 +207,12 @@ export default function LoginPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             autoComplete="current-password"
-                            className="w-full rounded-xl border border-neutral-200 bg-white py-3 pl-11 pr-12 text-sm text-neutral-900 shadow-sm outline-none transition-all duration-200 placeholder:text-neutral-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500 dark:focus:border-indigo-500"
+                            className="w-full rounded-xl border border-neutral-200 bg-bg-surface py-3 pl-11 pr-12 text-sm text-text-primary shadow-sm outline-none transition-all duration-200 placeholder:text-text-secondary focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 dark:border-neutral-800"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 transition-colors hover:text-neutral-600 dark:hover:text-neutral-300"
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary transition-colors hover:text-text-primary"
                             aria-label={showPassword ? "Hide password" : "Show password"}
                         >
                             {showPassword ? (
@@ -231,18 +231,18 @@ export default function LoginPage() {
                     transition={{ delay: 0.15 + staggerDelay * 2 }}
                     className="flex items-center justify-between"
                 >
-                    <label className="flex cursor-pointer items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                    <label className="flex cursor-pointer items-center gap-2 text-sm text-text-secondary">
                         <input
                             type="checkbox"
                             checked={rememberMe}
                             onChange={(e) => setRememberMe(e.target.checked)}
-                            className="h-4 w-4 rounded border-neutral-300 text-indigo-600 focus:ring-indigo-500 dark:border-neutral-700"
+                            className="h-4 w-4 rounded border-neutral-300 text-cobalt focus:ring-cobalt dark:border-neutral-700"
                         />
                         Remember me
                     </label>
                     <button
                         type="button"
-                        className="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
+                        className="text-sm font-medium text-cobalt hover:text-cobalt-hover transition-colors"
                     >
                         Forgot password?
                     </button>
@@ -257,7 +257,7 @@ export default function LoginPage() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="relative w-full overflow-hidden rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 dark:focus:ring-offset-neutral-950"
+                        className="relative w-full overflow-hidden rounded-xl bg-cobalt px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-cobalt/25 transition-all duration-300 hover:bg-cobalt-hover hover:shadow-xl hover:shadow-cobalt/30 hover:-translate-y-0.5 active:bg-cobalt-active focus:outline-none focus:ring-2 focus:ring-cobalt focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 dark:focus:ring-offset-neutral-950"
                     >
                         {isLoading ? (
                             <span className="flex items-center justify-center gap-2">

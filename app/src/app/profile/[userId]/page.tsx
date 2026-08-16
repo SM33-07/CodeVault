@@ -113,8 +113,8 @@ export default function UserProfilePage({
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 p-8 flex items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent mx-auto" />
+            <div className="min-h-screen bg-bg-base p-8 flex items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-cobalt border-t-transparent mx-auto" />
             </div>
         );
     }
@@ -123,30 +123,30 @@ export default function UserProfilePage({
     const totalViews = snippets.reduce((acc, s) => acc + (s.viewCount || 0), 0);
 
     return (
-        <div className="min-h-full bg-neutral-50/50 dark:bg-neutral-950 pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-full bg-bg-base pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-5xl space-y-8">
                 {/* Profile Header Banner */}
-                <div className="rounded-3xl border border-neutral-200/80 bg-white p-6 sm:p-8 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
+                <div className="rounded-3xl border border-neutral-200/80 bg-bg-surface p-6 sm:p-8 shadow-xs dark:border-neutral-800">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                         <div className="flex items-center gap-4">
-                            <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-indigo-700 text-2xl sm:text-3xl font-extrabold text-white shadow-lg shadow-indigo-500/20">
+                            <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-cobalt to-violet text-2xl sm:text-3xl font-extrabold text-white shadow-lg shadow-cobalt/20">
                                 {displayName.charAt(0).toUpperCase()}
                             </div>
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
+                                    <h1 className="text-2xl font-bold text-text-primary">
                                         {displayName}
                                     </h1>
                                     {isOwnProfile && (
-                                        <span className="rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+                                        <span className="rounded-full bg-cobalt/15 border border-cobalt/30 px-2.5 py-0.5 text-[11px] font-semibold text-cobalt">
                                             You
                                         </span>
                                     )}
                                 </div>
-                                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                <p className="text-xs text-text-secondary">
                                     {profile?.email}
                                 </p>
-                                <p className="mt-1 flex items-center gap-1.5 text-xs text-neutral-400">
+                                <p className="mt-1 flex items-center gap-1.5 text-xs text-text-secondary">
                                     <Calendar className="h-3.5 w-3.5" />
                                     <span>{profile?.createdAt || "Joined 2026"}</span>
                                 </p>
@@ -158,7 +158,7 @@ export default function UserProfilePage({
                             {isOwnProfile ? (
                                 <Link
                                     href="/profile/settings"
-                                    className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700 active:scale-95 transition-all"
+                                    className="inline-flex items-center gap-2 rounded-xl bg-cobalt px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-cobalt/20 hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95 transition-all"
                                 >
                                     <Edit3 className="h-4 w-4" />
                                     <span>Edit Profile</span>
@@ -169,7 +169,7 @@ export default function UserProfilePage({
                                         navigator.clipboard.writeText(window.location.href);
                                         toast.success("Profile URL copied to clipboard!");
                                     }}
-                                    className="inline-flex items-center gap-2 rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-xs font-semibold text-neutral-700 dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-50 transition-all"
+                                    className="inline-flex items-center gap-2 rounded-xl border border-neutral-300 bg-bg-elevated px-4 py-2.5 text-xs font-semibold text-text-primary dark:border-neutral-800 hover:border-cobalt hover:text-cobalt transition-all"
                                 >
                                     <span>Share Profile</span>
                                 </button>
@@ -178,42 +178,42 @@ export default function UserProfilePage({
                     </div>
 
                     {/* Bio */}
-                    <div className="mt-6 pt-4 border-t border-neutral-100 dark:border-neutral-800">
-                        <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed max-w-2xl">
+                    <div className="mt-6 pt-4 border-t border-neutral-200/60 dark:border-neutral-800">
+                        <p className="text-sm text-text-primary leading-relaxed max-w-2xl">
                             {profile?.bio || "No biography provided yet."}
                         </p>
                     </div>
 
                     {/* Stats */}
-                    <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-neutral-100 dark:border-neutral-800 text-xs">
+                    <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-neutral-200/60 dark:border-neutral-800 text-xs">
                         <div className="flex items-center gap-2">
-                            <Code2 className="h-4 w-4 text-indigo-500" />
-                            <span>
-                                <strong className="text-neutral-900 dark:text-white font-bold">
+                            <Code2 className="h-4 w-4 text-cobalt" />
+                            <span className="text-text-secondary">
+                                <strong className="text-text-primary font-bold">
                                     {snippets.length}
                                 </strong>{" "}
                                 Snippets
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Eye className="h-4 w-4 text-emerald-500" />
-                            <span>
-                                <strong className="text-neutral-900 dark:text-white font-bold">
+                            <Eye className="h-4 w-4 text-mint" />
+                            <span className="text-text-secondary">
+                                <strong className="text-text-primary font-bold">
                                     {totalViews}
                                 </strong>{" "}
                                 Total Views
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Shield className="h-4 w-4 text-purple-500" />
-                            <span>Verified Developer</span>
+                            <Shield className="h-4 w-4 text-violet" />
+                            <span className="text-violet font-semibold">Verified Developer</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Public Snippets List */}
                 <div className="space-y-4">
-                    <h2 className="text-lg font-bold text-neutral-900 dark:text-white">
+                    <h2 className="text-lg font-bold text-text-primary">
                         Public Code Snippets
                     </h2>
 
@@ -227,21 +227,27 @@ export default function UserProfilePage({
                                 <motion.div
                                     key={snippet.id}
                                     whileHover={{ y: -4 }}
-                                    className="group relative flex flex-col justify-between rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-neutral-900/90"
+                                    className="group relative flex flex-col justify-between rounded-2xl border border-neutral-200/80 bg-bg-surface p-5 shadow-xs hover:border-cobalt/60 dark:border-neutral-800"
                                 >
                                     <div>
                                         <div className="flex items-center justify-between">
-                                            <span className="rounded-md bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">
-                                                {langName}
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="rounded-md bg-bg-elevated border border-neutral-200 dark:border-neutral-800 px-2 py-0.5 text-[11px] font-semibold text-text-primary">
+                                                    {langName}
+                                                </span>
+                                                <span className="inline-flex items-center gap-1 badge-mint rounded-full px-2 py-0.5 text-[10px] font-semibold">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                    <span>Public</span>
+                                                </span>
+                                            </div>
                                             <button
                                                 onClick={(e) =>
                                                     handleCopy(codeStr, snippet.id, snippetTitle, e)
                                                 }
-                                                className="p-1 text-neutral-400 hover:text-neutral-600"
+                                                className="p-1 text-text-secondary hover:text-text-primary"
                                             >
                                                 {copiedId === snippet.id ? (
-                                                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                                    <Check className="h-3.5 w-3.5 text-emerald-400" />
                                                 ) : (
                                                     <Copy className="h-3.5 w-3.5" />
                                                 )}
@@ -249,24 +255,24 @@ export default function UserProfilePage({
                                         </div>
 
                                         <Link href={`/snippets/${snippet.id}`} className="block mt-2">
-                                            <h3 className="text-sm font-bold text-neutral-900 dark:text-white group-hover:text-indigo-600 line-clamp-1">
+                                            <h3 className="text-sm font-bold text-text-primary group-hover:text-cobalt transition-colors line-clamp-1">
                                                 {snippetTitle}
                                             </h3>
-                                            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2">
+                                            <p className="mt-1 text-xs text-text-secondary line-clamp-2">
                                                 {snippet.description || "Reusable snippet"}
                                             </p>
                                         </Link>
 
-                                        <div className="mt-3 overflow-hidden rounded-xl bg-neutral-950 p-2.5 font-mono text-[11px] text-neutral-300">
+                                        <div className="mt-3 overflow-hidden rounded-xl bg-bg-base border border-neutral-800 p-2.5 font-mono text-[11px] text-text-primary">
                                             <pre className="line-clamp-3">{codeStr}</pre>
                                         </div>
                                     </div>
 
-                                    <div className="mt-4 pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400">
+                                    <div className="mt-4 pt-2 border-t border-neutral-200/60 dark:border-neutral-800 flex items-center justify-between text-[11px] text-text-secondary">
                                         <span>{snippet.viewCount || 0} views</span>
                                         <Link
                                             href={`/snippets/${snippet.id}`}
-                                            className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+                                            className="font-semibold text-cobalt hover:underline"
                                         >
                                             View Code →
                                         </Link>

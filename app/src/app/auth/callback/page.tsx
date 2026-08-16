@@ -40,10 +40,10 @@ function AuthCallbackContent() {
     }, [searchParams, router, setAuth]);
 
     return (
-        <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4">
-            <div className="flex flex-col items-center gap-4 rounded-3xl border border-neutral-200 bg-white p-8 shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
-                <Loader2 className="h-8 w-8 animate-spin text-indigo-600 dark:text-indigo-400" />
-                <p className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+        <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4 bg-bg-base">
+            <div className="flex flex-col items-center gap-4 rounded-3xl border border-neutral-200 bg-bg-surface p-8 shadow-xl dark:border-neutral-800">
+                <Loader2 className="h-8 w-8 animate-spin text-cobalt" />
+                <p className="text-sm font-semibold text-text-primary">
                     Completing authentication...
                 </p>
             </div>
@@ -55,8 +55,8 @@ export default function AuthCallbackPage() {
     return (
         <Suspense
             fallback={
-                <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-bg-base">
+                    <Loader2 className="h-8 w-8 animate-spin text-cobalt" />
                 </div>
             }
         >

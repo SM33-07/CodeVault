@@ -98,8 +98,8 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
                 minWidth: visible ? "760px" : "auto",
             }}
             className={cn(
-                "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-3 lg:flex dark:bg-transparent",
-                visible && "bg-white/80 dark:bg-neutral-950/80 border border-neutral-200/80 dark:border-neutral-800/80",
+                "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-3 lg:flex",
+                visible && "bg-bg-surface/85 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80 shadow-xl shadow-black/10",
                 className,
             )}
         >
@@ -115,7 +115,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
         <motion.div
             onMouseLeave={() => setHovered(null)}
             className={cn(
-                "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium text-zinc-600 transition duration-200 hover:text-zinc-800 lg:flex lg:space-x-2 pointer-events-none",
+                "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium text-text-secondary transition duration-200 lg:flex lg:space-x-2 pointer-events-none",
                 className,
             )}
         >
@@ -125,12 +125,12 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
                     href={item.link}
                     onMouseEnter={() => setHovered(idx)}
                     onClick={onItemClick}
-                    className="pointer-events-auto relative px-4 py-2 text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-100"
+                    className="pointer-events-auto relative px-4 py-2 text-text-secondary transition-colors hover:text-cobalt dark:hover:text-cobalt"
                 >
                     {hovered === idx && (
                         <motion.div
                             layoutId="hovered"
-                            className="absolute inset-0 h-full w-full rounded-full bg-gray-100 dark:bg-neutral-800"
+                            className="absolute inset-0 h-full w-full rounded-full bg-bg-elevated"
                         />
                     )}
                     <span className="relative z-20">{item.name}</span>
@@ -146,7 +146,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
             animate={{
                 backdropFilter: visible ? "blur(10px)" : "none",
                 boxShadow: visible
-                    ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
+                    ? "0 0 24px rgba(0, 0, 0, 0.2), 0 1px 1px rgba(0, 0, 0, 0.1)"
                     : "none",
                 width: visible ? "90%" : "100%",
                 paddingRight: visible ? "12px" : "16px",
@@ -161,7 +161,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
             }}
             className={cn(
                 "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-4 py-3 lg:hidden",
-                visible && "bg-white/80 dark:bg-neutral-950/80 border border-neutral-200/80 dark:border-neutral-800/80",
+                visible && "bg-bg-surface/85 backdrop-blur-md border border-neutral-200/80 dark:border-neutral-800/80",
                 className,
             )}
         >
@@ -200,7 +200,7 @@ export const MobileNavMenu = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     className={cn(
-                        "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-2xl bg-white px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800",
+                        "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-2xl bg-bg-surface px-4 py-8 shadow-2xl border border-neutral-200 dark:border-neutral-800",
                         className,
                     )}
                 >
@@ -219,9 +219,9 @@ export const MobileNavToggle = ({
     onClick: () => void;
 }) => {
     return isOpen ? (
-        <IconX className="text-black dark:text-white cursor-pointer h-5 w-5" onClick={onClick} />
+        <IconX className="text-text-primary cursor-pointer h-5 w-5" onClick={onClick} />
     ) : (
-        <IconMenu2 className="text-black dark:text-white cursor-pointer h-5 w-5" onClick={onClick} />
+        <IconMenu2 className="text-text-primary cursor-pointer h-5 w-5" onClick={onClick} />
     );
 };
 
@@ -238,7 +238,7 @@ export const NavbarLogo = ({
         <Link
             href={href}
             className={cn(
-                "relative z-20 flex items-center space-x-2 text-sm font-normal text-black dark:text-white group",
+                "relative z-20 flex items-center space-x-2 text-sm font-normal text-text-primary group",
                 className,
             )}
         >
@@ -288,11 +288,11 @@ export const NavbarButton = ({
 
     const variantStyles = {
         primary:
-            "bg-black text-white dark:bg-white dark:text-black shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
-        secondary: "bg-transparent text-neutral-800 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800",
-        dark: "bg-black text-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
+            "bg-cobalt text-white hover:bg-cobalt-hover active:bg-cobalt-active shadow-md shadow-cobalt/20",
+        secondary: "bg-transparent text-text-primary hover:bg-bg-elevated",
+        dark: "bg-bg-elevated text-text-primary hover:bg-bg-surface border border-neutral-700/80 shadow-md",
         gradient:
-            "bg-gradient-to-b from-blue-500 to-blue-700 text-white shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]",
+            "bg-gradient-to-r from-cobalt to-violet text-white shadow-md shadow-cobalt/20 hover:opacity-95",
     };
 
     if (href && Tag === "a") {
