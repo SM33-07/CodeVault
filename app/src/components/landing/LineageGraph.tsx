@@ -269,18 +269,19 @@ export function LineageGraph() {
                             viewBox="0 0 100 100"
                             preserveAspectRatio="none"
                         >
-                            <defs>
-                                <filter id="glowViolet" x="-20%" y="-20%" width="140%" height="140%">
-                                    <feGaussianBlur stdDeviation="2" result="blur" />
-                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                                </filter>
-                                <filter id="glowEmerald" x="-20%" y="-20%" width="140%" height="140%">
-                                    <feGaussianBlur stdDeviation="2" result="blur" />
-                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                                </filter>
-                            </defs>
-
-                            {/* Branch to Fork 1 (Left Card Center: 16.67%) */}
+                            {/* Branch 1 (Left: 16.67%) - Wide Underlay Glow */}
+                            {(hoveredNode === "fork-1" || hoveredNode === "origin") && (
+                                <path
+                                    d="M 50 0 C 50 50, 16.67 50, 16.67 100"
+                                    fill="none"
+                                    vectorEffect="non-scaling-stroke"
+                                    stroke="#7C3AED"
+                                    strokeWidth={7}
+                                    strokeOpacity={0.4}
+                                    className="transition-all duration-200"
+                                />
+                            )}
+                            {/* Branch 1 Core Line */}
                             <path
                                 d="M 50 0 C 50 50, 16.67 50, 16.67 100"
                                 fill="none"
@@ -292,7 +293,7 @@ export function LineageGraph() {
                                         ? "#A78BFA"
                                         : "#7C3AED"
                                 }
-                                strokeWidth={hoveredNode === "fork-1" || hoveredNode === "origin" ? 3 : 2}
+                                strokeWidth={hoveredNode === "fork-1" || hoveredNode === "origin" ? 2.5 : 2}
                                 strokeOpacity={
                                     hoveredNode === "fork-1" || hoveredNode === "origin"
                                         ? 1
@@ -300,11 +301,22 @@ export function LineageGraph() {
                                         ? 0.25
                                         : 0.7
                                 }
-                                filter={hoveredNode === "fork-1" ? "url(#glowViolet)" : undefined}
                                 className="transition-all duration-200"
                             />
 
-                            {/* Branch to Fork 2 (Center Card Center: 50%) */}
+                            {/* Branch 2 (Center: 50%) - Wide Underlay Glow */}
+                            {(hasSimulated || hoveredNode === forkList[1]?.id || hoveredNode === "origin") && (
+                                <path
+                                    d="M 50 0 L 50 100"
+                                    fill="none"
+                                    vectorEffect="non-scaling-stroke"
+                                    stroke={hasSimulated ? "#10B981" : "#7C3AED"}
+                                    strokeWidth={7}
+                                    strokeOpacity={hasSimulated ? 0.45 : 0.4}
+                                    className="transition-all duration-200"
+                                />
+                            )}
+                            {/* Branch 2 Core Line */}
                             <path
                                 d="M 50 0 L 50 100"
                                 fill="none"
@@ -320,7 +332,7 @@ export function LineageGraph() {
                                 }
                                 strokeWidth={
                                     hasSimulated || hoveredNode === forkList[1]?.id || hoveredNode === "origin"
-                                        ? 3
+                                        ? 2.5
                                         : 2
                                 }
                                 strokeOpacity={
@@ -330,17 +342,22 @@ export function LineageGraph() {
                                         ? 0.25
                                         : 0.7
                                 }
-                                filter={
-                                    hasSimulated
-                                        ? "url(#glowEmerald)"
-                                        : hoveredNode === forkList[1]?.id
-                                        ? "url(#glowViolet)"
-                                        : undefined
-                                }
                                 className="transition-all duration-200"
                             />
 
-                            {/* Branch to Fork 3 (Right Card Center: 83.33%) */}
+                            {/* Branch 3 (Right: 83.33%) - Wide Underlay Glow */}
+                            {(hoveredNode === forkList[2]?.id || hoveredNode === "origin") && (
+                                <path
+                                    d="M 50 0 C 50 50, 83.33 50, 83.33 100"
+                                    fill="none"
+                                    vectorEffect="non-scaling-stroke"
+                                    stroke="#7C3AED"
+                                    strokeWidth={7}
+                                    strokeOpacity={0.4}
+                                    className="transition-all duration-200"
+                                />
+                            )}
+                            {/* Branch 3 Core Line */}
                             <path
                                 d="M 50 0 C 50 50, 83.33 50, 83.33 100"
                                 fill="none"
@@ -352,7 +369,7 @@ export function LineageGraph() {
                                         ? "#A78BFA"
                                         : "#7C3AED"
                                 }
-                                strokeWidth={hoveredNode === forkList[2]?.id || hoveredNode === "origin" ? 3 : 2}
+                                strokeWidth={hoveredNode === forkList[2]?.id || hoveredNode === "origin" ? 2.5 : 2}
                                 strokeOpacity={
                                     hoveredNode === forkList[2]?.id || hoveredNode === "origin"
                                         ? 1
@@ -360,7 +377,6 @@ export function LineageGraph() {
                                         ? 0.25
                                         : 0.7
                                 }
-                                filter={hoveredNode === forkList[2]?.id ? "url(#glowViolet)" : undefined}
                                 className="transition-all duration-200"
                             />
                         </svg>
