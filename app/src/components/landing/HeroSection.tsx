@@ -64,9 +64,9 @@ export function HeroSection() {
             <div className="hidden lg:block pointer-events-auto">
                 {/* Snippet 1: useFork (Top-Left) */}
                 <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
+                    initial={{ x: -10 }}
+                    animate={{ x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
                     whileHover={{ scale: 1.05, y: -3, rotateZ: -1 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={(e) => handleCopy("fork", "const lineage = useFork(originId);", "useFork()", e)}
@@ -101,9 +101,9 @@ export function HeroSection() {
 
                 {/* Snippet 2: Vault Enclave (Bottom-Left) */}
                 <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
+                    initial={{ x: -10 }}
+                    animate={{ x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
                     whileHover={{ scale: 1.05, y: -3, rotateZ: -1 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={(e) => handleCopy("vault", "state: ENCRYPTED_LOCAL // Air-gapped Zero Telemetry", "Vault Enclave", e)}
@@ -139,9 +139,9 @@ export function HeroSection() {
             <div className="hidden lg:block pointer-events-auto">
                 {/* Snippet 3: CLI Pull (Top-Right) */}
                 <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
+                    initial={{ x: 10 }}
+                    animate={{ x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.15 }}
                     whileHover={{ scale: 1.05, y: -3, rotateZ: 1 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={(e) => handleCopy("cli", "$ cv pull #snip-rbac-jwt", "CLI Pull", e)}
@@ -176,9 +176,9 @@ export function HeroSection() {
 
                 {/* Snippet 4: authGuard (Bottom-Right) */}
                 <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
+                    initial={{ x: 10 }}
+                    animate={{ x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.25 }}
                     whileHover={{ scale: 1.05, y: -3, rotateZ: 1 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={(e) => handleCopy("guard", "const auth = await verifyJwt(token, secret);", "verifyJwt()", e)}
@@ -214,9 +214,9 @@ export function HeroSection() {
 
             {/* Announcement Pill Badge */}
             <motion.div
-                initial={{ y: -10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4 }}
+                initial={{ y: -6 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.35 }}
             >
                 <Link
                     href="/register"
@@ -236,9 +236,8 @@ export function HeroSection() {
             <div className="mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-text-primary sm:text-6xl md:text-7xl">
                 <div className="overflow-hidden">
                     <motion.h1
-                        initial={{ y: "110%", opacity: 0 }}
-                        animate={{ y: "0%", opacity: 1 }}
-                        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                        initial={{ y: "0%" }}
+                        animate={{ y: "0%" }}
                         className="block"
                     >
                         Every fork remembers
@@ -246,9 +245,8 @@ export function HeroSection() {
                 </div>
                 <div className="overflow-hidden mt-1">
                     <motion.span
-                        initial={{ y: "110%", opacity: 0 }}
-                        animate={{ y: "0%", opacity: 1 }}
-                        transition={{ duration: 0.55, delay: 0.13, ease: [0.16, 1, 0.3, 1] }}
+                        initial={{ y: "0%" }}
+                        animate={{ y: "0%" }}
                         className="block bg-gradient-to-r from-sky-400 via-cobalt to-indigo-400 bg-clip-text text-transparent animate-shimmer"
                     >
                         where it came from.
@@ -258,9 +256,8 @@ export function HeroSection() {
 
             {/* Subtitle */}
             <motion.p
-                initial={{ y: 12, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.45, delay: 0.22 }}
+                initial={{ y: 0 }}
+                animate={{ y: 0 }}
                 className="mt-5 max-w-2xl text-base md:text-lg text-text-secondary leading-relaxed"
             >
                 Save reusable functions, trace fork lineage back to original authors,
@@ -273,9 +270,8 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <motion.div
-                initial={{ y: 12, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.45, delay: 0.3 }}
+                initial={{ y: 0 }}
+                animate={{ y: 0 }}
                 className="mt-7 flex flex-wrap items-center justify-center gap-4"
             >
                 <Link
@@ -297,9 +293,8 @@ export function HeroSection() {
 
             {/* Feature Highlights Pills */}
             <motion.div
-                initial={{ y: 10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.45, delay: 0.38 }}
+                initial={{ y: 0 }}
+                animate={{ y: 0 }}
                 className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-text-secondary"
             >
                 <div className="group flex items-center gap-2 font-medium transition-all hover:-translate-y-0.5 cursor-default">

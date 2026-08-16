@@ -183,10 +183,10 @@ export function LandingFooter() {
             {/* 1. Main CTA Section */}
             <section className="mx-auto max-w-5xl px-4 pt-16 pb-12 w-full">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ y: 0 }}
+                    whileInView={{ y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.35 }}
                     className="group relative overflow-hidden rounded-3xl border border-neutral-200/80 bg-bg-surface/80 p-8 md:p-14 text-center text-text-primary shadow-2xl backdrop-blur-xl dark:border-neutral-800/80 dark:bg-bg-surface/75"
                 >
                     {/* Ambient Glow Elements */}

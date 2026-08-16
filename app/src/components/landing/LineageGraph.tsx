@@ -195,8 +195,8 @@ export function LineageGraph() {
                     {/* 1. Origin Node with Entrance Animation & Hover State */}
                     <motion.div
                         variants={{
-                            hidden: { scale: 0.92, y: -15, opacity: 0 },
-                            visible: { scale: 1, y: 0, opacity: 1, transition: { duration: 0.45, ease: "easeOut" } },
+                            hidden: { scale: 0.98, y: 0 },
+                            visible: { scale: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
                         }}
                         onMouseEnter={() => setHoveredNode("origin")}
                         onMouseLeave={() => setHoveredNode(null)}
