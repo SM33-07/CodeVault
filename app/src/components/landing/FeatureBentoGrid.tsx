@@ -363,10 +363,7 @@ export function FeatureBentoGrid() {
                     /* 1. Symmetrical 2x2 Balanced Grid View */
                     <motion.div
                         layout
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.4 }}
+                        transition={{ duration: 0.3 }}
                         className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch"
                     >
                         {featureCards.map((card) => (
@@ -409,10 +406,7 @@ export function FeatureBentoGrid() {
                     /* 2. 3D Morphing Card Stack View */
                     <motion.div
                         layout
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.4 }}
+                        transition={{ duration: 0.3 }}
                         className="relative flex flex-col items-center justify-center py-6 min-h-[460px]"
                     >
                         <div className="relative w-full max-w-xl h-[420px] flex items-center justify-center [perspective:1000px]">

@@ -162,9 +162,9 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Email */}
                 <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.35 + staggerDelay * 0 }}
+                    initial={{ x: -6 }}
+                    animate={{ x: 0 }}
+                    transition={{ delay: 0.15 + staggerDelay * 0 }}
                 >
                     <label
                         htmlFor="login-email"
@@ -188,9 +188,9 @@ export default function LoginPage() {
 
                 {/* Password */}
                 <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.35 + staggerDelay * 1 }}
+                    initial={{ x: -6 }}
+                    animate={{ x: 0 }}
+                    transition={{ delay: 0.15 + staggerDelay * 1 }}
                 >
                     <label
                         htmlFor="login-password"
@@ -226,9 +226,9 @@ export default function LoginPage() {
 
                 {/* Remember me & Forgot password */}
                 <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.35 + staggerDelay * 2 }}
+                    initial={{ x: -6 }}
+                    animate={{ x: 0 }}
+                    transition={{ delay: 0.15 + staggerDelay * 2 }}
                     className="flex items-center justify-between"
                 >
                     <label className="flex cursor-pointer items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
@@ -250,9 +250,9 @@ export default function LoginPage() {
 
                 {/* Submit */}
                 <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
+                    initial={{ y: 8 }}
+                    animate={{ y: 0 }}
+                    transition={{ delay: 0.25 }}
                 >
                     <button
                         type="submit"

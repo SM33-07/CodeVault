@@ -123,9 +123,9 @@ export default function AuthLayout({
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 dark:from-neutral-950 dark:via-neutral-900 dark:to-indigo-950/20" />
 
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    initial={{ y: 15 }}
+                    animate={{ y: 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                     className="relative z-10 w-full max-w-[420px]"
                 >
                     {/* Logo */}

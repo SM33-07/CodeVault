@@ -223,9 +223,9 @@ export default function RegisterPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Display Name */}
                 <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.35 + staggerDelay * 0 }}
+                    initial={{ x: -6 }}
+                    animate={{ x: 0 }}
+                    transition={{ delay: 0.15 + staggerDelay * 0 }}
                 >
                     <label
                         htmlFor="register-name"
@@ -249,9 +249,9 @@ export default function RegisterPage() {
 
                 {/* Email */}
                 <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.35 + staggerDelay * 1 }}
+                    initial={{ x: -6 }}
+                    animate={{ x: 0 }}
+                    transition={{ delay: 0.15 + staggerDelay * 1 }}
                 >
                     <label
                         htmlFor="register-email"
@@ -275,9 +275,9 @@ export default function RegisterPage() {
 
                 {/* Password */}
                 <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.35 + staggerDelay * 2 }}
+                    initial={{ x: -6 }}
+                    animate={{ x: 0 }}
+                    transition={{ delay: 0.15 + staggerDelay * 2 }}
                 >
                     <label
                         htmlFor="register-password"
@@ -314,9 +314,9 @@ export default function RegisterPage() {
 
                 {/* Confirm Password */}
                 <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.35 + staggerDelay * 3 }}
+                    initial={{ x: -6 }}
+                    animate={{ x: 0 }}
+                    transition={{ delay: 0.15 + staggerDelay * 3 }}
                 >
                     <label
                         htmlFor="register-confirm-password"
@@ -367,9 +367,9 @@ export default function RegisterPage() {
 
                 {/* Terms */}
                 <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.35 + staggerDelay * 4 }}
+                    initial={{ x: -6 }}
+                    animate={{ x: 0 }}
+                    transition={{ delay: 0.15 + staggerDelay * 4 }}
                 >
                     <label className="flex cursor-pointer items-start gap-2.5 text-sm text-neutral-600 dark:text-neutral-400">
                         <input
@@ -399,9 +399,9 @@ export default function RegisterPage() {
 
                 {/* Submit */}
                 <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
+                    initial={{ y: 8 }}
+                    animate={{ y: 0 }}
+                    transition={{ delay: 0.25 }}
                 >
                     <button
                         type="submit"

@@ -63,8 +63,8 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 15 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true }}
             whileHover={{
                 y: -4,

@@ -88,9 +88,9 @@ export function LineageGraph() {
             <div className="relative mt-8 flex flex-col items-center">
                 {/* 1. Origin Node */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9, y: -10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
+                    initial={{ scale: 0.96, y: -10 }}
+                    animate={{ scale: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
                     className="relative z-10 w-full max-w-sm rounded-2xl border-2 border-amber-500/60 bg-gradient-to-br from-amber-500/10 via-white to-white p-4 shadow-lg dark:from-amber-950/40 dark:via-neutral-900 dark:to-neutral-900 dark:border-amber-500/50"
                 >
                     <div className="flex items-center justify-between">
@@ -144,9 +144,9 @@ export function LineageGraph() {
                             stroke="url(#lineageGlow)"
                             strokeWidth="2.5"
                             strokeDasharray="4 2"
-                            initial={{ pathLength: 0, opacity: 0 }}
-                            animate={{ pathLength: 1, opacity: 1 }}
-                            transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 1.2, ease: "easeOut", delay: 0.1 }}
                         />
 
                         {/* Branch to Fork 2 (Center) */}
@@ -155,9 +155,9 @@ export function LineageGraph() {
                             fill="none"
                             stroke="#E0A458"
                             strokeWidth="2.5"
-                            initial={{ pathLength: 0, opacity: 0 }}
-                            animate={{ pathLength: 1, opacity: 1 }}
-                            transition={{ duration: 1.0, ease: "easeOut", delay: 0.3 }}
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 1.0, ease: "easeOut", delay: 0.2 }}
                         />
 
                         {/* Branch to Fork 3 (Right) */}
@@ -167,9 +167,9 @@ export function LineageGraph() {
                             stroke="url(#lineageGlow)"
                             strokeWidth="2.5"
                             strokeDasharray="4 2"
-                            initial={{ pathLength: 0, opacity: 0 }}
-                            animate={{ pathLength: 1, opacity: 1 }}
-                            transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
                         />
                     </svg>
                 </div>
@@ -179,9 +179,9 @@ export function LineageGraph() {
                     {FORK_NODES.map((fork, idx) => (
                         <motion.div
                             key={fork.id}
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.5 + idx * 0.15 }}
+                            initial={{ y: 15 }}
+                            animate={{ y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.2 + idx * 0.1 }}
                             whileHover={{ y: -3, transition: { duration: 0.2 } }}
                             onClick={() => setSelectedNode(fork.id)}
                             className={`group relative cursor-pointer rounded-2xl border bg-white p-4 transition-all duration-300 dark:bg-neutral-900 ${

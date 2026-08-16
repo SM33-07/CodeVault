@@ -31,9 +31,9 @@ export function HeroSection() {
 
             {/* Announcement Pill Badge */}
             <motion.div
-                initial={{ opacity: 0, y: -15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                initial={{ y: -10 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.4 }}
             >
                 <Link
                     href="/register"
@@ -51,9 +51,9 @@ export function HeroSection() {
 
             {/* Main Headline */}
             <motion.h1
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
+                initial={{ y: 12 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.45, delay: 0.05 }}
                 className="mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-6xl md:text-7xl dark:text-white"
             >
                 Every fork remembers <br />
@@ -64,9 +64,9 @@ export function HeroSection() {
 
             {/* Subtitle */}
             <motion.p
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                initial={{ y: 12 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.45, delay: 0.1 }}
                 className="mt-5 max-w-2xl text-base md:text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed"
             >
                 The self-hostable home for code snippets. Save reusable functions,
@@ -84,9 +84,9 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+                initial={{ y: 12 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.45, delay: 0.15 }}
                 className="mt-7 flex flex-wrap items-center justify-center gap-4"
             >
                 <Link
@@ -109,9 +109,9 @@ export function HeroSection() {
 
             {/* Feature Highlights Pills */}
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
+                initial={{ y: 10 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.45, delay: 0.2 }}
                 className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-neutral-500 dark:text-neutral-400"
             >
                 <div className="flex items-center gap-1.5 font-medium">
