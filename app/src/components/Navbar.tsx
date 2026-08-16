@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Moon, Plus, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useScroll, useMotionValueEvent } from "framer-motion";
 
 import {
     Navbar,
@@ -26,6 +27,13 @@ export default function CodeVaultNavbar() {
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
+
+    const { scrollY } = useScroll();
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useMotionValueEvent(scrollY, "change", (latest: number) => {
+        setIsScrolled(latest > 50);
+    });
 
     const token = useAuthStore((state) => state.token);
     const user = useAuthStore((state) => state.user);
@@ -56,39 +64,20 @@ export default function CodeVaultNavbar() {
         setTheme(theme === "dark" ? "light" : "dark");
     };
 
-    const navItems = isAuthenticated
-        ? [
-            {
-                name: "Home",
-                link: "/",
-            },
-            {
-                name: "Dashboard",
-                link: "/dashboard",
-            },
-            {
-                name: "Library",
-                link: "/snippets",
-            },
-            {
-                name: "Profile",
-                link: `/profile/${user?.id || "me"}`,
-            },
-        ]
-        : [
-            {
-                name: "Home",
-                link: "/",
-            },
-            {
-                name: "Library",
-                link: "/snippets",
-            },
-            {
-                name: "Dashboard",
-                link: "/dashboard",
-            },
-        ];
+    const navItems = [
+        {
+            name: "Home",
+            link: "/",
+        },
+        {
+            name: "Library",
+            link: "/snippets",
+        },
+        {
+            name: "Dashboard",
+            link: "/dashboard",
+        },
+    ];
 
     return (
         <Navbar>
@@ -98,13 +87,13 @@ export default function CodeVaultNavbar() {
 
                 <NavItems items={navItems} />
 
-                <div className="flex items-center gap-2">
+                <div className="relative z-20 flex items-center gap-2 shrink-0">
                     {/* Theme Toggle */}
                     {mounted && (
                         <button
                             type="button"
                             onClick={toggleTheme}
-                            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
                             aria-label="Toggle theme"
                         >
                             {theme === "dark" ? (
@@ -117,34 +106,41 @@ export default function CodeVaultNavbar() {
 
                     {isAuthenticated && user ? (
                         <>
-                            {/* New Snippet */}
-                            <NavbarButton
-                                variant="primary"
-                                onClick={() => router.push("/snippets/new")}
-                            >
-                                <Plus className="mr-2 h-4 w-4" />
-                                New Snippet
-                            </NavbarButton>
-
-                            {/* User */}
-                            <NavbarButton
-                                variant="secondary"
+                            {/* User Profile Pill: perfectly aligned at max width, avatar-only on scroll */}
+                            <button
+                                type="button"
                                 onClick={() => router.push(`/profile/${user.id}`)}
+                                className={`flex h-9 items-center rounded-full border border-neutral-200/80 bg-bg-surface text-text-primary transition-all duration-200 hover:border-cobalt hover:bg-bg-elevated hover:text-cobalt dark:border-neutral-700/80 shadow-xs ${
+                                    isScrolled ? "w-9 justify-center p-0" : "px-2.5 gap-2"
+                                }`}
+                                title={displayName}
                             >
-                                <span className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold dark:bg-neutral-700">
+                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cobalt/15 text-xs font-bold text-cobalt border border-cobalt/30">
                                     {(displayName ?? "?").charAt(0).toUpperCase()}
                                 </span>
 
-                                <span className="max-w-[140px] truncate">
-                                    {displayName}
-                                </span>
+                                {!isScrolled && (
+                                    <span className="max-w-[130px] truncate text-xs font-semibold">
+                                        {displayName}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* New */}
+                            <NavbarButton
+                                variant="primary"
+                                onClick={() => router.push("/snippets/new")}
+                                className="h-9 px-3.5 text-xs"
+                            >
+                                <Plus className="mr-1.5 h-4 w-4" />
+                                New
                             </NavbarButton>
 
                             {/* Logout */}
                             <button
                                 type="button"
                                 onClick={handleLogout}
-                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
                                 aria-label="Logout"
                             >
                                 <LogOut className="h-4 w-4" />
@@ -155,6 +151,7 @@ export default function CodeVaultNavbar() {
                             <NavbarButton
                                 variant="secondary"
                                 onClick={() => router.push("/login")}
+                                className="h-9 px-3 text-xs"
                             >
                                 Login
                             </NavbarButton>
@@ -162,6 +159,7 @@ export default function CodeVaultNavbar() {
                             <NavbarButton
                                 variant="primary"
                                 onClick={() => router.push("/register")}
+                                className="h-9 px-4 text-xs"
                             >
                                 Register
                             </NavbarButton>
@@ -181,7 +179,7 @@ export default function CodeVaultNavbar() {
                             <button
                                 type="button"
                                 onClick={toggleTheme}
-                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
                                 aria-label="Toggle theme"
                             >
                                 {theme === "dark" ? (
@@ -210,7 +208,7 @@ export default function CodeVaultNavbar() {
                             key={`mobile-link-${index}`}
                             href={item.link}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex w-full items-center px-3 py-2 text-sm font-medium rounded-lg text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 transition-colors"
+                            className="flex w-full items-center px-3 py-2 text-sm font-medium rounded-lg text-text-secondary hover:text-cobalt hover:bg-bg-elevated transition-colors"
                         >
                             <span>{item.name}</span>
                         </Link>

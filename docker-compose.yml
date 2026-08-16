@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: codevault-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: codevault
+      POSTGRES_PASSWORD: codevault_secure_password
+      POSTGRES_DB: codevault_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U codevault -d codevault_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: codevault-backend
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 4001
+      NODE_ENV: production
+      DATABASE_URL: postgres://8f385c42b59818cd0b2394f500157cbce6e2862b039ffe283919baddb9e56690:sk_xfw1diKigfYZNwvyUGn2S@db.prisma.io:5432/postgres?sslmode=require
+      JWT_SECRET: ${JWT_SECRET:-yM7#qP2$vL9@eR5!xN8@wK4%uF1^dS6*zA3&Jk91}
+      JWT_EXPIRES_IN: 7d
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:3000}
+      SERVER_URL: ${SERVER_URL:-http://localhost:4001}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-AQ.Ab8RN6JXpV79NJWAUtjdim1tl1hJnLcednvzE_fDi9qj5iNqbA}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-1087539877985-uv2h8qrn2tgt628fj343so5l6fgmjog0.apps.googleusercontent.com}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-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}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-Ov23liRwee8qyLg8qDPF}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-2f20187cfb63f185e2c7c6d355bdac9eb2e1a251}
+    ports:
+      - "4001:4001"
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: codevault-frontend
+    restart: always
+    depends_on:
+      - server
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4001}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-1087539877985-uv2h8qrn2tgt628fj343so5l6fgmjog0.apps.googleusercontent.com}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-Ov23liRwee8qyLg8qDPF}
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:

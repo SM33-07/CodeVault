@@ -117,8 +117,8 @@ export default function SnippetsLibraryPage() {
 
                     <div className="flex items-center gap-3">
                         <Link
-                            href="/dashboard"
-                            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700 transition-all active:scale-95"
+                            href="/snippets/new"
+                            className="inline-flex items-center gap-2 rounded-xl bg-cobalt px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-cobalt/20 hover:bg-cobalt-hover active:bg-cobalt-active transition-all active:scale-95"
                         >
                             <Plus className="h-4 w-4" />
                             <span>Create Snippet</span>
@@ -127,19 +127,19 @@ export default function SnippetsLibraryPage() {
                 </div>
 
                 {/* Filter Controls Bar (Search + Language Tabs + Tags) */}
-                <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70 space-y-4">
+                <div className="rounded-2xl border border-neutral-200/80 bg-bg-surface p-4 shadow-sm dark:border-neutral-800 space-y-4">
                     <div className="flex flex-col md:flex-row items-center gap-3">
                         {/* Search Bar */}
                         <div className="relative flex-1 w-full">
-                            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
                             <input
                                 type="text"
                                 placeholder="Search by title, description, or #tag (Ctrl+K)..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full rounded-xl border border-neutral-200 bg-neutral-50 py-2.5 pl-10 pr-12 text-xs text-neutral-900 outline-none transition-all focus:border-indigo-500 focus:bg-white dark:border-neutral-800 dark:bg-neutral-800 dark:text-white dark:focus:bg-neutral-900"
+                                className="w-full rounded-xl border border-neutral-200 bg-bg-elevated py-2.5 pl-10 pr-12 text-xs text-text-primary outline-none transition-all focus:border-cobalt dark:border-neutral-800"
                             />
-                            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded border border-neutral-200 bg-white px-1.5 py-0.5 text-[10px] font-mono text-neutral-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400">
+                            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded border border-neutral-200 bg-bg-surface px-1.5 py-0.5 text-[10px] font-mono text-text-secondary dark:border-neutral-700">
                                 Ctrl+K
                             </kbd>
                         </div>
@@ -149,7 +149,7 @@ export default function SnippetsLibraryPage() {
                             <select
                                 value={selectedLanguage}
                                 onChange={(e) => setSelectedLanguage(e.target.value)}
-                                className="w-full md:w-44 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-xs font-medium text-neutral-800 outline-none dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-200"
+                                className="w-full md:w-44 rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2.5 text-xs font-medium text-text-primary outline-none dark:border-neutral-800"
                             >
                                 {languagesList.map((lang) => (
                                     <option key={lang} value={lang}>
@@ -168,10 +168,10 @@ export default function SnippetsLibraryPage() {
                                 <button
                                     key={lang}
                                     onClick={() => setSelectedLanguage(lang)}
-                                    className={`rounded-full px-3 py-1 text-xs font-medium transition-all shrink-0 ${
+                                    className={`rounded-full px-3 py-1 text-xs font-medium transition-all shrink-0 border ${
                                         isActive
-                                            ? "bg-indigo-600 text-white shadow-xs"
-                                            : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                            ? "bg-cobalt text-white border-cobalt shadow-xs"
+                                            : "bg-bg-elevated text-text-secondary hover:border-cobalt hover:text-cobalt border-neutral-200 dark:border-neutral-800"
                                     }`}
                                 >
                                     {lang}
@@ -180,7 +180,7 @@ export default function SnippetsLibraryPage() {
                         })}
 
                         {selectedTag && (
-                            <div className="flex items-center gap-1.5 rounded-full bg-indigo-50 border border-indigo-200 px-3 py-1 text-xs font-medium text-indigo-700 dark:bg-indigo-950 dark:border-indigo-800 dark:text-indigo-300 shrink-0">
+                            <div className="flex items-center gap-1.5 rounded-full bg-bg-elevated border border-cobalt/40 px-3 py-1 text-xs font-medium text-cobalt shrink-0">
                                 <span>Tag: {selectedTag}</span>
                                 <button
                                     onClick={() => setSelectedTag(null)}
@@ -193,13 +193,13 @@ export default function SnippetsLibraryPage() {
                     </div>
                 </div>
 
-                {/* Loading State Skeletons (Step 11 Spec) */}
+                {/* Loading State Skeletons */}
                 {isLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[1, 2, 3, 4, 5, 6].map((idx) => (
                             <div
                                 key={idx}
-                                className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900 space-y-4"
+                                className="rounded-2xl border border-neutral-200 bg-bg-surface p-6 dark:border-neutral-800 space-y-4"
                             >
                                 <div className="flex justify-between">
                                     <Skeleton className="h-5 w-20 rounded-full" />
@@ -232,14 +232,20 @@ export default function SnippetsLibraryPage() {
                                     key={snippet.id}
                                     whileHover={{ y: -4 }}
                                     transition={{ duration: 0.2 }}
-                                    className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-xs transition-all hover:border-neutral-300 hover:shadow-xl dark:border-neutral-800 dark:bg-neutral-900/90 dark:hover:border-neutral-700"
+                                    className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-neutral-200/80 bg-bg-surface p-6 shadow-xs transition-all hover:border-cobalt/60 hover:shadow-xl dark:border-neutral-800"
                                 >
                                     <div>
-                                        {/* Card Header: Language badge + actions */}
+                                        {/* Card Header: Language badge + status + actions */}
                                         <div className="flex items-center justify-between gap-2">
-                                            <span className="rounded-md bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
-                                                {langName}
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="rounded-md bg-bg-elevated border border-neutral-200 dark:border-neutral-800 px-2.5 py-0.5 text-xs font-semibold text-text-primary">
+                                                    {langName}
+                                                </span>
+                                                <span className="inline-flex items-center gap-1 badge-mint rounded-full px-2 py-0.5 text-[10px] font-semibold">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                    <span>Public</span>
+                                                </span>
+                                            </div>
 
                                             <div className="flex items-center gap-1.5">
                                                 <button
@@ -251,11 +257,11 @@ export default function SnippetsLibraryPage() {
                                                             e
                                                         )
                                                     }
-                                                    className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200 transition-colors"
+                                                    className="flex h-7 w-7 items-center justify-center rounded-lg text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors"
                                                     title="Copy Code"
                                                 >
                                                     {copiedId === snippet.id ? (
-                                                        <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                                        <Check className="h-3.5 w-3.5 text-emerald-400" />
                                                     ) : (
                                                         <Copy className="h-3.5 w-3.5" />
                                                     )}
@@ -265,31 +271,31 @@ export default function SnippetsLibraryPage() {
 
                                         {/* Title & Description */}
                                         <Link href={`/snippets/${snippet.id}`} className="block mt-3">
-                                            <h3 className="text-base font-bold text-neutral-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
+                                            <h3 className="text-base font-bold text-text-primary group-hover:text-cobalt transition-colors line-clamp-1">
                                                 {snippetTitle}
                                             </h3>
-                                            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
+                                            <p className="mt-1 text-xs text-text-secondary line-clamp-2 leading-relaxed">
                                                 {snippet.description || "No description provided."}
                                             </p>
                                         </Link>
 
                                         {/* Code Peek Box */}
-                                        <div className="mt-4 overflow-hidden rounded-xl bg-neutral-950 p-3 font-mono text-[11px] text-neutral-300 border border-neutral-800">
-                                            <pre className="line-clamp-3 text-neutral-300 leading-relaxed">
+                                        <div className="mt-4 overflow-hidden rounded-xl bg-bg-base p-3 font-mono text-[11px] text-text-primary border border-neutral-200/80 dark:border-neutral-800">
+                                            <pre className="line-clamp-3 leading-relaxed">
                                                 {codeStr}
                                             </pre>
                                         </div>
                                     </div>
 
                                     {/* Bottom Metadata & Stats */}
-                                    <div className="mt-5 pt-3 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between text-xs">
+                                    <div className="mt-5 pt-3 border-t border-neutral-200/60 dark:border-neutral-800/80 flex items-center justify-between text-xs">
                                         {/* Tag pills */}
                                         <div className="flex flex-wrap items-center gap-1">
                                             {tagsList.slice(0, 2).map((t: string) => (
                                                 <span
                                                     key={t}
                                                     onClick={() => setSelectedTag(t)}
-                                                    className="rounded bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 text-[10px] text-neutral-500 hover:text-indigo-600 cursor-pointer"
+                                                    className="rounded bg-bg-elevated border border-neutral-200 dark:border-neutral-800 px-1.5 py-0.5 text-[10px] text-text-secondary hover:border-cobalt hover:text-cobalt cursor-pointer transition-colors"
                                                 >
                                                     {t.startsWith("#") ? t : `#${t}`}
                                                 </span>
@@ -297,13 +303,13 @@ export default function SnippetsLibraryPage() {
                                         </div>
 
                                         {/* Stats (views / forks) */}
-                                        <div className="flex items-center gap-3 text-neutral-400 text-[11px]">
+                                        <div className="flex items-center gap-3 text-text-secondary text-[11px]">
                                             <span className="flex items-center gap-1">
                                                 <Eye className="h-3 w-3" />
                                                 {snippet.viewCount || 0}
                                             </span>
-                                            <span className="flex items-center gap-1">
-                                                <GitFork className="h-3 w-3" />
+                                            <span className="flex items-center gap-1 rounded bg-violet/10 border border-violet/20 px-1.5 py-0.5 text-[10px] font-semibold text-violet">
+                                                <GitFork className="h-3 w-3 text-violet" />
                                                 {snippet.forkCount || 0}
                                             </span>
                                         </div>
@@ -317,16 +323,16 @@ export default function SnippetsLibraryPage() {
                 {/* Empty State */}
                 {!isLoading && snippets.length === 0 && (
                     <div className="rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-800 p-12 text-center">
-                        <Code2 className="mx-auto h-10 w-10 text-neutral-400" />
-                        <h3 className="mt-3 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                        <Code2 className="mx-auto h-10 w-10 text-text-secondary" />
+                        <h3 className="mt-3 text-sm font-semibold text-text-primary">
                             No snippets found
                         </h3>
-                        <p className="mt-1 text-xs text-neutral-500">
+                        <p className="mt-1 text-xs text-text-secondary">
                             Try adjusting your search terms or create a new snippet.
                         </p>
                         <Link
-                            href="/dashboard"
-                            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700"
+                            href="/snippets/new"
+                            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-cobalt px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-cobalt-hover active:bg-cobalt-active"
                         >
                             <Plus className="h-3.5 w-3.5" />
                             <span>Create Your First Snippet</span>
