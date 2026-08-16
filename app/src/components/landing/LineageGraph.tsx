@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { GitFork, Sparkles, User, ArrowUpRight, Code, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
@@ -54,13 +54,41 @@ const FORK_NODES: LineageNode[] = [
 
 export function LineageGraph() {
     const [selectedNode, setSelectedNode] = useState<string | null>(null);
+    const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+    const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        setTilt({
+            x: -y * 8,
+            y: x * 10,
+        });
+    };
+
+    const handleMouseLeave = () => {
+        setTilt({ x: 0, y: 0 });
+        setHoveredNode(null);
+    };
 
     return (
-        <div className="relative mx-auto mt-10 w-full max-w-4xl rounded-3xl border border-neutral-200/80 bg-bg-surface/80 p-6 md:p-8 shadow-xl backdrop-blur-xl dark:border-neutral-800/80">
+        <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{
+                transform: `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+                transition: "transform 0.25s ease-out, box-shadow 0.3s ease-out",
+            }}
+            className="relative mx-auto mt-10 w-full max-w-4xl rounded-3xl border border-neutral-200/80 bg-bg-surface/85 p-6 md:p-8 shadow-xl backdrop-blur-xl dark:border-neutral-800/80 hover:shadow-2xl hover:shadow-violet/20 hover:border-violet/40"
+        >
             {/* Header / Lineage Thesis Badge */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-neutral-200/60 dark:border-neutral-800/60">
                 <div className="flex items-center gap-2.5">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 text-violet border border-violet/30">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 text-violet border border-violet/30 shadow-xs">
                         <GitFork className="h-4 w-4" />
                     </div>
                     <div>
@@ -69,7 +97,7 @@ export function LineageGraph() {
                                 Provenance & Fork Lineage Graph
                             </h3>
                             <span className="rounded-full bg-violet/10 px-2 py-0.5 text-[10px] font-semibold text-violet border border-violet/20">
-                                --color-violet
+                                Signature Provenance
                             </span>
                         </div>
                         <p className="text-xs text-text-secondary">
@@ -80,24 +108,31 @@ export function LineageGraph() {
 
                 <div className="flex items-center gap-2 text-xs font-mono text-text-secondary">
                     <span className="flex h-2 w-2 rounded-full bg-mint animate-pulse" />
-                    <span>Realtime Lineage Thread</span>
+                    <span className="text-mint font-semibold">Realtime Lineage Thread</span>
                 </div>
             </div>
 
             {/* Tree Container */}
             <div className="relative mt-8 flex flex-col items-center">
-                {/* 1. Origin Node */}
+                {/* 1. Origin Node with Entrance Animation & Hover State */}
                 <motion.div
-                    initial={{ scale: 0.96, y: -10 }}
-                    animate={{ scale: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="relative z-10 w-full max-w-sm rounded-2xl border-2 border-violet/70 bg-gradient-to-br from-violet/15 via-bg-surface to-bg-surface p-4 shadow-lg shadow-violet/10"
+                    variants={{
+                        hidden: { scale: 0.92, y: -15, opacity: 0 },
+                        visible: { scale: 1, y: 0, opacity: 1, transition: { duration: 0.45, ease: "easeOut" } },
+                    }}
+                    onMouseEnter={() => setHoveredNode("origin")}
+                    onMouseLeave={() => setHoveredNode(null)}
+                    className={`relative z-10 w-full max-w-sm rounded-2xl border-2 transition-all duration-300 bg-gradient-to-br from-violet/15 via-bg-surface to-bg-surface p-4 shadow-lg ${
+                        hoveredNode === "origin"
+                            ? "border-violet bg-violet/20 shadow-violet/25 scale-[1.02]"
+                            : "border-violet/70 shadow-violet/10"
+                    }`}
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <span className="flex h-2 w-2 rounded-full bg-violet" />
+                            <span className="flex h-2 w-2 rounded-full bg-violet animate-ping" />
                             <span className="text-[11px] font-bold uppercase tracking-wider text-violet">
-                                Origin Source
+                                Origin Source Root
                             </span>
                         </div>
                         <span className="rounded-md bg-bg-elevated px-2 py-0.5 text-[10px] font-mono font-medium text-text-secondary">
@@ -117,13 +152,17 @@ export function LineageGraph() {
                             <User className="h-3 w-3 text-violet" />
                             {ORIGIN_NODE.author}
                         </span>
-                        <span className="text-violet font-semibold">
+                        <motion.span
+                            animate={{ opacity: [1, 0.55, 1] }}
+                            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+                            className="text-violet font-semibold"
+                        >
                             3 Active Lineages
-                        </span>
+                        </motion.span>
                     </div>
                 </motion.div>
 
-                {/* 2. SVG Animated Lineage Threads (Violet Signature Draw-In) */}
+                {/* 2. SVG Animated Lineage Threads with Dynamic Hover Thickening */}
                 <div className="relative w-full h-20 md:h-24 my-1">
                     <svg
                         className="w-full h-full overflow-visible pointer-events-none"
@@ -135,69 +174,109 @@ export function LineageGraph() {
                                 <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.9" />
                                 <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.4" />
                             </linearGradient>
+                            <linearGradient id="lineageActiveGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#A78BFA" stopOpacity="1" />
+                                <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.8" />
+                            </linearGradient>
                         </defs>
 
                         {/* Branch to Fork 1 (Left) */}
                         <motion.path
                             d="M 400 0 C 400 50, 160 50, 160 100"
                             fill="none"
-                            stroke="url(#lineageGlow)"
-                            strokeWidth="2.5"
+                            stroke={hoveredNode === "fork-1" ? "url(#lineageActiveGlow)" : "url(#lineageGlow)"}
+                            strokeWidth={hoveredNode === "fork-1" ? "3.5" : "2.5"}
                             strokeDasharray="4 2"
-                            initial={{ pathLength: 0 }}
-                            animate={{ pathLength: 1 }}
-                            transition={{ duration: 1.2, ease: "easeOut", delay: 0.1 }}
+                            variants={{
+                                hidden: { pathLength: 0, opacity: 0 },
+                                visible: { pathLength: 1, opacity: 1, transition: { duration: 1.1, ease: "easeOut", delay: 0.3 } },
+                            }}
                         />
 
                         {/* Branch to Fork 2 (Center) */}
                         <motion.path
                             d="M 400 0 L 400 100"
                             fill="none"
-                            stroke="#7C3AED"
-                            strokeWidth="2.5"
-                            initial={{ pathLength: 0 }}
-                            animate={{ pathLength: 1 }}
-                            transition={{ duration: 1.0, ease: "easeOut", delay: 0.2 }}
+                            stroke={hoveredNode === "fork-2" ? "#A78BFA" : "#7C3AED"}
+                            strokeWidth={hoveredNode === "fork-2" ? "3.5" : "2.5"}
+                            variants={{
+                                hidden: { pathLength: 0, opacity: 0 },
+                                visible: { pathLength: 1, opacity: 1, transition: { duration: 0.9, ease: "easeOut", delay: 0.45 } },
+                            }}
                         />
 
                         {/* Branch to Fork 3 (Right) */}
                         <motion.path
                             d="M 400 0 C 400 50, 640 50, 640 100"
                             fill="none"
-                            stroke="url(#lineageGlow)"
-                            strokeWidth="2.5"
+                            stroke={hoveredNode === "fork-3" ? "url(#lineageActiveGlow)" : "url(#lineageGlow)"}
+                            strokeWidth={hoveredNode === "fork-3" ? "3.5" : "2.5"}
                             strokeDasharray="4 2"
-                            initial={{ pathLength: 0 }}
-                            animate={{ pathLength: 1 }}
-                            transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+                            variants={{
+                                hidden: { pathLength: 0, opacity: 0 },
+                                visible: { pathLength: 1, opacity: 1, transition: { duration: 1.1, ease: "easeOut", delay: 0.6 } },
+                            }}
                         />
                     </svg>
                 </div>
 
-                {/* 3. Fork Nodes Row */}
+                {/* 3. Fork Nodes Row with Overshoot Spring Entrance & Interactive Tooltips */}
                 <div className="grid w-full grid-cols-1 md:grid-cols-3 gap-4">
                     {FORK_NODES.map((fork, idx) => (
                         <motion.div
                             key={fork.id}
-                            initial={{ y: 15 }}
-                            animate={{ y: 0 }}
-                            transition={{ duration: 0.4, delay: 0.2 + idx * 0.1 }}
-                            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                            variants={{
+                                hidden: { y: 30, opacity: 0, scale: 0.92 },
+                                visible: {
+                                    y: 0,
+                                    opacity: 1,
+                                    scale: 1,
+                                    transition: {
+                                        type: "spring",
+                                        stiffness: 280,
+                                        damping: 20,
+                                        delay: 0.9 + idx * 0.14,
+                                    },
+                                },
+                            }}
+                            whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
+                            onMouseEnter={() => setHoveredNode(fork.id)}
+                            onMouseLeave={() => setHoveredNode(null)}
                             onClick={() => setSelectedNode(fork.id)}
                             className={`group relative cursor-pointer rounded-2xl border bg-bg-surface p-4 transition-all duration-300 ${
                                 selectedNode === fork.id
-                                    ? "border-violet shadow-lg shadow-violet/15 ring-2 ring-violet/20"
-                                    : "border-neutral-200/80 hover:border-violet/60 dark:border-neutral-800 dark:hover:border-violet/50 shadow-sm hover:shadow-md"
+                                    ? "border-violet shadow-xl shadow-violet/20 ring-2 ring-violet/30"
+                                    : hoveredNode === fork.id
+                                    ? "border-violet/80 bg-violet/[0.04] shadow-lg shadow-violet/15"
+                                    : "border-neutral-200/80 hover:border-violet/60 dark:border-neutral-800 shadow-sm"
                             }`}
                         >
+                            {/* Interactive Tooltip Popover */}
+                            <AnimatePresence>
+                                {hoveredNode === fork.id && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                                        transition={{ duration: 0.15 }}
+                                        className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap rounded-lg bg-neutral-900 px-3 py-1.5 text-[11px] font-semibold text-white shadow-xl border border-violet/40 dark:bg-neutral-800"
+                                    >
+                                        <span>Inspect {fork.forkDiff}</span>
+                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-900 dark:border-t-neutral-800" />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
                             {/* Lineage Node Connector Dot */}
-                            <div className="absolute -top-2 left-1/2 -translate-x-1/2 h-3.5 w-3.5 rounded-full border-2 border-violet bg-bg-surface shadow-sm flex items-center justify-center">
+                            <div className={`absolute -top-2 left-1/2 -translate-x-1/2 h-3.5 w-3.5 rounded-full border-2 bg-bg-surface shadow-sm flex items-center justify-center transition-colors ${
+                                hoveredNode === fork.id ? "border-violet scale-125" : "border-violet/70"
+                            }`}>
                                 <div className="h-1.5 w-1.5 rounded-full bg-violet" />
                             </div>
 
                             <div className="flex items-center justify-between">
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold text-violet">
-                                    <GitFork className="h-3 w-3" />
+                                    <GitFork className="h-3 w-3 text-violet" />
                                     Fork #{idx + 1}
                                 </span>
                                 <span className="rounded-md bg-bg-elevated px-1.5 py-0.5 text-[10px] font-mono text-text-secondary">
@@ -226,6 +305,6 @@ export function LineageGraph() {
                     ))}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

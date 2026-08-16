@@ -87,7 +87,7 @@ export default function CodeVaultNavbar() {
 
                 <NavItems items={navItems} />
 
-                <div className="flex items-center gap-2">
+                <div className="relative z-20 flex items-center gap-2 shrink-0">
                     {/* Theme Toggle */}
                     {mounted && (
                         <button
@@ -106,28 +106,31 @@ export default function CodeVaultNavbar() {
 
                     {isAuthenticated && user ? (
                         <>
-                            {/* User: Full at max size, avatar-only on scroll */}
-                            <NavbarButton
-                                variant="secondary"
+                            {/* User Profile Pill: perfectly aligned at max width, avatar-only on scroll */}
+                            <button
+                                type="button"
                                 onClick={() => router.push(`/profile/${user.id}`)}
-                                className={isScrolled ? "p-1 rounded-full border border-neutral-200/80 dark:border-neutral-700/80" : "flex items-center"}
+                                className={`flex h-9 items-center rounded-full border border-neutral-200/80 bg-bg-surface text-text-primary transition-all duration-200 hover:border-cobalt hover:bg-bg-elevated hover:text-cobalt dark:border-neutral-700/80 shadow-xs ${
+                                    isScrolled ? "w-9 justify-center p-0" : "px-2.5 gap-2"
+                                }`}
                                 title={displayName}
                             >
-                                <span className={isScrolled ? "flex h-7 w-7 items-center justify-center rounded-full bg-bg-elevated text-xs font-semibold text-text-primary border border-neutral-700/50" : "mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-bg-elevated text-xs font-semibold text-text-primary border border-neutral-700/50"}>
+                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cobalt/15 text-xs font-bold text-cobalt border border-cobalt/30">
                                     {(displayName ?? "?").charAt(0).toUpperCase()}
                                 </span>
 
                                 {!isScrolled && (
-                                    <span className="max-w-[140px] truncate text-text-primary">
+                                    <span className="max-w-[130px] truncate text-xs font-semibold">
                                         {displayName}
                                     </span>
                                 )}
-                            </NavbarButton>
+                            </button>
 
                             {/* New */}
                             <NavbarButton
                                 variant="primary"
                                 onClick={() => router.push("/snippets/new")}
+                                className="h-9 px-3.5 text-xs"
                             >
                                 <Plus className="mr-1.5 h-4 w-4" />
                                 New
@@ -148,6 +151,7 @@ export default function CodeVaultNavbar() {
                             <NavbarButton
                                 variant="secondary"
                                 onClick={() => router.push("/login")}
+                                className="h-9 px-3 text-xs"
                             >
                                 Login
                             </NavbarButton>
@@ -155,6 +159,7 @@ export default function CodeVaultNavbar() {
                             <NavbarButton
                                 variant="primary"
                                 onClick={() => router.push("/register")}
+                                className="h-9 px-4 text-xs"
                             >
                                 Register
                             </NavbarButton>

@@ -522,7 +522,7 @@ export function CoverflowSnippetShowcase() {
                     </p>
                 </div>
 
-                {/* Filter Pills Bar */}
+                {/* Filter Pills Bar with Sliding layoutId Active Indicator */}
                 <div className="flex flex-wrap items-center justify-center gap-2">
                     {LANGUAGES.map((lang) => {
                         const count =
@@ -538,15 +538,22 @@ export function CoverflowSnippetShowcase() {
                                     setSelectedLanguage(lang);
                                     setActiveIndex(0);
                                 }}
-                                className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all border ${
+                                className={`relative flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                                     isSelected
-                                        ? "bg-cobalt text-white border-cobalt shadow-sm scale-105"
-                                        : "bg-bg-elevated text-text-secondary hover:border-cobalt hover:text-cobalt border-neutral-200 dark:border-neutral-800"
+                                        ? "text-white"
+                                        : "text-text-secondary hover:text-cobalt bg-bg-elevated border border-neutral-200 dark:border-neutral-800"
                                 }`}
                             >
-                                <span>{lang}</span>
+                                {isSelected && (
+                                    <motion.div
+                                        layoutId="activeCoverflowFilterPill"
+                                        className="absolute inset-0 rounded-xl bg-cobalt shadow-md shadow-cobalt/25"
+                                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                                    />
+                                )}
+                                <span className="relative z-10">{lang}</span>
                                 <span
-                                    className={`rounded-full px-1.5 py-0.2 text-[10px] ${
+                                    className={`relative z-10 rounded-full px-1.5 py-0.2 text-[10px] ${
                                         isSelected
                                             ? "bg-white/20 text-white"
                                             : "bg-bg-surface text-text-secondary"
@@ -559,25 +566,29 @@ export function CoverflowSnippetShowcase() {
                     })}
                 </div>
 
-                <div className="relative flex items-center justify-center min-h-[460px] py-6 [perspective:1200px]">
-                    <div className="relative flex w-full max-w-4xl items-center justify-center">
+                {/* 3D Coverflow Stage with Balanced Circular Offset */}
+                <div className="relative flex items-center justify-center min-h-[480px] py-6 [perspective:1200px]">
+                    <div className="relative flex w-full max-w-5xl items-center justify-center">
                         {visibleSnippets.map((snippet, index) => {
-                            const offset = index - activeIndex;
+                            const count = visibleSnippets.length;
+                            let offset = index - activeIndex;
+                            if (count > 3) {
+                                while (offset > count / 2) offset -= count;
+                                while (offset < -count / 2) offset += count;
+                            }
+
                             const isCenter = offset === 0;
                             const isVisible = Math.abs(offset) <= 2;
 
-                            if (!isVisible) return null;
-
-                            const rotateY = offset * -25;
+                            const rotateY = offset * -20;
                             const translateX = offset * 230;
-                            const scale = isCenter ? 1 : 1 - Math.abs(offset) * 0.15;
+                            const scale = isCenter ? 1 : Math.max(0.72, 1 - Math.abs(offset) * 0.14);
                             const zIndex = 20 - Math.abs(offset) * 5;
-                            const opacity = isCenter ? 1 : Math.max(0.4, 1 - Math.abs(offset) * 0.35);
+                            const opacity = isCenter ? 1 : isVisible ? Math.max(0.45, 1 - Math.abs(offset) * 0.32) : 0;
 
                             return (
                                 <motion.div
                                     key={snippet.id}
-                                    layoutId={`card-${snippet.id}`}
                                     onClick={() => {
                                         if (isCenter) {
                                             setSelectedSnippet(snippet);
@@ -595,17 +606,18 @@ export function CoverflowSnippetShowcase() {
                                     }}
                                     transition={{
                                         type: "spring",
-                                        stiffness: 260,
+                                        stiffness: 350,
                                         damping: 28,
+                                        mass: 0.6,
                                     }}
-                                    className={`absolute w-[320px] sm:w-[380px] cursor-pointer rounded-2xl border transition-shadow duration-300 ${
+                                    className={`group absolute w-[310px] sm:w-[360px] md:w-[380px] cursor-pointer rounded-2xl border ${
                                         isCenter
-                                            ? "border-cobalt bg-bg-surface shadow-2xl shadow-cobalt/20 ring-2 ring-cobalt/30"
-                                            : "border-neutral-200/70 bg-bg-surface/80 dark:border-neutral-800/70 shadow-lg hover:border-cobalt/50"
-                                    }`}
+                                            ? "border-cobalt bg-bg-surface shadow-2xl shadow-cobalt/25 ring-2 ring-cobalt/30 hover:-translate-y-1.5"
+                                            : "border-neutral-200/80 bg-bg-surface dark:border-neutral-800/80 shadow-lg hover:border-cobalt/50 hover:opacity-90 hover:-translate-y-1"
+                                    } ${isVisible ? "pointer-events-auto" : "pointer-events-none"}`}
                                     style={{
                                         transformStyle: "preserve-3d",
-                                        backdropFilter: "blur(12px)",
+                                        willChange: "transform, opacity",
                                     }}
                                 >
                                     <div className="p-5 pb-3">
@@ -627,7 +639,7 @@ export function CoverflowSnippetShowcase() {
                                                 </span>
                                                 {isCenter && (
                                                     <span className="flex items-center gap-1 rounded-full badge-cobalt px-2 py-0.5 text-[10px] font-semibold">
-                                                        <Maximize2 className="h-2.5 w-2.5" />
+                                                        <Maximize2 className="h-2.5 w-2.5 transition-transform duration-200 group-hover:rotate-45 group-hover:scale-110" />
                                                         <span>Inspect</span>
                                                     </span>
                                                 )}

@@ -125,7 +125,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
                     href={item.link}
                     onMouseEnter={() => setHovered(idx)}
                     onClick={onItemClick}
-                    className="pointer-events-auto relative px-4 py-2 text-text-secondary transition-colors hover:text-cobalt dark:hover:text-cobalt"
+                    className="pointer-events-auto relative px-4 py-2 text-text-secondary transition-colors hover:text-cobalt dark:hover:text-cobalt group"
                 >
                     {hovered === idx && (
                         <motion.div
@@ -133,7 +133,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
                             className="absolute inset-0 h-full w-full rounded-full bg-bg-elevated"
                         />
                     )}
-                    <span className="relative z-20">{item.name}</span>
+                    <span className="relative z-20 nav-link-underline">{item.name}</span>
                 </Link>
             ))}
         </motion.div>
@@ -249,7 +249,7 @@ export const NavbarLogo = ({
                         alt="CodeVault"
                         width={180}
                         height={48}
-                        className="h-7 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105 dark:hidden"
+                        className="h-7 md:h-8 w-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_10px_rgba(59,130,246,0.35)] dark:hidden"
                         priority
                     />
                     <Image
@@ -257,7 +257,7 @@ export const NavbarLogo = ({
                         alt="CodeVault"
                         width={180}
                         height={48}
-                        className="h-7 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105 hidden dark:block"
+                        className="h-7 md:h-8 w-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_12px_rgba(124,58,237,0.4)] hidden dark:block"
                         priority
                     />
                 </>
@@ -284,15 +284,15 @@ export const NavbarButton = ({
     | React.ComponentPropsWithoutRef<"button">
 )) => {
     const baseStyles =
-        "px-4 py-2 rounded-full text-sm font-semibold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-flex items-center justify-center text-center";
+        "px-4 py-2 rounded-full text-sm font-semibold relative cursor-pointer transition-all duration-200 inline-flex items-center justify-center text-center";
 
     const variantStyles = {
         primary:
-            "bg-cobalt text-white hover:bg-cobalt-hover active:bg-cobalt-active shadow-md shadow-cobalt/20",
-        secondary: "bg-transparent text-text-primary hover:bg-bg-elevated",
-        dark: "bg-bg-elevated text-text-primary hover:bg-bg-surface border border-neutral-700/80 shadow-md",
+            "sheen-button bg-cobalt text-white hover:bg-cobalt-hover active:bg-cobalt-active shadow-md shadow-cobalt/20 hover:shadow-lg hover:shadow-cobalt/35 hover:-translate-y-0.5 active:scale-95",
+        secondary: "bg-transparent text-text-primary hover:bg-bg-elevated hover:text-cobalt nav-link-underline",
+        dark: "bg-bg-elevated text-text-primary hover:bg-bg-surface border border-neutral-700/80 shadow-md hover:-translate-y-0.5 active:scale-95",
         gradient:
-            "bg-gradient-to-r from-cobalt to-violet text-white shadow-md shadow-cobalt/20 hover:opacity-95",
+            "sheen-button bg-gradient-to-r from-cobalt to-violet text-white shadow-md shadow-cobalt/20 hover:opacity-95 hover:shadow-lg hover:shadow-violet/30 hover:-translate-y-0.5 active:scale-95",
     };
 
     if (href && Tag === "a") {

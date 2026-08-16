@@ -49,24 +49,35 @@ export function HeroSection() {
                 </Link>
             </motion.div>
 
-            {/* Main Headline */}
-            <motion.h1
-                initial={{ y: 12 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.45, delay: 0.05 }}
-                className="mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-text-primary sm:text-6xl md:text-7xl"
-            >
-                Every fork remembers <br />
-                <span className="bg-gradient-to-r from-cobalt to-violet bg-clip-text text-transparent">
-                    where it came from.
-                </span>
-            </motion.h1>
+            {/* Main Headline with Kinetic Staggered Mask Entrance */}
+            <div className="mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-text-primary sm:text-6xl md:text-7xl">
+                <div className="overflow-hidden">
+                    <motion.h1
+                        initial={{ y: "110%", opacity: 0 }}
+                        animate={{ y: "0%", opacity: 1 }}
+                        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                        className="block"
+                    >
+                        Every fork remembers
+                    </motion.h1>
+                </div>
+                <div className="overflow-hidden mt-1">
+                    <motion.span
+                        initial={{ y: "110%", opacity: 0 }}
+                        animate={{ y: "0%", opacity: 1 }}
+                        transition={{ duration: 0.55, delay: 0.13, ease: [0.16, 1, 0.3, 1] }}
+                        className="block bg-gradient-to-r from-cobalt via-violet to-cobalt bg-clip-text text-transparent animate-shimmer"
+                    >
+                        where it came from.
+                    </motion.span>
+                </div>
+            </div>
 
             {/* Subtitle */}
             <motion.p
-                initial={{ y: 12 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.45, delay: 0.1 }}
+                initial={{ y: 12, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.45, delay: 0.22 }}
                 className="mt-5 max-w-2xl text-base md:text-lg text-text-secondary leading-relaxed"
             >
                 The self-hostable home for code snippets. Save reusable functions,
@@ -84,49 +95,49 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <motion.div
-                initial={{ y: 12 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.45, delay: 0.15 }}
+                initial={{ y: 12, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.45, delay: 0.3 }}
                 className="mt-7 flex flex-wrap items-center justify-center gap-4"
             >
                 <Link
                     href="/register"
-                    className="inline-flex items-center gap-2 rounded-full bg-cobalt px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-cobalt/25 transition-all duration-200 hover:bg-cobalt-hover active:bg-cobalt-active hover:shadow-xl hover:shadow-cobalt/35 hover:-translate-y-0.5 active:scale-95"
+                    className="sheen-button group inline-flex items-center gap-2 rounded-full bg-cobalt px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-cobalt/25 transition-all duration-200 hover:bg-cobalt-hover active:bg-cobalt-active hover:shadow-xl hover:shadow-cobalt/35 hover:-translate-y-0.5 active:scale-95"
                 >
                     <Sparkles className="h-4 w-4" />
                     <span>Get Started Free</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
                 </Link>
 
                 <Link
                     href="/snippets"
-                    className="inline-flex items-center gap-2 rounded-full border border-neutral-300/80 bg-bg-surface/80 px-7 py-3.5 text-sm font-semibold text-text-primary shadow-sm backdrop-blur-md transition-all duration-200 hover:border-cobalt hover:-translate-y-0.5 dark:border-neutral-800"
+                    className="group inline-flex items-center gap-2 rounded-full border border-neutral-300/80 bg-bg-surface/80 px-7 py-3.5 text-sm font-semibold text-text-primary shadow-sm backdrop-blur-md transition-all duration-200 hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-400 hover:-translate-y-0.5 active:scale-95 dark:border-neutral-800"
                 >
-                    <Terminal className="h-4 w-4 text-text-secondary" />
+                    <Terminal className="h-4 w-4 text-text-secondary group-hover:text-emerald-400 transition-colors" />
                     <span>Explore Public Snippets</span>
                 </Link>
             </motion.div>
 
             {/* Feature Highlights Pills */}
             <motion.div
-                initial={{ y: 10 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.45, delay: 0.2 }}
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.45, delay: 0.38 }}
                 className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-text-secondary"
             >
-                <div className="flex items-center gap-1.5 font-medium">
-                    <GitFork className="h-4 w-4 text-violet" />
-                    <span>Fork Lineage Tracking</span>
+                <div className="group flex items-center gap-1.5 font-medium transition-all hover:-translate-y-0.5 cursor-default">
+                    <GitFork className="h-4 w-4 text-violet transition-transform group-hover:scale-110" />
+                    <span className="group-hover:text-text-primary transition-colors">Fork Lineage Tracking</span>
                 </div>
                 <div className="h-3 w-px bg-neutral-300 dark:bg-neutral-800" />
-                <div className="flex items-center gap-1.5 font-medium">
-                    <Search className="h-4 w-4 text-cobalt" />
-                    <span>Multi-Language Tag Search</span>
+                <div className="group flex items-center gap-1.5 font-medium transition-all hover:-translate-y-0.5 cursor-default">
+                    <Search className="h-4 w-4 text-cobalt transition-transform group-hover:scale-110" />
+                    <span className="group-hover:text-text-primary transition-colors">Multi-Language Tag Search</span>
                 </div>
                 <div className="h-3 w-px bg-neutral-300 dark:bg-neutral-800" />
-                <div className="flex items-center gap-1.5 font-medium">
-                    <Sparkles className="h-4 w-4 text-mint" />
-                    <span>On-Demand AI Explanation</span>
+                <div className="group flex items-center gap-1.5 font-medium transition-all hover:-translate-y-0.5 cursor-default">
+                    <Sparkles className="h-4 w-4 text-mint transition-transform group-hover:scale-110" />
+                    <span className="group-hover:text-text-primary transition-colors">On-Demand AI Explanation</span>
                 </div>
             </motion.div>
         </div>

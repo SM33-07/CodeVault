@@ -24,8 +24,9 @@ export function FeatureBentoGrid() {
     // Feature 1: Lineage State
     const [activeRevision, setActiveRevision] = useState<"v1" | "v2" | "v3">("v3");
 
-    // Feature 2: Search State
+    // Feature 2: Search State & Auto-cycling
     const [searchQuery, setSearchQuery] = useState("jwt");
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     // Feature 3: AI Explanation State
@@ -34,6 +35,18 @@ export function FeatureBentoGrid() {
 
     // Feature 4: Tag Taxonomy State
     const [selectedTags, setSelectedTags] = useState<string[]>(["#react", "#performance"]);
+
+    // Auto-cycle demo search queries when not focused
+    React.useEffect(() => {
+        if (isSearchFocused) return;
+        const demoQueries = ["jwt", "tokio", "useDebounce", "FastAPI"];
+        let qIdx = 0;
+        const interval = setInterval(() => {
+            qIdx = (qIdx + 1) % demoQueries.length;
+            setSearchQuery(demoQueries[qIdx]);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [isSearchFocused]);
 
     // Command Palette Mock Items
     const searchResults = [
@@ -50,13 +63,13 @@ export function FeatureBentoGrid() {
         setAiProgress(0);
         let progress = 0;
         const interval = setInterval(() => {
-            progress += 25;
+            progress += 20;
             setAiProgress(progress);
             if (progress >= 100) {
                 clearInterval(interval);
                 setIsExplaining(false);
             }
-        }, 140);
+        }, 120);
     };
 
     const toggleTag = (tag: string) => {
@@ -106,37 +119,37 @@ export function FeatureBentoGrid() {
                         ))}
                     </div>
 
-                    {/* Diff viewer */}
-                    <div className="rounded-2xl border border-neutral-800 bg-bg-base p-3.5 font-mono text-xs text-text-primary shadow-inner h-[135px] overflow-y-auto">
-                        <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-800 text-[10px] text-text-secondary">
+                    {/* Diff viewer with highlight-flash on revision switch */}
+                    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-bg-base p-3.5 font-mono text-xs text-text-primary shadow-inner h-[135px] overflow-y-auto">
+                        <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-200 dark:border-neutral-800 text-[10px] text-text-secondary">
                             <span>useDebounce.ts ({activeRevision.toUpperCase()})</span>
                             <span className="text-violet">Parent: #snip-core-1</span>
                         </div>
 
                         {activeRevision === "v1" && (
                             <div className="space-y-1 text-text-secondary text-[11px]">
-                                <div><span className="text-neutral-600 select-none">1 </span>export function useDebounce(value, delay) &#123;</div>
-                                <div><span className="text-neutral-600 select-none">2 </span>  const [debounced, setDebounced] = useState(value);</div>
-                                <div><span className="text-neutral-600 select-none">3 </span>  useEffect(() =&gt; setTimeout(setDebounced, delay));</div>
-                                <div><span className="text-neutral-600 select-none">4 </span>&#125;</div>
+                                <div><span className="text-neutral-400 dark:text-neutral-600 select-none">1 </span>export function useDebounce(value, delay) &#123;</div>
+                                <div><span className="text-neutral-400 dark:text-neutral-600 select-none">2 </span>  const [debounced, setDebounced] = useState(value);</div>
+                                <div><span className="text-neutral-400 dark:text-neutral-600 select-none">3 </span>  useEffect(() =&gt; setTimeout(setDebounced, delay));</div>
+                                <div><span className="text-neutral-400 dark:text-neutral-600 select-none">4 </span>&#125;</div>
                             </div>
                         )}
 
                         {activeRevision === "v2" && (
                             <div className="space-y-1 text-[11px]">
-                                <div className="text-text-secondary"><span className="text-neutral-600 select-none">1 </span>export function useDebounce&lt;T&gt;(value: T, delay = 300): T &#123;</div>
-                                <div className="text-mint bg-mint/10"><span className="text-mint select-none">+ </span>  const [debounced, setDebounced] = useState&lt;T&gt;(value);</div>
-                                <div className="text-mint bg-mint/10"><span className="text-mint select-none">+ </span>  const timer = setTimeout(() =&gt; setDebounced(value), delay);</div>
-                                <div className="text-text-secondary"><span className="text-neutral-600 select-none">4 </span>&#125;</div>
+                                <div className="text-text-secondary"><span className="text-neutral-400 dark:text-neutral-600 select-none">1 </span>export function useDebounce&lt;T&gt;(value: T, delay = 300): T &#123;</div>
+                                <div className="text-mint bg-mint/10 animate-highlight-flash rounded px-1 -mx-1"><span className="text-mint select-none">+ </span>  const [debounced, setDebounced] = useState&lt;T&gt;(value);</div>
+                                <div className="text-mint bg-mint/10 animate-highlight-flash rounded px-1 -mx-1"><span className="text-mint select-none">+ </span>  const timer = setTimeout(() =&gt; setDebounced(value), delay);</div>
+                                <div className="text-text-secondary"><span className="text-neutral-400 dark:text-neutral-600 select-none">4 </span>&#125;</div>
                             </div>
                         )}
 
                         {activeRevision === "v3" && (
                             <div className="space-y-1 text-[11px]">
-                                <div className="text-text-secondary"><span className="text-neutral-600 select-none">1 </span>export function useDebounce&lt;T&gt;(value: T, delay = 300): T &#123;</div>
-                                <div className="text-text-secondary"><span className="text-neutral-600 select-none">2 </span>  const [debounced, setDebounced] = useState&lt;T&gt;(value);</div>
-                                <div className="text-mint bg-mint/10"><span className="text-mint select-none">+ </span>  useEffect(() =&gt; &#123; const t = setTimeout(...); return () =&gt; clearTimeout(t); &#125;);</div>
-                                <div className="text-text-secondary"><span className="text-neutral-600 select-none">4 </span>&#125;</div>
+                                <div className="text-text-secondary"><span className="text-neutral-400 dark:text-neutral-600 select-none">1 </span>export function useDebounce&lt;T&gt;(value: T, delay = 300): T &#123;</div>
+                                <div className="text-text-secondary"><span className="text-neutral-400 dark:text-neutral-600 select-none">2 </span>  const [debounced, setDebounced] = useState&lt;T&gt;(value);</div>
+                                <div className="text-mint bg-mint/10 animate-highlight-flash rounded px-1 -mx-1"><span className="text-mint select-none">+ </span>  useEffect(() =&gt; &#123; const t = setTimeout(...); return () =&gt; clearTimeout(t); &#125;);</div>
+                                <div className="text-text-secondary"><span className="text-neutral-400 dark:text-neutral-600 select-none">4 </span>&#125;</div>
                             </div>
                         )}
                     </div>
@@ -164,9 +177,11 @@ export function FeatureBentoGrid() {
                         <input
                             type="text"
                             value={searchQuery}
+                            onFocus={() => setIsSearchFocused(true)}
+                            onBlur={() => setIsSearchFocused(false)}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Type to search (e.g. jwt, rust, #react)..."
-                            className="w-full rounded-xl border border-neutral-200 bg-bg-base py-2 pl-9 pr-3 text-xs text-text-primary outline-none focus:border-cobalt focus:ring-1 focus:ring-cobalt dark:border-neutral-800"
+                            className="w-full rounded-xl border border-neutral-200 bg-bg-base py-2 pl-9 pr-3 text-xs text-text-primary outline-none focus:border-cobalt focus:ring-1 focus:ring-cobalt dark:border-neutral-800 transition-colors"
                         />
                     </div>
 
@@ -198,7 +213,7 @@ export function FeatureBentoGrid() {
                     </div>
 
                     <div className="pt-2 flex items-center justify-between text-[11px] text-text-secondary border-t border-neutral-200/60 dark:border-neutral-800">
-                        <span>Navigate with ↑ ↓ keys</span>
+                        <span>Live keyword filter</span>
                         <kbd className="rounded bg-bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-text-primary border border-neutral-700/50">
                             ↵ Enter
                         </kbd>
@@ -219,7 +234,7 @@ export function FeatureBentoGrid() {
                     <button
                         onClick={triggerAiExplanation}
                         disabled={isExplaining}
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-cobalt px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-cobalt/20 hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95 transition-all disabled:opacity-75"
+                        className="sheen-button flex w-full items-center justify-center gap-2 rounded-xl bg-cobalt px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-cobalt/20 hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95 transition-all disabled:opacity-75"
                     >
                         <Sparkles className="h-3.5 w-3.5 animate-pulse" />
                         <span>{isExplaining ? "Analyzing Architecture..." : "Explain Snippet Live"}</span>
@@ -234,10 +249,15 @@ export function FeatureBentoGrid() {
                                         style={{ width: `${aiProgress}%` }}
                                     />
                                 </div>
-                                <p className="text-[11px] text-center text-text-secondary font-medium">Parsing AST & complexity profile...</p>
+                                <p className="text-[11px] text-center text-text-secondary font-medium animate-pulse">Parsing AST & complexity profile...</p>
                             </div>
                         ) : (
-                            <div className="space-y-2">
+                            <motion.div
+                                initial={{ opacity: 0, y: 4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="space-y-2"
+                            >
                                 <div className="flex items-center justify-between text-[11px] font-bold text-text-primary">
                                     <span>Complexity Profile</span>
                                     <span className="font-mono text-cobalt">Time: O(1) | Space: O(1)</span>
@@ -245,7 +265,7 @@ export function FeatureBentoGrid() {
                                 <p className="text-[11px] text-text-secondary leading-relaxed">
                                     Encapsulates timer teardown on dependency shift to prevent unmounted memory leaks.
                                 </p>
-                            </div>
+                            </motion.div>
                         )}
                     </div>
 
@@ -269,7 +289,7 @@ export function FeatureBentoGrid() {
             iconBg: "bg-cobalt/10 border-cobalt/20",
             renderContent: () => (
                 <div className="flex flex-col h-full justify-between space-y-4">
-                    {/* Tag Cloud */}
+                    {/* Tag Cloud with Scale on Hover */}
                     <div className="flex flex-wrap gap-1.5 h-[135px] overflow-y-auto content-start">
                         {[
                             "#react",
@@ -290,8 +310,8 @@ export function FeatureBentoGrid() {
                                 <button
                                     key={tag}
                                     onClick={() => toggleTag(tag)}
-                                    className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all border ${isSelected
-                                        ? "bg-cobalt text-white border-cobalt shadow-xs scale-105"
+                                    className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all border hover:scale-105 ${isSelected
+                                        ? "bg-cobalt text-white border-cobalt shadow-xs"
                                         : "bg-bg-elevated text-text-secondary hover:border-cobalt hover:text-cobalt border-neutral-200 dark:border-neutral-800"
                                         }`}
                                 >
@@ -305,9 +325,14 @@ export function FeatureBentoGrid() {
                         <span className="truncate">
                             Active: <strong className="text-text-primary">{selectedTags.join(", ") || "None"}</strong>
                         </span>
-                        <span className="rounded-full bg-cobalt/10 px-2 py-0.5 text-[10px] font-bold text-cobalt border border-cobalt/20 shrink-0">
+                        <motion.span
+                            key={selectedTags.length}
+                            initial={{ scale: 1.15 }}
+                            animate={{ scale: 1 }}
+                            className="rounded-full bg-cobalt/10 px-2 py-0.5 text-[10px] font-bold text-cobalt border border-cobalt/20 shrink-0"
+                        >
                             {selectedTags.length * 3} matched
-                        </span>
+                        </motion.span>
                     </div>
                 </div>
             ),
@@ -330,28 +355,44 @@ export function FeatureBentoGrid() {
                     </p>
                 </div>
 
-                {/* View Mode Switcher Tabs */}
+                {/* View Mode Switcher Tabs with Sliding Indicator */}
                 <div className="flex items-center gap-1 self-start md:self-auto rounded-2xl border border-neutral-200/80 bg-bg-surface p-1 dark:border-neutral-800 backdrop-blur-md">
                     <button
                         onClick={() => setViewMode("grid")}
-                        className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${viewMode === "grid"
-                            ? "bg-cobalt text-white shadow-sm"
-                            : "text-text-secondary hover:text-text-primary"
-                            }`}
+                        className={`relative flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                            viewMode === "grid"
+                                ? "text-white"
+                                : "text-text-secondary hover:text-text-primary"
+                        }`}
                     >
-                        <LayoutGrid className="h-3.5 w-3.5" />
-                        <span>Grid View</span>
+                        {viewMode === "grid" && (
+                            <motion.div
+                                layoutId="bentoViewModeIndicator"
+                                className="absolute inset-0 rounded-xl bg-cobalt shadow-sm"
+                                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                            />
+                        )}
+                        <LayoutGrid className="relative z-10 h-3.5 w-3.5" />
+                        <span className="relative z-10">Grid View</span>
                     </button>
 
                     <button
                         onClick={() => setViewMode("stack")}
-                        className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${viewMode === "stack"
-                            ? "bg-cobalt text-white shadow-sm"
-                            : "text-text-secondary hover:text-text-primary"
-                            }`}
+                        className={`relative flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                            viewMode === "stack"
+                                ? "text-white"
+                                : "text-text-secondary hover:text-text-primary"
+                        }`}
                     >
-                        <Layers className="h-3.5 w-3.5" />
-                        <span>Morphing Stack</span>
+                        {viewMode === "stack" && (
+                            <motion.div
+                                layoutId="bentoViewModeIndicator"
+                                className="absolute inset-0 rounded-xl bg-cobalt shadow-sm"
+                                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                            />
+                        )}
+                        <Layers className="relative z-10 h-3.5 w-3.5" />
+                        <span className="relative z-10">Morphing Stack</span>
                     </button>
                 </div>
             </div>
