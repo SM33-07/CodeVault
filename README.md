@@ -277,6 +277,6 @@ Contributions, feedback, and feature requests are welcome! Feel free to open iss
 
 ## 📄 License & Author
 
-Built by **[Soham More](https://github.com/SM33-07)** (`sohammore3312@gmail.com`) — [LinkedIn](https://www.linkedin.com/in/soham-more/)
+Built by **[Soham More](https://github.com/SM33-07)** (`sohammore3312@gmail.com`) — [LinkedIn](https://www.linkedin.com/in/soham-more-muj/)
 
 Licensed under the [MIT License](LICENSE). Feel free to fork, self-host, and build upon it!
