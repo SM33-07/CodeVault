@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Sparkles,
@@ -18,6 +19,7 @@ import {
     ExternalLink,
     Code2,
     Command,
+    Mail,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -38,31 +40,80 @@ function GithubIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
     );
 }
 
-interface CliTab {
-    id: "npx" | "docker" | "git";
-    label: string;
-    command: string;
+function LinkedinIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
+    return (
+        <svg
+            className={className}
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
+            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+        </svg>
+    );
+}
+
+interface CliStep {
     comment: string;
+    cmd: string;
+}
+
+interface CliTab {
+    id: "docker" | "git" | "npm";
+    label: string;
+    description: string;
+    steps: CliStep[];
 }
 
 const CLI_TABS: CliTab[] = [
     {
-        id: "npx",
-        label: "npx (Instant)",
-        command: "npx codevault@latest init",
-        comment: "# Scaffold self-hosted instance in seconds",
-    },
-    {
         id: "docker",
-        label: "Docker",
-        command: "docker run -d -p 3000:3000 codevault/app:latest",
-        comment: "# Production container with PostgreSQL",
+        label: "Docker Compose",
+        description: "Zero-configuration one-command self-hosting stack:",
+        steps: [
+            {
+                comment: "# 1. Clone repository",
+                cmd: "git clone https://github.com/SM33-07/CodeVault.git && cd CodeVault",
+            },
+            {
+                comment: "# 2. Launch PostgreSQL + Express API + Next.js frontend",
+                cmd: "docker compose up -d",
+            },
+        ],
     },
     {
         id: "git",
         label: "Git Clone",
-        command: "git clone https://github.com/SM33-07/CodeVault.git",
-        comment: "# Full source code repository",
+        description: "Monorepo local development setup:",
+        steps: [
+            {
+                comment: "# 1. Clone & install dependencies",
+                cmd: "git clone https://github.com/SM33-07/CodeVault.git && cd CodeVault && npm install",
+            },
+            {
+                comment: "# 2. Run Prisma database migrations",
+                cmd: "cd server && npx prisma migrate dev && cd ..",
+            },
+            {
+                comment: "# 3. Start frontend (:3000) and backend (:4001) concurrently",
+                cmd: "npm run dev",
+            },
+        ],
+    },
+    {
+        id: "npm",
+        label: "npm Dev",
+        description: "Quickly run development servers:",
+        steps: [
+            {
+                comment: "# 1. Install monorepo dependencies",
+                cmd: "npm install",
+            },
+            {
+                comment: "# 2. Launch concurrent dev servers",
+                cmd: "npm run dev",
+            },
+        ],
     },
 ];
 
@@ -90,20 +141,28 @@ const TRUST_STATS = [
 ];
 
 export function LandingFooter() {
-    const [activeCliTab, setActiveCliTab] = useState<"npx" | "docker" | "git">("npx");
-    const [copied, setCopied] = useState(false);
+    const [activeCliTab, setActiveCliTab] = useState<"docker" | "git" | "npm">("docker");
+    const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+    const [copiedAll, setCopiedAll] = useState(false);
 
     const currentTab = CLI_TABS.find((tab) => tab.id === activeCliTab) || CLI_TABS[0];
 
-    const handleCopyCommand = () => {
-        navigator.clipboard.writeText(currentTab.command);
-        setCopied(true);
+    const handleCopyStep = (cmd: string, idx: number) => {
+        navigator.clipboard.writeText(cmd);
+        setCopiedIndex(idx);
         toast.success("Command copied to clipboard!");
-        setTimeout(() => setCopied(false), 2000);
+        setTimeout(() => setCopiedIndex(null), 2000);
+    };
+
+    const handleCopyAll = () => {
+        const fullScript = currentTab.steps.map((s) => `${s.comment}\n${s.cmd}`).join("\n\n");
+        navigator.clipboard.writeText(fullScript);
+        setCopiedAll(true);
+        toast.success("Full setup script copied!");
+        setTimeout(() => setCopiedAll(false), 2000);
     };
 
     const handleTriggerSearch = () => {
-        // Trigger Cmd+K / Ctrl+K keyboard event for CommandPalette
         const isMac = typeof window !== "undefined" && navigator.userAgent.toUpperCase().indexOf("MAC") >= 0;
         const event = new KeyboardEvent("keydown", {
             key: "k",
@@ -174,60 +233,99 @@ export function LandingFooter() {
 
                         {/* Quickstart Developer Terminal */}
                         <div className="mt-8 pt-4 border-t border-neutral-200/60 dark:border-neutral-800/80 text-left">
-                            <div className="mx-auto max-w-xl rounded-2xl border border-neutral-200/80 bg-bg-base p-3 shadow-inner dark:border-neutral-800">
+                            <div className="mx-auto max-w-2xl rounded-2xl border border-neutral-200/80 bg-bg-base p-4 shadow-inner dark:border-neutral-800">
                                 {/* Terminal Tabs Header */}
-                                <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-200/60 dark:border-neutral-800 text-[11px]">
-                                    <div className="flex items-center gap-1.5">
-                                        <div className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-                                        <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
-                                        <div className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
-                                        <span className="ml-2 font-mono text-text-secondary text-[10px]">
-                                            quickstart-cli
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-neutral-200/60 dark:border-neutral-800 gap-2">
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
+                                            <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
+                                            <div className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
+                                        </div>
+                                        <span className="font-mono text-text-secondary text-[11px] font-semibold">
+                                            quickstart-setup
                                         </span>
                                     </div>
 
-                                    {/* Tabs */}
-                                    <div className="flex items-center gap-1">
-                                        {CLI_TABS.map((tab) => (
-                                            <button
-                                                key={tab.id}
-                                                onClick={() => setActiveCliTab(tab.id)}
-                                                className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-all ${
-                                                    activeCliTab === tab.id
-                                                        ? "bg-cobalt/15 text-cobalt border border-cobalt/30 font-semibold"
-                                                        : "text-text-secondary hover:text-text-primary"
-                                                }`}
-                                            >
-                                                {tab.label}
-                                            </button>
-                                        ))}
+                                    {/* Tabs & Copy All */}
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1 bg-bg-surface p-0.5 rounded-lg border border-neutral-200 dark:border-neutral-800">
+                                            {CLI_TABS.map((tab) => (
+                                                <button
+                                                    key={tab.id}
+                                                    onClick={() => setActiveCliTab(tab.id)}
+                                                    className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-all ${
+                                                        activeCliTab === tab.id
+                                                            ? "bg-cobalt text-white shadow-xs font-semibold"
+                                                            : "text-text-secondary hover:text-text-primary"
+                                                    }`}
+                                                >
+                                                    {tab.label}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        <button
+                                            onClick={handleCopyAll}
+                                            className="flex items-center gap-1 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-bg-elevated px-2 py-1 text-[10px] font-medium text-text-primary hover:border-cobalt hover:text-cobalt active:scale-95 transition-all"
+                                            title="Copy full setup script"
+                                        >
+                                            {copiedAll ? (
+                                                <>
+                                                    <Check className="h-3 w-3 text-emerald-500" />
+                                                    <span className="text-emerald-500 font-semibold">Copied</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Copy className="h-3 w-3 text-text-secondary" />
+                                                    <span>Copy All</span>
+                                                </>
+                                            )}
+                                        </button>
                                     </div>
                                 </div>
 
-                                {/* Terminal Body & Copy Button */}
-                                <div className="flex items-center justify-between gap-3 px-2 py-1 font-mono text-xs">
-                                    <div className="flex items-center gap-2 truncate text-text-primary">
-                                        <span className="text-cobalt select-none font-bold">$</span>
-                                        <span className="truncate">{currentTab.command}</span>
-                                    </div>
+                                {/* Step Description */}
+                                <p className="text-[11px] text-text-secondary mb-3 font-mono">
+                                    {currentTab.description}
+                                </p>
 
-                                    <button
-                                        onClick={handleCopyCommand}
-                                        className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-bg-elevated px-2.5 py-1 text-[11px] font-medium text-text-primary hover:border-cobalt hover:text-cobalt active:scale-95 transition-all shrink-0"
-                                        title="Copy to clipboard"
-                                    >
-                                        {copied ? (
-                                            <>
-                                                <Check className="h-3.5 w-3.5 text-emerald-500" />
-                                                <span className="text-emerald-500 font-semibold">Copied</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Copy className="h-3.5 w-3.5 text-text-secondary" />
-                                                <span>Copy</span>
-                                            </>
-                                        )}
-                                    </button>
+                                {/* Terminal Steps List */}
+                                <div className="space-y-3 font-mono text-xs">
+                                    {currentTab.steps.map((step, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl bg-bg-surface/70 p-2.5 border border-neutral-200/50 dark:border-neutral-800/50 hover:border-cobalt/40 transition-colors"
+                                        >
+                                            <div className="space-y-0.5 overflow-hidden">
+                                                <span className="text-[10px] text-emerald-500/90 dark:text-emerald-400/90 select-none block">
+                                                    {step.comment}
+                                                </span>
+                                                <div className="flex items-center gap-2 text-text-primary">
+                                                    <span className="text-cobalt select-none font-bold">$</span>
+                                                    <span className="truncate">{step.cmd}</span>
+                                                </div>
+                                            </div>
+
+                                            <button
+                                                onClick={() => handleCopyStep(step.cmd, idx)}
+                                                className="flex items-center gap-1 rounded-md border border-neutral-300 dark:border-neutral-700 bg-bg-elevated px-2 py-1 text-[10px] font-medium text-text-primary hover:border-cobalt hover:text-cobalt active:scale-95 transition-all shrink-0 self-end sm:self-auto"
+                                                title="Copy command"
+                                            >
+                                                {copiedIndex === idx ? (
+                                                    <>
+                                                        <Check className="h-3 w-3 text-emerald-500" />
+                                                        <span className="text-emerald-500">Copied</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Copy className="h-3 w-3 text-text-secondary" />
+                                                        <span>Copy</span>
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -264,18 +362,58 @@ export function LandingFooter() {
                     <div className="grid grid-cols-1 md:grid-cols-5 gap-8 lg:gap-12">
                         {/* Brand Column (Spans 2 on desktop) */}
                         <div className="md:col-span-2 space-y-4">
-                            <Link href="/" className="inline-flex items-center gap-2.5 group">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-cobalt to-violet text-white font-mono text-xs font-bold shadow-md shadow-cobalt/20 transition-transform group-hover:scale-105">
-                                    CV
-                                </div>
-                                <span className="text-base font-extrabold tracking-tight text-text-primary">
-                                    CodeVault
-                                </span>
+                            <Link href="/" className="inline-flex items-center group">
+                                <Image
+                                    src="/images/logo_codevault_light.png"
+                                    alt="CodeVault"
+                                    width={150}
+                                    height={38}
+                                    className="h-7 md:h-8 w-auto object-contain transition-all duration-300 group-hover:scale-105 dark:hidden"
+                                />
+                                <Image
+                                    src="/images/logo_codevault_dark.png"
+                                    alt="CodeVault"
+                                    width={150}
+                                    height={38}
+                                    className="h-7 md:h-8 w-auto object-contain transition-all duration-300 group-hover:scale-105 hidden dark:block"
+                                />
                             </Link>
 
                             <p className="text-xs text-text-secondary leading-relaxed max-w-sm">
                                 The self-hostable snippet vault built for modern engineering teams. Save functions, trace fork lineages back to roots, and query with instant keyboard precision.
                             </p>
+
+                            {/* Author Social Links */}
+                            <div className="flex items-center gap-2 pt-0.5">
+                                <a
+                                    href="https://github.com/SM33-07"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-800 bg-bg-elevated text-text-secondary hover:border-cobalt hover:text-cobalt hover:-translate-y-0.5 transition-all shadow-xs"
+                                    title="GitHub (SM33-07)"
+                                    aria-label="GitHub Profile"
+                                >
+                                    <GithubIcon className="h-4 w-4" />
+                                </a>
+                                <a
+                                    href="https://www.linkedin.com/in/soham-more-muj/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-800 bg-bg-elevated text-text-secondary hover:border-[#0A66C2] hover:text-[#0A66C2] hover:-translate-y-0.5 transition-all shadow-xs"
+                                    title="LinkedIn Profile"
+                                    aria-label="LinkedIn Profile"
+                                >
+                                    <LinkedinIcon className="h-4 w-4" />
+                                </a>
+                                <a
+                                    href="mailto:sohammore3312@gmail.com"
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-800 bg-bg-elevated text-text-secondary hover:border-emerald-500 hover:text-emerald-500 hover:-translate-y-0.5 transition-all shadow-xs"
+                                    title="Email (sohammore3312@gmail.com)"
+                                    aria-label="Email Contact"
+                                >
+                                    <Mail className="h-4 w-4" />
+                                </a>
+                            </div>
 
                             {/* Live System Status Pill */}
                             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-medium text-emerald-500">

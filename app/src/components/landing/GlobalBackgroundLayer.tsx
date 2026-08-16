@@ -1,21 +1,42 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { GitFork, Code2, Shield } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { GitFork, Code2, Shield, Sparkles, Terminal, Copy, Check, Lock } from "lucide-react";
+import { toast } from "sonner";
 
 export function GlobalBackgroundLayer() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [reducedMotion, setReducedMotion] = useState(false);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
 
     useEffect(() => {
-        // Check reduced motion preference
         const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
         setReducedMotion(mediaQuery.matches);
         const listener = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
         mediaQuery.addEventListener("change", listener);
         return () => mediaQuery.removeEventListener("change", listener);
     }, []);
+
+    const handleCopy = (id: string, text: string, label: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(text);
+        setCopiedId(id);
+        toast.success(`Copied snippet: ${label}`);
+        setTimeout(() => setCopiedId(null), 2000);
+    };
+
+    const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const newRipple = { id: Date.now(), x, y };
+        setRipples((prev) => [...prev.slice(-4), newRipple]);
+        setTimeout(() => {
+            setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
+        }, 1200);
+    };
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -24,110 +45,85 @@ export function GlobalBackgroundLayer() {
         if (!ctx) return;
 
         let animationFrameId: number;
-        let width = (canvas.width = window.innerWidth);
-        let height = (canvas.height = window.innerHeight);
+        const parent = canvas.parentElement;
+        let width = (canvas.width = parent?.clientWidth || window.innerWidth);
+        let height = (canvas.height = parent?.clientHeight || window.innerHeight);
 
         const handleResize = () => {
             if (!canvas) return;
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
+            const p = canvas.parentElement;
+            width = canvas.width = p?.clientWidth || window.innerWidth;
+            height = canvas.height = p?.clientHeight || window.innerHeight;
         };
         window.addEventListener("resize", handleResize);
 
-        // Cursor tracking with lerp
-        let targetX = width * 0.5;
-        let targetY = height * 0.3;
-        let cursorX = targetX;
-        let cursorY = targetY;
+        // Smooth cursor tracking
+        let mouseX = width * 0.5;
+        let mouseY = height * 0.3;
+        let curX = mouseX;
+        let curY = mouseY;
 
         const handleMouseMove = (e: MouseEvent) => {
-            targetX = e.clientX;
-            targetY = e.clientY;
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
         };
         window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
-        // Blobs definition
         let time = 0;
-        const blobs = [
-            {
-                // Cobalt interactive blob (reacts to cursor)
-                color: "rgba(59, 130, 246, 0.12)",
-                radius: 380,
-                baseX: width * 0.45,
-                baseY: height * 0.25,
-            },
-            {
-                // Violet brand/lineage blob
-                color: "rgba(124, 58, 237, 0.09)",
-                radius: 420,
-                baseX: width * 0.7,
-                baseY: height * 0.45,
-            },
-            {
-                // Mint state feedback blob
-                color: "rgba(16, 185, 129, 0.06)",
-                radius: 340,
-                baseX: width * 0.2,
-                baseY: height * 0.65,
-            },
-        ];
 
         const render = () => {
-            time += 0.006;
+            time += 0.008;
             ctx.clearRect(0, 0, width, height);
-            ctx.globalCompositeOperation = "lighter";
 
-            if (reducedMotion) {
-                // Static render for reduced motion
-                blobs.forEach((blob, i) => {
-                    const gradient = ctx.createRadialGradient(
-                        blob.baseX,
-                        blob.baseY,
-                        0,
-                        blob.baseX,
-                        blob.baseY,
-                        blob.radius
-                    );
-                    gradient.addColorStop(0, blob.color);
-                    gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-                    ctx.fillStyle = gradient;
-                    ctx.beginPath();
-                    ctx.arc(blob.baseX, blob.baseY, blob.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-                return;
-            }
+            curX += (mouseX - curX) * 0.04;
+            curY += (mouseY - curY) * 0.04;
 
-            // Lerp cursor toward target
-            cursorX += (targetX - cursorX) * 0.03;
-            cursorY += (targetY - cursorY) * 0.03;
+            const tiltX = (curX / width - 0.5) * 2;
+            const tiltY = (curY / height - 0.5) * 2;
 
-            blobs.forEach((blob, i) => {
-                let x = blob.baseX;
-                let y = blob.baseY;
+            // 1. Dynamic Mesh Gradient Volumetric Auras
+            ctx.save();
+            ctx.globalCompositeOperation = "screen";
 
-                if (i === 0) {
-                    // Cobalt blob drifts toward cursor
-                    x = cursorX + Math.sin(time) * 40;
-                    y = cursorY + Math.cos(time * 0.8) * 35;
-                } else if (i === 1) {
-                    // Violet blob slow harmonic drift
-                    x = blob.baseX + Math.cos(time * 0.7) * 80;
-                    y = blob.baseY + Math.sin(time * 0.5) * 60;
-                } else {
-                    // Mint blob gentle circular motion
-                    x = blob.baseX + Math.sin(time * 0.9) * 60;
-                    y = blob.baseY + Math.cos(time * 0.6) * 50;
-                }
+            // Top-Right Deep Violet Aura
+            const vX = width * 0.82 + Math.cos(time * 0.4) * 45 + tiltX * 30;
+            const vY = height * 0.16 + Math.sin(time * 0.35) * 35 + tiltY * 20;
+            const vGrad = ctx.createRadialGradient(vX, vY, 0, vX, vY, 520);
+            vGrad.addColorStop(0, "rgba(124, 58, 237, 0.25)");
+            vGrad.addColorStop(0.45, "rgba(124, 58, 237, 0.09)");
+            vGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+            ctx.fillStyle = vGrad;
+            ctx.beginPath();
+            ctx.arc(vX, vY, 520, 0, Math.PI * 2);
+            ctx.fill();
 
-                const gradient = ctx.createRadialGradient(x, y, 0, x, y, blob.radius);
-                gradient.addColorStop(0, blob.color);
-                gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(x, y, blob.radius, 0, Math.PI * 2);
-                ctx.fill();
-            });
+            // Center-Left Cobalt Glow (Reacts dynamically to cursor)
+            const cX = width * 0.24 + Math.sin(time * 0.5) * 45 + tiltX * 35;
+            const cY = height * 0.22 + Math.cos(time * 0.4) * 35 + tiltY * 25;
+            const cGrad = ctx.createRadialGradient(cX, cY, 0, cX, cY, 460);
+            cGrad.addColorStop(0, "rgba(59, 130, 246, 0.2)");
+            cGrad.addColorStop(0.5, "rgba(59, 130, 246, 0.07)");
+            cGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+            ctx.fillStyle = cGrad;
+            ctx.beginPath();
+            ctx.arc(cX, cY, 460, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Bottom-Left Mint / Emerald Aura
+            const mX = width * 0.35 + Math.cos(time * 0.6) * 40 + tiltX * 20;
+            const mY = height * 0.44 + Math.sin(time * 0.5) * 30 + tiltY * 15;
+            const mGrad = ctx.createRadialGradient(mX, mY, 0, mX, mY, 420);
+            mGrad.addColorStop(0, "rgba(16, 185, 129, 0.16)");
+            mGrad.addColorStop(0.5, "rgba(16, 185, 129, 0.05)");
+            mGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+            ctx.fillStyle = mGrad;
+            ctx.beginPath();
+            ctx.arc(mX, mY, 420, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
 
             animationFrameId = requestAnimationFrame(render);
         };
@@ -142,101 +138,57 @@ export function GlobalBackgroundLayer() {
     }, [reducedMotion]);
 
     return (
-        <div className="pointer-events-none fixed inset-0 -z-50 overflow-hidden select-none">
-            {/* 1. Canvas Mesh Gradient Layer */}
+        <div
+            onClick={handleCanvasClick}
+            className="absolute inset-0 z-0 overflow-hidden select-none cursor-crosshair"
+        >
+            {/* 1. Static Atmospheric Gradient Glow Underlay */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute -top-[6%] right-[3%] h-[680px] w-[680px] rounded-full bg-violet/25 blur-[140px] dark:bg-purple-600/30" />
+                <div className="absolute top-[32%] left-[8%] h-[620px] w-[620px] rounded-full bg-mint/20 blur-[130px] dark:bg-emerald-500/22" />
+                <div className="absolute top-[4%] left-[4%] h-[520px] w-[520px] rounded-full bg-cobalt/20 blur-[120px] dark:bg-blue-600/20" />
+            </div>
+
+            {/* 2. Dynamic Mesh Canvas Atmosphere */}
             <canvas
                 ref={canvasRef}
-                className="absolute inset-0 h-full w-full opacity-90 dark:opacity-80"
+                className="absolute inset-0 h-full w-full opacity-95 dark:opacity-90 pointer-events-none"
             />
 
-            {/* 2. Faint 1px Background Grid with Radial Mask */}
+            {/* 3. High-Definition 1px Blueprint Perspective Grid with Radial Mask */}
             <div
-                className="absolute inset-0 opacity-[0.035] dark:opacity-[0.045]"
+                className="absolute inset-0 pointer-events-none opacity-[0.06] dark:opacity-[0.11]"
                 style={{
                     backgroundImage: `
                         linear-gradient(to right, #3B82F6 1px, transparent 1px),
-                        linear-gradient(to bottom, #3B82F6 1px, transparent 1px)
+                        linear-gradient(to bottom, #7C3AED 1px, transparent 1px)
                     `,
-                    backgroundSize: "44px 44px",
-                    maskImage: "radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 80%)",
-                    WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 80%)",
+                    backgroundSize: "52px 52px",
+                    maskImage: "radial-gradient(ellipse 85% 75% at 50% 30%, black 35%, transparent 85%)",
+                    WebkitMaskImage: "radial-gradient(ellipse 85% 75% at 50% 30%, black 35%, transparent 85%)",
                 }}
             />
 
-            {/* 3. Scattered Glowing Lineage Network Node Dots */}
-            <div className="absolute top-[18%] left-[12%] h-2 w-2 rounded-full bg-cobalt/60 blur-[1px] animate-pulse" style={{ animationDuration: "3.5s" }} />
-            <div className="absolute top-[28%] right-[14%] h-2.5 w-2.5 rounded-full bg-violet/70 blur-[1px] animate-pulse" style={{ animationDuration: "4.2s", animationDelay: "1s" }} />
-            <div className="absolute top-[52%] left-[8%] h-2 w-2 rounded-full bg-mint/60 blur-[1px] animate-pulse" style={{ animationDuration: "3.8s", animationDelay: "2s" }} />
-            <div className="absolute top-[68%] right-[10%] h-2 w-2 rounded-full bg-cobalt/50 blur-[1px] animate-pulse" style={{ animationDuration: "4.8s", animationDelay: "0.5s" }} />
-            <div className="absolute top-[82%] left-[18%] h-2.5 w-2.5 rounded-full bg-violet/60 blur-[1px] animate-pulse" style={{ animationDuration: "5s", animationDelay: "1.5s" }} />
-            <div className="absolute top-[40%] right-[22%] h-1.5 w-1.5 rounded-full bg-mint/50 blur-[1px] animate-pulse" style={{ animationDuration: "3.2s", animationDelay: "2.5s" }} />
+            {/* 4. Click Ripple Waves */}
+            <AnimatePresence>
+                {ripples.map((ripple) => (
+                    <motion.div
+                        key={ripple.id}
+                        initial={{ scale: 0, opacity: 0.8 }}
+                        animate={{ scale: 3.5, opacity: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1.1, ease: "easeOut" }}
+                        style={{
+                            left: ripple.x - 40,
+                            top: ripple.y - 40,
+                        }}
+                        className="pointer-events-none absolute h-20 w-20 rounded-full border-2 border-violet/60 shadow-[0_0_25px_rgba(124,58,237,0.6)]"
+                    />
+                ))}
+            </AnimatePresence>
 
-            {/* 4. Floating Code-Fragment Cards (Hero Corners) */}
-            <div className="hidden xl:block">
-                {/* Floating Card 1: useFork hook (Top-Left) */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.6 }}
-                    className="absolute top-[14%] left-[3%] z-0 animate-float-1"
-                >
-                    <div className="rounded-xl border border-neutral-200/60 bg-bg-surface/50 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg backdrop-blur-md dark:border-neutral-800/60 dark:bg-bg-surface/40">
-                        <div className="flex items-center gap-1.5 pb-1 mb-1 border-b border-neutral-700/40 text-[10px] text-violet">
-                            <GitFork className="h-3 w-3" />
-                            <span>useFork()</span>
-                        </div>
-                        <p className="text-text-primary">
-                            <span className="text-cobalt">const</span> lineage ={" "}
-                            <span className="text-violet">useFork</span>(originId);
-                        </p>
-                    </div>
-                </motion.div>
-
-                {/* Floating Card 2: Git branch command (Top-Right) */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.8 }}
-                    className="absolute top-[20%] right-[3%] z-0 animate-float-2"
-                >
-                    <div className="rounded-xl border border-neutral-200/60 bg-bg-surface/50 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg backdrop-blur-md dark:border-neutral-800/60 dark:bg-bg-surface/40">
-                        <div className="flex items-center gap-1.5 pb-1 mb-1 border-b border-neutral-700/40 text-[10px] text-cobalt">
-                            <Code2 className="h-3 w-3" />
-                            <span>git-provenance</span>
-                        </div>
-                        <p className="text-text-primary">
-                            $ cv fork <span className="text-emerald-400">#snip-rbac-01</span>
-                        </p>
-                    </div>
-                </motion.div>
-
-                {/* Floating Card 3: CTE Lineage depth query (Mid-Left) */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 1.0 }}
-                    className="absolute top-[62%] left-[2%] z-0 animate-float-3"
-                >
-                    <div className="rounded-xl border border-neutral-200/60 bg-bg-surface/50 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg backdrop-blur-md dark:border-neutral-800/60 dark:bg-bg-surface/40">
-                        <div className="flex items-center gap-1.5 pb-1 mb-1 border-b border-neutral-700/40 text-[10px] text-emerald-400">
-                            <Shield className="h-3 w-3" />
-                            <span>PostgreSQL CTE</span>
-                        </div>
-                        <p className="text-text-primary">
-                            depth: <span className="text-violet font-semibold">3</span>{" "}
-                            <span className="text-text-secondary">// parent origin</span>
-                        </p>
-                    </div>
-                </motion.div>
-            </div>
-
-            {/* 5. Static Grain Texture SVG Noise Overlay */}
-            <div
-                className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                }}
-            />
+            {/* 5. Smooth Bottom Fade to Flat Obsidian (#080B10) */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-bg-base via-bg-base/80 to-transparent" />
         </div>
     );
 }
