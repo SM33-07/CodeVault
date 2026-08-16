@@ -19,88 +19,57 @@ import { InteractiveSnippetMockup } from "@/components/landing/InteractiveSnippe
 import { LineageGraph } from "@/components/landing/LineageGraph";
 import { CoverflowSnippetShowcase } from "@/components/snippets/CoverflowSnippetShowcase";
 import { FeatureBentoGrid } from "@/components/landing/FeatureBentoGrid";
+import { ChaosVsVaultComparison } from "@/components/landing/ChaosVsVaultComparison";
+import { GlobalBackgroundLayer } from "@/components/landing/GlobalBackgroundLayer";
+import { KeyboardShortcutsModal } from "@/components/command/KeyboardShortcutsModal";
+import { LandingFooter } from "@/components/landing/LandingFooter";
 
 export default function HomePage() {
     return (
-        <div className="flex flex-col min-h-screen bg-neutral-50/50 dark:bg-neutral-950">
-            {/* 1. Hero & 3D Container Scroll */}
-            <section className="relative w-full">
-                <ContainerScroll
-                    titleComponent={<HeroSection />}
-                >
-                    <InteractiveSnippetMockup />
-                </ContainerScroll>
-            </section>
+        <div className="relative flex flex-col min-h-screen bg-bg-base overflow-x-hidden">
+            {/* Global Developer Keyboard Shortcuts HUD (? key) */}
+            <KeyboardShortcutsModal />
 
-            {/* 2. Signature Visual Element: The Lineage Thread */}
-            <section className="relative w-full px-4 py-8 border-t border-neutral-200/60 dark:border-neutral-800/60 bg-gradient-to-b from-transparent via-amber-500/[0.02] to-transparent">
-                <div className="mx-auto max-w-5xl text-center space-y-2 mb-2">
-                    <span className="text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">
-                        The Signature Differentiator
-                    </span>
-                    <h2 className="text-2xl md:text-3xl font-extrabold text-neutral-900 dark:text-white">
-                        Every Fork Remembers Its Roots
-                    </h2>
-                </div>
-                <LineageGraph />
-            </section>
-
-            {/* 3. 3D Coverflow Interactive Snippet Showcase with Click-to-Expand Modal */}
-            <section className="relative w-full border-t border-neutral-200/60 dark:border-neutral-800/60 bg-white/40 dark:bg-neutral-900/30">
-                <CoverflowSnippetShowcase />
-            </section>
-
-            {/* 3. Interactive Feature Bento Grid with Live Micro-Widgets */}
-            <FeatureBentoGrid />
-
-            {/* 3. Call to Action Banner */}
-            <section className="mx-auto max-w-5xl px-4 py-16 w-full">
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 p-8 md:p-12 text-center text-white shadow-2xl shadow-indigo-500/20">
-                    {/* Background glow accents */}
-                    <div className="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
-                    <div className="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-purple-400/20 blur-2xl" />
-
+            <main className="relative flex flex-col flex-1">
+                {/* 1. Hero & 3D Container Scroll with Scoped Atmospheric 3D Kinetic Layer & Small Code Snippets */}
+                <section className="relative w-full overflow-hidden bg-bg-base pb-12 md:pb-20">
+                    <GlobalBackgroundLayer />
                     <div className="relative z-10">
-                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-                            Start building your personal code vault today
+                        <ContainerScroll
+                            titleComponent={<HeroSection />}
+                        >
+                            <InteractiveSnippetMockup />
+                        </ContainerScroll>
+                    </div>
+                </section>
+
+                {/* 2. Signature Visual Element: The Lineage Thread (Flat Obsidian Canvas) */}
+                <section className="relative w-full px-4 py-12 border-t border-neutral-200/60 dark:border-neutral-800/60 bg-bg-base">
+                    <div className="mx-auto max-w-5xl text-center space-y-2 mb-2">
+                        <span className="text-xs font-bold uppercase tracking-widest text-violet">
+                            The Signature Differentiator
+                        </span>
+                        <h2 className="text-2xl md:text-3xl font-extrabold text-text-primary">
+                            Every Fork Remembers Its Roots
                         </h2>
-                        <p className="mt-3 text-indigo-100 max-w-xl mx-auto text-sm md:text-base">
-                            Organize, fork, and rediscover your code — with lineage tracking and AI explanations built in.
-                        </p>
-
-                        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                            <Link
-                                href="/register"
-                                className="rounded-full bg-white px-8 py-3 text-sm font-bold text-indigo-600 shadow-lg transition-all duration-200 hover:bg-indigo-50 hover:scale-105 active:scale-95"
-                            >
-                                Create Free Account
-                            </Link>
-                            <Link
-                                href="/login"
-                                className="rounded-full border border-white/30 bg-white/10 px-8 py-3 text-sm font-semibold text-white backdrop-blur-md transition-all duration-200 hover:bg-white/20"
-                            >
-                                Sign In
-                            </Link>
-                        </div>
                     </div>
-                </div>
-            </section>
+                    <LineageGraph />
+                </section>
 
-            {/* Footer */}
-            <footer className="mt-auto border-t border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-950 px-4 py-8 text-center text-xs text-neutral-500">
-                <div className="mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-between gap-4">
-                    <p>© 2026 CodeVault. Store. Fork. Discover. Code.</p>
-                    <div className="flex items-center gap-6">
-                        <Link href="/login" className="hover:text-neutral-800 dark:hover:text-neutral-300 transition-colors">
-                            Sign In
-                        </Link>
-                        <Link href="/register" className="hover:text-neutral-800 dark:hover:text-neutral-300 transition-colors">
-                            Register
-                        </Link>
-                        <span className="text-neutral-400">⌘K to search</span>
-                    </div>
-                </div>
-            </footer>
+                {/* 3. The Pain vs The Solution: Chaos vs Sovereign Vault */}
+                <ChaosVsVaultComparison />
+
+                {/* 4. 3D Coverflow Interactive Snippet Showcase with Click-to-Expand Modal */}
+                <section className="relative w-full border-t border-neutral-200/60 dark:border-neutral-800/60 bg-bg-base">
+                    <CoverflowSnippetShowcase />
+                </section>
+
+                {/* 5. Interactive Feature Bento Grid with Live Micro-Widgets */}
+                <FeatureBentoGrid />
+
+                {/* 6. Enhanced Closer: CTA Banner, Trust Strip & Multi-Column SaaS Footer */}
+                <LandingFooter />
+            </main>
         </div>
     );
 }

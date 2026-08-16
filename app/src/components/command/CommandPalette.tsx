@@ -83,42 +83,42 @@ export function CommandPalette({
                         onSelect={() => runCommand(() => router.push("/"))}
                         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs cursor-pointer"
                     >
-                        <Home className="h-4 w-4 text-neutral-500" />
+                        <Home className="h-4 w-4 text-text-secondary" />
                         <span>Home</span>
                     </CommandItem>
                     <CommandItem
                         onSelect={() => runCommand(() => router.push("/dashboard"))}
                         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs cursor-pointer"
                     >
-                        <FileCode className="h-4 w-4 text-indigo-500" />
+                        <FileCode className="h-4 w-4 text-cobalt" />
                         <span>Dashboard</span>
                     </CommandItem>
                     <CommandItem
                         onSelect={() => runCommand(() => router.push("/snippets"))}
                         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs cursor-pointer"
                     >
-                        <Code className="h-4 w-4 text-emerald-500" />
+                        <Code className="h-4 w-4 text-mint" />
                         <span>Snippet Library</span>
                     </CommandItem>
                     <CommandItem
                         onSelect={() => runCommand(() => router.push("/profile/me"))}
                         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs cursor-pointer"
                     >
-                        <User className="h-4 w-4 text-purple-500" />
+                        <User className="h-4 w-4 text-violet" />
                         <span>Developer Profile</span>
                     </CommandItem>
                     <CommandItem
                         onSelect={() => runCommand(() => router.push("/register"))}
                         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs cursor-pointer"
                     >
-                        <Plus className="h-4 w-4 text-indigo-500" />
+                        <Plus className="h-4 w-4 text-cobalt" />
                         <span>Create Account / New Vault</span>
                     </CommandItem>
                     <CommandItem
                         onSelect={() => runCommand(() => router.push("/login"))}
                         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs cursor-pointer"
                     >
-                        <User className="h-4 w-4 text-neutral-500" />
+                        <User className="h-4 w-4 text-text-secondary" />
                         <span>Sign In</span>
                     </CommandItem>
                 </CommandGroup>
@@ -143,14 +143,14 @@ export function CommandPalette({
                                     className="h-2 w-2 rounded-full"
                                     style={{ backgroundColor: snippet.langColor }}
                                 />
-                                <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                                <span className="font-medium text-text-primary">
                                     {snippet.title}
                                 </span>
-                                <span className="text-[10px] text-neutral-400">
+                                <span className="text-[10px] text-text-secondary">
                                     ({snippet.language})
                                 </span>
                             </div>
-                            <span className="flex items-center gap-1 text-[10px] text-neutral-400 font-mono">
+                            <span className="flex items-center gap-1 text-[10px] text-text-secondary font-mono">
                                 <Copy className="h-3 w-3" />
                                 Copy
                             </span>
@@ -177,7 +177,7 @@ export function CommandPalette({
                             </>
                         ) : (
                             <>
-                                <Moon className="h-4 w-4 text-indigo-400" />
+                                <Moon className="h-4 w-4 text-cobalt" />
                                 <span>Switch to Dark Theme</span>
                             </>
                         )}

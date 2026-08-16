@@ -14,10 +14,9 @@ export const ContainerScroll = ({
     children,
     className,
 }: ContainerScrollProps) => {
-    const containerRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start start", "end end"],
     });
 
     const [isMobile, setIsMobile] = useState(false);
@@ -28,28 +27,26 @@ export const ContainerScroll = ({
         };
         checkMobile();
         window.addEventListener("resize", checkMobile);
-        return () => {
-            window.removeEventListener("resize", checkMobile);
-        };
+        return () => window.removeEventListener("resize", checkMobile);
     }, []);
 
     const scaleDimensions = () => {
-        return isMobile ? [0.75, 0.95] : [1.05, 1];
+        return isMobile ? [0.75, 0.9] : [1.05, 1];
     };
 
-    const rotate = useTransform(scrollYProgress, [0, 0.7], [18, 0]);
-    const scale = useTransform(scrollYProgress, [0, 0.7], scaleDimensions());
-    const translate = useTransform(scrollYProgress, [0, 0.7], [0, -60]);
+    const rotate = useTransform(scrollYProgress, [0, 1], [20, 0]);
+    const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
+    const translate = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
     return (
         <div
-            className="relative flex h-[55rem] md:h-[75rem] items-center justify-center p-2 md:p-12 overflow-hidden"
             ref={containerRef}
+            className={`h-[60rem] md:h-[80rem] flex items-center justify-center relative p-2 md:p-20 ${className || ""}`}
         >
             <div
-                className="relative w-full py-10 md:py-20"
+                className="py-10 md:py-40 w-full relative"
                 style={{
-                    perspective: "1200px",
+                    perspective: "1000px",
                 }}
             >
                 <Header translate={translate} titleComponent={titleComponent} />
@@ -95,10 +92,12 @@ export const Card = ({
             style={{
                 rotateX: rotate,
                 scale,
+                boxShadow:
+                    "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
             }}
-            className="relative mx-auto mt-6 md:mt-10 h-[30rem] md:h-[42rem] w-full max-w-5xl rounded-[28px] md:rounded-[36px] border border-neutral-200/80 bg-neutral-900/5 p-2 md:p-4 shadow-[0_20px_70px_rgba(0,0,0,0.12),0_0_50px_rgba(99,102,241,0.1)] backdrop-blur-xl dark:border-neutral-800/80 dark:bg-neutral-900/60 dark:shadow-[0_25px_80px_rgba(0,0,0,0.4),0_0_60px_rgba(99,102,241,0.18)]"
+            className="relative mx-auto -mt-8 md:-mt-12 h-[28rem] sm:h-[34rem] md:h-[40rem] w-full max-w-5xl rounded-[24px] md:rounded-[32px] border border-neutral-200/80 bg-bg-surface/80 p-2 md:p-3.5 shadow-2xl backdrop-blur-xl dark:border-neutral-800/80 dark:bg-bg-surface/80 dark:shadow-[0_25px_80px_rgba(0,0,0,0.6),0_0_60px_rgba(59,130,246,0.15)]"
         >
-            <div className="h-full w-full overflow-hidden rounded-[20px] md:rounded-[28px] bg-white border border-neutral-200/60 shadow-inner dark:bg-neutral-950 dark:border-neutral-800/60">
+            <div className="h-full w-full overflow-hidden rounded-[18px] md:rounded-[24px] bg-bg-base border border-neutral-200/60 shadow-inner dark:border-neutral-800/60">
                 {children}
             </div>
         </motion.div>

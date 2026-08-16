@@ -61,26 +61,26 @@ export default function ProfileSettingsPage() {
     };
 
     return (
-        <div className="min-h-full bg-neutral-50/50 dark:bg-neutral-950 pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-full bg-bg-base pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl space-y-6">
                 <Link
                     href="/dashboard"
-                    className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-600 hover:text-indigo-600 dark:text-neutral-400 dark:hover:text-indigo-400 transition-colors"
+                    className="inline-flex items-center gap-2 text-xs font-semibold text-text-secondary hover:text-cobalt transition-colors"
                 >
                     <ArrowLeft className="h-4 w-4" />
                     <span>Back to Dashboard</span>
                 </Link>
 
-                <div className="rounded-3xl border border-neutral-200/80 bg-white p-8 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-                    <div className="flex items-center gap-3 pb-6 border-b border-neutral-100 dark:border-neutral-800">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
+                <div className="rounded-3xl border border-neutral-200/80 bg-bg-surface p-8 shadow-xs dark:border-neutral-800">
+                    <div className="flex items-center gap-3 pb-6 border-b border-neutral-200/60 dark:border-neutral-800">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cobalt/15 text-cobalt">
                             <User className="h-5 w-5" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-neutral-900 dark:text-white">
+                            <h1 className="text-xl font-bold text-text-primary">
                                 Profile Settings
                             </h1>
-                            <p className="text-xs text-neutral-500">
+                            <p className="text-xs text-text-secondary">
                                 Update your public developer profile and bio.
                             </p>
                         </div>
@@ -88,22 +88,22 @@ export default function ProfileSettingsPage() {
 
                     <form onSubmit={handleSave} className="mt-6 space-y-5">
                         <div>
-                            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
+                            <label className="block text-xs font-semibold text-text-primary mb-1.5">
                                 Email Address
                             </label>
                             <input
                                 type="email"
                                 value={user?.email || "developer@codevault.dev"}
                                 disabled
-                                className="w-full rounded-xl border border-neutral-200 bg-neutral-100 px-3.5 py-2.5 text-xs text-neutral-500 dark:border-neutral-800 dark:bg-neutral-800 cursor-not-allowed"
+                                className="w-full rounded-xl border border-neutral-200 bg-bg-elevated/50 px-3.5 py-2.5 text-xs text-text-secondary dark:border-neutral-800 cursor-not-allowed"
                             />
-                            <p className="mt-1 text-[11px] text-neutral-400">
+                            <p className="mt-1 text-[11px] text-text-secondary">
                                 Email cannot be changed directly in v1.
                             </p>
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
+                            <label className="block text-xs font-semibold text-text-primary mb-1.5">
                                 Display Name
                             </label>
                             <input
@@ -112,12 +112,12 @@ export default function ProfileSettingsPage() {
                                 onChange={(e) => setDisplayName(e.target.value)}
                                 placeholder="Your name or developer handle"
                                 maxLength={50}
-                                className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3.5 py-2.5 text-xs text-neutral-900 outline-none focus:border-indigo-500 focus:bg-white dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3.5 py-2.5 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
+                            <label className="block text-xs font-semibold text-text-primary mb-1.5">
                                 Short Biography (Max 500 characters)
                             </label>
                             <textarea
@@ -126,24 +126,24 @@ export default function ProfileSettingsPage() {
                                 onChange={(e) => setBio(e.target.value)}
                                 placeholder="Write a short summary about your engineering stack, projects, or interests..."
                                 maxLength={500}
-                                className="w-full rounded-xl border border-neutral-200 bg-neutral-50 p-3.5 text-xs text-neutral-900 outline-none focus:border-indigo-500 focus:bg-white dark:border-neutral-800 dark:bg-neutral-800 dark:text-white"
+                                className="w-full rounded-xl border border-neutral-200 bg-bg-elevated p-3.5 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
                             />
-                            <p className="mt-1 text-right text-[10px] text-neutral-400">
+                            <p className="mt-1 text-right text-[10px] text-text-secondary">
                                 {bio.length}/500
                             </p>
                         </div>
 
-                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-neutral-200/60 dark:border-neutral-800">
                             <Link
                                 href="/dashboard"
-                                className="rounded-xl px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                                className="rounded-xl px-4 py-2 text-xs font-semibold text-text-secondary hover:bg-bg-elevated"
                             >
                                 Cancel
                             </Link>
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs font-semibold text-white shadow-md hover:bg-indigo-700 active:scale-95 transition-all"
+                                className="inline-flex items-center gap-2 rounded-xl bg-cobalt px-6 py-2.5 text-xs font-semibold text-white shadow-md hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95 transition-all"
                             >
                                 {isLoading ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />

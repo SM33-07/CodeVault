@@ -85,7 +85,7 @@ export const useAuthStore = create<AuthState>()(
         viewCount: 0,
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
-        gradientTheme: { glow: "#6366F1", accent: "from-indigo-500/20" },
+        gradientTheme: { glow: "#3B82F6", accent: "from-cobalt/20" },
     },
     {
         id: "snip-3",
@@ -106,7 +106,7 @@ export const useAuthStore = create<AuthState>()(
         codePreview: [
             "<motion.path",
             "  d=\"M 400 0 C 400 50, 160 50, 160 100\"",
-            "  stroke=\"#E0A458\" strokeWidth=\"2.5\"",
+            "  stroke=\"#7C3AED\" strokeWidth=\"2.5\"",
             "  animate={{ pathLength: 1 }} transition={{ duration: 1.2 }} />",
         ],
         tags: ["#framer-motion", "#svg", "#lineage", "#animations"],
@@ -114,7 +114,7 @@ export const useAuthStore = create<AuthState>()(
         viewCount: 0,
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
-        gradientTheme: { glow: "#E0A458", accent: "from-amber-500/20" },
+        gradientTheme: { glow: "#7C3AED", accent: "from-violet/20" },
     },
     {
         id: "snip-4",
@@ -172,7 +172,7 @@ SELECT * FROM SnippetLineage ORDER BY depth DESC;`,
         viewCount: 0,
         createdAt: "Example",
         author: { name: "CodeVault Team", handle: "codevault" },
-        gradientTheme: { glow: "#336791", accent: "from-indigo-500/20" },
+        gradientTheme: { glow: "#336791", accent: "from-cobalt/20" },
     },
     {
         id: "snip-6",
@@ -267,14 +267,14 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                 <div>
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cobalt">
                         <Sparkles className="h-3.5 w-3.5" />
                         <span>Example Snippets</span>
                     </div>
-                    <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
+                    <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-text-primary">
                         See What You Can Build
                     </h2>
-                    <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 max-w-lg">
+                    <p className="mt-2 text-sm text-text-secondary max-w-lg">
                         Curated seed snippets showcasing multi-language support, tagging, and code previews.
                     </p>
                 </div>
@@ -282,17 +282,17 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
                 {/* Quick Search & Command trigger */}
                 <div className="flex items-center gap-3">
                     <div className="relative flex-1 md:w-72">
-                        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
                         <input
                             type="text"
                             placeholder="Filter snippets..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full rounded-xl border border-neutral-200 bg-white py-2.5 pl-10 pr-12 text-xs text-neutral-900 shadow-sm outline-none transition-all placeholder:text-neutral-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-500"
+                            className="w-full rounded-xl border border-neutral-200 bg-bg-surface py-2.5 pl-10 pr-12 text-xs text-text-primary shadow-sm outline-none transition-all placeholder:text-text-secondary focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 dark:border-neutral-800"
                         />
                         <button
                             onClick={onOpenCommand}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 text-[10px] font-mono text-neutral-500 hover:bg-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400"
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-neutral-200 bg-bg-elevated px-1.5 py-0.5 text-[10px] font-mono text-text-secondary hover:bg-neutral-200 dark:border-neutral-700"
                         >
                             ⌘K
                         </button>
@@ -301,7 +301,7 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
                     <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value as any)}
-                        className="rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-xs font-medium text-neutral-700 shadow-sm outline-none transition-all hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
+                        className="rounded-xl border border-neutral-200 bg-bg-surface px-3 py-2.5 text-xs font-medium text-text-primary shadow-sm outline-none transition-all hover:bg-bg-elevated dark:border-neutral-800"
                     >
                         <option value="forks">Most Forked</option>
                         <option value="views">Most Viewed</option>
@@ -321,10 +321,10 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
                                 setSelectedLanguage(lang.name);
                                 setSelectedTag(null);
                             }}
-                            className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 shrink-0 ${
+                            className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 shrink-0 border ${
                                 isActive
-                                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/25"
-                                    : "bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200/80 dark:bg-neutral-900 dark:text-neutral-300 dark:border-neutral-800 dark:hover:bg-neutral-800"
+                                    ? "bg-cobalt text-white border-cobalt shadow-sm"
+                                    : "bg-bg-elevated text-text-secondary hover:border-cobalt hover:text-cobalt border-neutral-200 dark:border-neutral-800"
                             }`}
                         >
                             <span>{lang.name}</span>
@@ -332,7 +332,7 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
                                 className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
                                     isActive
                                         ? "bg-white/20 text-white"
-                                        : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
+                                        : "bg-bg-surface text-text-secondary"
                                 }`}
                             >
                                 {lang.count}
@@ -342,7 +342,7 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
                 })}
 
                 {selectedTag && (
-                    <div className="flex items-center gap-1.5 rounded-full bg-indigo-50 border border-indigo-200 px-3 py-1 text-xs font-medium text-indigo-700 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-300">
+                    <div className="flex items-center gap-1.5 rounded-full bg-bg-elevated border border-cobalt/40 px-3 py-1 text-xs font-medium text-cobalt">
                         <span>Tag: {selectedTag}</span>
                         <button
                             onClick={() => setSelectedTag(null)}
@@ -369,11 +369,11 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
 
             {filteredSnippets.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-800 p-12 text-center">
-                    <Code2 className="mx-auto h-8 w-8 text-neutral-400" />
-                    <h3 className="mt-3 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                    <Code2 className="mx-auto h-8 w-8 text-text-secondary" />
+                    <h3 className="mt-3 text-sm font-semibold text-text-primary">
                         No snippets found
                     </h3>
-                    <p className="mt-1 text-xs text-neutral-500">
+                    <p className="mt-1 text-xs text-text-secondary">
                         Try resetting your search query or language filter.
                     </p>
                     <button
@@ -382,7 +382,7 @@ export function SnippetFilterGrid({ onOpenCommand }: { onOpenCommand?: () => voi
                             setSearchQuery("");
                             setSelectedTag(null);
                         }}
-                        className="mt-4 rounded-lg bg-neutral-900 px-4 py-2 text-xs font-medium text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900"
+                        className="mt-4 rounded-lg bg-cobalt px-4 py-2 text-xs font-medium text-white hover:bg-cobalt-hover active:bg-cobalt-active transition-colors"
                     >
                         Reset Filters
                     </button>
