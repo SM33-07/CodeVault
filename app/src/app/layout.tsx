@@ -5,6 +5,7 @@ import { IBM_Plex_Serif, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { NavbarWrapper } from "@/components/NavbarWrapper";
 import { CommandPalette } from "@/components/command/CommandPalette";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const plexSerif = IBM_Plex_Serif({
   weight: ["400", "500", "600", "700"],
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </main>
           <Toaster />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
