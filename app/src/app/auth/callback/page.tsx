@@ -2,9 +2,9 @@
 
 import React, { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth-store";
+import { CyberLoader } from "@/components/ui/CyberLoader";
 
 function AuthCallbackContent() {
     const router = useRouter();
@@ -39,27 +39,12 @@ function AuthCallbackContent() {
         }
     }, [searchParams, router, setAuth]);
 
-    return (
-        <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4 bg-bg-base">
-            <div className="flex flex-col items-center gap-4 rounded-3xl border border-neutral-200 bg-bg-surface p-8 shadow-xl dark:border-neutral-800">
-                <Loader2 className="h-8 w-8 animate-spin text-cobalt" />
-                <p className="text-sm font-semibold text-text-primary">
-                    Completing authentication...
-                </p>
-            </div>
-        </div>
-    );
+    return <CyberLoader fullscreen size="lg" label="Authorizing Vault Session..." />;
 }
 
 export default function AuthCallbackPage() {
     return (
-        <Suspense
-            fallback={
-                <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-bg-base">
-                    <Loader2 className="h-8 w-8 animate-spin text-cobalt" />
-                </div>
-            }
-        >
+        <Suspense fallback={<CyberLoader fullscreen size="lg" label="Initializing..." />}>
             <AuthCallbackContent />
         </Suspense>
     );

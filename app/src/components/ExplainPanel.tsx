@@ -6,6 +6,7 @@ import { Sparkles, Loader2, AlertCircle, CheckCircle2, Shield, Zap, RefreshCw } 
 import { toast } from "sonner";
 import { api } from "@/lib/api-client";
 import { TextGenerate } from "@/components/animations/TextGenerate";
+import { CyberLoader } from "@/components/ui/CyberLoader";
 
 interface ExplainPanelProps {
     snippetId: string;
@@ -84,14 +85,8 @@ export function ExplainPanel({ snippetId, codeBody, language }: ExplainPanelProp
 
             {/* Loading State (NFR-2: Immediate feedback) */}
             {isLoading && (
-                <div className="mt-5 rounded-xl bg-bg-elevated p-6 border border-neutral-200 dark:border-neutral-800 text-center space-y-3">
-                    <Loader2 className="mx-auto h-6 w-6 animate-spin text-cobalt" />
-                    <p className="text-xs font-semibold text-text-primary">
-                        Analyzing syntax, algorithms, and complexity...
-                    </p>
-                    <p className="text-[11px] text-text-secondary">
-                        Synthesizing natural language developer explanation
-                    </p>
+                <div className="mt-5 rounded-2xl bg-bg-elevated/70 p-6 border border-neutral-200/80 dark:border-neutral-800 backdrop-blur-xl text-center">
+                    <CyberLoader size="md" label="Synthesizing Gemini code explanation..." />
                 </div>
             )}
 

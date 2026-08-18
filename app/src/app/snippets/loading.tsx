@@ -1,0 +1,5 @@
+import { CyberLoader } from "@/components/ui/CyberLoader";
+
+export default function SnippetsLoading() {
+    return <CyberLoader fullscreen size="lg" label="Indexing Snippet Library..." />;
+}

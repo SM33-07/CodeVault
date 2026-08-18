@@ -2,9 +2,11 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Toaster } from "sonner"
 import { IBM_Plex_Serif, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import React, { Suspense } from "react";
 import { ThemeProvider } from "next-themes";
 import { NavbarWrapper } from "@/components/NavbarWrapper";
 import { CommandPalette } from "@/components/command/CommandPalette";
+import { RouteTransitionLoader } from "@/components/ui/RouteTransitionLoader";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -55,6 +57,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem
           disableTransitionOnChange
         >
+          <Suspense fallback={null}>
+            <RouteTransitionLoader />
+          </Suspense>
           <NavbarWrapper />
           <CommandPalette />
           <main className="min-h-[calc(100vh-4rem)]">

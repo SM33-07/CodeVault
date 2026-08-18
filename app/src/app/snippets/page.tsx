@@ -25,6 +25,7 @@ import { apiGet } from "@/lib/api";
 import { Snippet } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SAMPLE_SNIPPETS } from "@/components/snippets/SnippetFilterGrid";
+import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
 
 export default function SnippetsLibraryPage() {
     const router = useRouter();
@@ -102,8 +103,9 @@ export default function SnippetsLibraryPage() {
     ];
 
     return (
-        <div className="min-h-full bg-neutral-50/50 dark:bg-neutral-950 pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-6xl space-y-8">
+        <div className="relative min-h-screen bg-bg-base pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            <BodyBackgroundLayer isFixed />
+            <div className="relative z-10 mx-auto max-w-6xl space-y-8">
                 {/* Header Title & Actions */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>

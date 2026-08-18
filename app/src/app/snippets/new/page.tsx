@@ -19,6 +19,7 @@ import {
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth-store";
 import { apiPost } from "@/lib/api";
+import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
 
 const AVAILABLE_LANGUAGES = [
     { name: "TypeScript", color: "#3178C6", ext: ".ts" },
@@ -105,8 +106,9 @@ export default function CreateSnippetPage() {
     };
 
     return (
-        <div className="min-h-full bg-neutral-50/50 dark:bg-neutral-950 py-8 px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-4xl space-y-6">
+        <div className="relative min-h-screen bg-bg-base py-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            <BodyBackgroundLayer isFixed />
+            <div className="relative z-10 mx-auto max-w-4xl space-y-6">
                 {/* Back Link & Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">

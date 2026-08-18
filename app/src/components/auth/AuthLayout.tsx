@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
 
 interface AuthLayoutProps {
     children: React.ReactNode;
@@ -119,8 +120,9 @@ export default function AuthLayout({
         <div className="flex min-h-[calc(100vh-4rem)] w-full">
             {/* Left Panel - Form */}
             <div className="relative flex w-full flex-col items-center justify-center px-6 py-8 sm:px-10 lg:w-1/2 lg:px-16">
-                {/* Subtle background pattern */}
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-blue-50/20 dark:from-bg-base dark:via-bg-surface dark:to-bg-base" />
+                {/* Living Obsidian Grainient Shader */}
+                <BodyBackgroundLayer isFixed />
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-50/80 via-white/80 to-blue-50/10 dark:from-bg-base/80 dark:via-bg-surface/80 dark:to-bg-base/80 pointer-events-none" />
 
                 <motion.div
                     initial={{ y: 15 }}

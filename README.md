@@ -19,7 +19,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg)](https://www.postgresql.org)
 [![Prisma ORM](https://img.shields.io/badge/Prisma-ORM-2D3748.svg)](https://www.prisma.io)
-[![Sprint](https://img.shields.io/badge/Sprint-6%2F6%20Complete-brightgreen.svg)](#-the-build-journey--sprint-roadmap)
+[![Release](https://img.shields.io/badge/v1.0.0-Sprint_1--6_Delivered-brightgreen.svg)](#-the-build-journey--sprint-roadmap)
 [![Docker](https://img.shields.io/badge/Docker-Compose_Ready-2496ED.svg)](#-docker-quickstart)
 
 </div>

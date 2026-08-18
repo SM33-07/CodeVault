@@ -30,6 +30,8 @@ import { apiGet, apiPost, apiDelete } from "@/lib/api";
 import { Snippet } from "@/types";
 import { ExplainPanel } from "@/components/ExplainPanel";
 import { SAMPLE_SNIPPETS } from "@/components/snippets/SnippetFilterGrid";
+import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
+import { CyberLoader } from "@/components/ui/CyberLoader";
 
 export default function SnippetDetailPage({
     params,
@@ -111,14 +113,7 @@ export default function SnippetDetailPage({
     };
 
     if (isLoading) {
-        return (
-            <div className="min-h-screen bg-bg-base p-8 flex items-center justify-center">
-                <div className="text-center space-y-3">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-cobalt border-t-transparent mx-auto" />
-                    <p className="text-xs text-text-secondary">Loading code snippet...</p>
-                </div>
-            </div>
-        );
+        return <CyberLoader fullscreen size="lg" label="Decrypting Snippet..." />;
     }
 
     if (!snippet) {
@@ -151,8 +146,9 @@ export default function SnippetDetailPage({
     const isOwner = user?.id && snippet.ownerId === user.id;
 
     return (
-        <div className="min-h-full bg-bg-base pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-5xl space-y-8">
+        <div className="relative min-h-screen bg-bg-base pt-4 pb-12 sm:pt-6 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            <BodyBackgroundLayer isFixed />
+            <div className="relative z-10 mx-auto max-w-5xl space-y-8">
                 {/* Back Navigation Bar */}
                 <div className="flex items-center justify-between">
                     <Link
