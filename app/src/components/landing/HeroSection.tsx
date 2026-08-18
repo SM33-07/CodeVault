@@ -72,21 +72,21 @@ export function HeroSection() {
                     </div>
                 </motion.div>
 
-                {/* Snippet 2: Vault Enclave (Bottom-Left) */}
+                {/* Snippet 2: Self-Hosted Vault (Bottom-Left) */}
                 <motion.div
                     initial={{ x: -10 }}
                     animate={{ x: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                     whileHover={{ scale: 1.06, y: -3, rotateZ: -1 }}
                     whileTap={{ scale: 0.96 }}
-                    onClick={(e) => handleCopy("vault", "state: ENCRYPTED_LOCAL // Air-gapped Zero Telemetry", "Vault Enclave", e)}
+                    onClick={(e) => handleCopy("vault", "host: localhost:3000 // Docker + PostgreSQL", "Self-Hosted Vault", e)}
                     className="absolute top-44 left-0 xl:-left-12 2xl:-left-20 z-20 cursor-pointer animate-float-3 text-left max-w-[210px] group"
                 >
                     <div className="rounded-xl border border-neutral-200/80 bg-bg-surface/85 p-2.5 font-mono text-[11px] text-text-secondary shadow-lg shadow-mint/10 backdrop-blur-md dark:border-neutral-800/80 dark:bg-bg-surface/80 group-hover:border-mint group-hover:shadow-xl group-hover:shadow-mint/25 transition-all duration-200">
                         <div className="flex items-center justify-between gap-2 pb-1 mb-1 border-b border-neutral-200/60 dark:border-neutral-700/40 text-[10px] text-emerald-400">
                             <span className="flex items-center gap-1 font-bold">
                                 <Shield className="h-3 w-3 text-emerald-400" />
-                                <span>Vault Enclave</span>
+                                <span>Self-Hosted Vault</span>
                             </span>
                             <div className="flex items-center gap-1">
                                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -98,10 +98,10 @@ export function HeroSection() {
                             </div>
                         </div>
                         <p className="text-text-primary font-mono text-[10.5px] truncate">
-                            state: <span className="text-emerald-400 font-semibold">ENCRYPTED</span>
+                            storage: <span className="text-emerald-400 font-semibold">LOCAL_POSTGRES</span>
                         </p>
                         <div className="mt-1 flex items-center justify-between text-[9px] text-text-secondary">
-                            <span>Air-gapped local</span>
+                            <span>Dockerized local</span>
                             <span className="text-emerald-400 font-semibold group-hover:underline">1-click copy</span>
                         </div>
                     </div>

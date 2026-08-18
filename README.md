@@ -8,6 +8,11 @@
 
 <br />
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-trycodevault.vercel.app-blueviolet?style=for-the-badge&logo=vercel)](https://trycodevault.vercel.app/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/SM33-07/CodeVault)
+
+<br />
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.2.9-black.svg)](https://nextjs.org/)
@@ -20,6 +25,12 @@
 </div>
 
 ---
+
+## 🌐 Live Demo & Deployment
+
+* **Live Web App**: [https://trycodevault.vercel.app/](https://trycodevault.vercel.app/)
+* **Backend API**: Self-hostable via Docker Compose or deployable to Render / Railway / Fly.io.
+
 
 ## 💡 Why CodeVault?
 
@@ -71,6 +82,44 @@ CodeVault follows a clean **three-tier architecture** — the frontend never tal
 ```
 
 > **Design principle**: The AI feature degrades gracefully — if the AI service is unavailable, every other feature keeps working. CodeVault is a snippet manager first, AI tool second.
+
+---
+
+## 🛡️ Key Engineering & Security Decisions
+
+### 1. Fork Lineage & Provenance Data Model
+Rather than treating a forked snippet as an orphaned copy or an unindexed duplicate, CodeVault models lineage at the database layer via a self-referencing foreign key:
+```prisma
+model Snippet {
+  id           String    @id @default(uuid())
+  title        String
+  code         String
+  language     String
+  isPrivate    Boolean   @default(false)
+  authorId     String
+  author       User      @relation(fields: [authorId], references: [id])
+  
+  // Provenance Lineage
+  forkedFromId String?
+  forkedFrom   Snippet?  @relation("SnippetForks", fields: [forkedFromId], references: [id])
+  forks        Snippet[] @relation("SnippetForks")
+  forkCount    Int       @default(0)
+}
+```
+* **Immutable Ancestry**: Downstream mutations (custom code diffs, retagging) never alter the parent snippet.
+* **Access Isolation**: Forking a private snippet is rejected at the API middleware layer (`403 Forbidden`).
+
+### 2. OAuth Account-Linking Security
+During Google and GitHub OAuth callback flows, an unverified external email could theoretically attempt to link to a pre-existing email/password account. CodeVault mitigates account hijacking by enforcing strict provider ownership and verified email flags before linking identities.
+
+### 3. AI Service Boundary & Graceful Degradation
+The AI explanation endpoint (`/api/ai/:id/explain`) is isolated behind a dedicated service boundary with strict timeout guards:
+* Gemini API tokens remain exclusively on the Express backend (zero client-side leakage).
+* If the upstream AI provider is rate-limited, unreachable, or returns an error, the core snippet management platform remains 100% operational with a graceful fallback status.
+
+### 4. Visibility-Aware Multi-Tier Search & Profiles
+* **Search queries (`/api/snippets`)**: Public visitors only match against public snippets. Authenticated users automatically receive a union query matching public snippets plus their own private snippets (`WHERE (isPrivate = false) OR (isPrivate = true AND authorId = userId)`).
+* **Profiles (`/api/users/:userId`)**: Viewing another developer's profile exposes only their public catalog. Viewing your own profile reveals your complete sovereign library.
 
 ---
 

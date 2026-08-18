@@ -185,7 +185,7 @@ export function LineageGraph() {
                             className="sheen-button inline-flex items-center gap-1.5 rounded-full bg-violet px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-violet/25 hover:bg-violet-hover hover:scale-105 active:scale-95 transition-all"
                         >
                             <Sparkles className="h-3.5 w-3.5" />
-                            <span>Simulate Fork</span>
+                            <span>Visualize Fork</span>
                         </button>
                     </div>
                 </div>
@@ -199,10 +199,10 @@ export function LineageGraph() {
                         <div className="space-y-0.5">
                             <span className="font-bold text-text-primary text-xs flex items-center gap-2">
                                 How Fork Lineage Works
-                                <span className="text-[10px] text-violet font-mono font-normal">Interactive Simulation</span>
+                                <span className="text-[10px] text-violet font-mono font-normal">Interactive Visualization</span>
                             </span>
                             <p className="text-[11px] text-text-secondary leading-relaxed">
-                                Click <strong>&quot;Simulate Fork&quot;</strong> above to spawn a custom mutation (e.g. Rust WASM or Go Routine) and watch CodeVault instantly connect a bidirectional ancestry link back to <strong className="text-violet">useAuth.ts (#root)</strong>.
+                                Click <strong>&quot;Visualize Fork&quot;</strong> above to branch a new variant (e.g. Rust WASM or Go Routine) and watch the interactive tree dynamically trace parent-child provenance back to <strong className="text-violet">useAuth.ts (#root)</strong>.
                             </p>
                         </div>
                     </div>

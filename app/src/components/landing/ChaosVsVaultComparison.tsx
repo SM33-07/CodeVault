@@ -153,8 +153,8 @@ export function ChaosVsVaultComparison() {
                                     </div>
                                 </div>
                                 <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-500 border border-emerald-500/30">
-                                    Zero Telemetry
-                                </span>
+                                     Self-Hosted & Private
+                                 </span>
                             </div>
 
                             {/* Solved Mockup */}
@@ -199,7 +199,7 @@ export function ChaosVsVaultComparison() {
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                                    <span><strong className="text-text-primary">Air-Gapped Privacy</strong> — one-command self-hosted Docker container with zero third-party telemetry.</span>
+                                    <span><strong className="text-text-primary">Self-Hosted Privacy</strong> — one-command Docker container keeping your snippets on your own database.</span>
                                 </li>
                             </ul>
                         </div>

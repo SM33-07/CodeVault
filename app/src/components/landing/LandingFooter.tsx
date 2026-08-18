@@ -125,8 +125,8 @@ const TRUST_STATS = [
     },
     {
         icon: <ShieldCheck className="h-4 w-4 text-emerald-500" />,
-        title: "Zero Telemetry",
-        desc: "Self-hostable & air-gapped security",
+        title: "Self-Hostable",
+        desc: "Your database, your infrastructure",
     },
     {
         icon: <Scale className="h-4 w-4 text-amber-500" />,
