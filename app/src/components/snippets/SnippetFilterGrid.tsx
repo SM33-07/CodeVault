@@ -99,7 +99,7 @@ export const useAuthStore = create<AuthState>()(
   stroke="url(#lineageGlow)"
   strokeWidth="2.5"
   strokeDasharray="4 2"
-  initial={{ pathLength: 0, opacity: 0 }}
+  initial={{ pathLength: 0 }}
   animate={{ pathLength: 1, opacity: 1 }}
   transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
 />`,

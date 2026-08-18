@@ -116,7 +116,7 @@ export function ExplainPanel({ snippetId, codeBody, language }: ExplainPanelProp
             <AnimatePresence>
                 {explanation && (
                     <motion.div
-                        initial={{ opacity: 0, y: 8 }}
+                        initial={{ y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="mt-5 space-y-4 rounded-xl bg-bg-elevated p-5 border border-neutral-200/80 dark:border-neutral-800 text-xs leading-relaxed"
                     >

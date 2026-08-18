@@ -624,7 +624,7 @@ export function InteractiveSnippetMockup() {
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentSnippet.id}
-                            initial={{ opacity: 0, y: 6 }}
+                            initial={{ y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -6 }}
                             transition={{ duration: 0.18 }}

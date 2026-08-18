@@ -232,27 +232,13 @@ export function HeroSection() {
                 </Link>
             </motion.div>
 
-            {/* Main Headline with Kinetic Staggered Mask Entrance */}
-            <div className="mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-text-primary sm:text-6xl md:text-7xl">
-                <div className="overflow-hidden">
-                    <motion.h1
-                        initial={{ y: "0%" }}
-                        animate={{ y: "0%" }}
-                        className="block"
-                    >
-                        Every fork remembers
-                    </motion.h1>
-                </div>
-                <div className="overflow-hidden mt-1">
-                    <motion.span
-                        initial={{ y: "0%" }}
-                        animate={{ y: "0%" }}
-                        className="block bg-gradient-to-r from-sky-400 via-cobalt to-indigo-400 bg-clip-text text-transparent animate-shimmer"
-                    >
-                        where it came from.
-                    </motion.span>
-                </div>
-            </div>
+            {/* Main Headline */}
+            <h1 className="mt-6 max-w-4xl text-4xl font-extrabold tracking-tight text-text-primary sm:text-6xl md:text-7xl">
+                Every fork remembers{" "}
+                <span className="bg-gradient-to-r from-sky-400 via-cobalt to-indigo-400 bg-clip-text text-transparent animate-shimmer">
+                    where it came from.
+                </span>
+            </h1>
 
             {/* Subtitle */}
             <motion.p

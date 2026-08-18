@@ -75,7 +75,7 @@ function AnimatedCodePreview() {
                 {codeLines.map((line, i) => (
                     <motion.div
                         key={i}
-                        initial={{ opacity: 0, x: -20 }}
+                        initial={{ x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{
                             delay: 0.8 + i * 0.1,
@@ -150,7 +150,7 @@ export default function AuthLayout({
 
                     {/* Title */}
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.15, duration: 0.5 }}
                         className="mb-6"
@@ -165,7 +165,7 @@ export default function AuthLayout({
 
                     {/* Form content (children) */}
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3, duration: 0.5 }}
                     >
@@ -174,7 +174,6 @@ export default function AuthLayout({
 
                     {/* Footer */}
                     <motion.p
-                        initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5, duration: 0.5 }}
                         className="mt-6 text-center text-sm text-neutral-500 dark:text-neutral-400"
@@ -225,7 +224,7 @@ export default function AuthLayout({
                 <div className="relative z-10 flex flex-col items-center gap-6 px-12">
                     {/* Logo Banner */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.85 }}
+                        initial={{ scale: 0.85 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
                         className="flex flex-col items-center"
@@ -242,7 +241,7 @@ export default function AuthLayout({
 
                     {/* Code preview card */}
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.7, duration: 0.7 }}
                     >
@@ -251,7 +250,7 @@ export default function AuthLayout({
 
                     {/* Stats */}
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.2, duration: 0.5 }}
                         className="flex items-center gap-8 text-white/40"
