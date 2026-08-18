@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { LaserBorderCard } from "@/components/ui/LaserBorderCard";
 
 export interface ShowcaseSnippet {
     id: string;
@@ -500,26 +501,28 @@ export function CoverflowSnippetShowcase() {
     };
 
     return (
-        <div className="relative w-full py-16 px-4 overflow-hidden select-none">
+        <div className="relative w-full py-8 md:py-10 px-4 overflow-hidden select-none">
             {/* Ambient Background Glow */}
             <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
                 <div className="h-[450px] w-[700px] rounded-full bg-cobalt/10 blur-[120px] dark:bg-cobalt/15" />
             </div>
 
-            <div className="mx-auto max-w-6xl space-y-10">
-                {/* Section Header */}
-                <div className="text-center space-y-3">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-neutral-200/80 bg-bg-surface px-3.5 py-1 text-xs font-semibold text-text-secondary dark:border-neutral-800">
-                        <Code2 className="h-3.5 w-3.5 text-cobalt" />
-                        <span>Curated Code Library</span>
-                    </div>
+            <div className="mx-auto max-w-6xl space-y-6">
+                {/* Section Header Card */}
+                <div className="max-w-3xl mx-auto flex justify-center">
+                    <LaserBorderCard laserColor="violet" className="p-6 sm:p-8 text-center space-y-3 shadow-xl">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-neutral-200/80 bg-bg-surface px-3.5 py-1 text-xs font-semibold text-text-secondary dark:border-neutral-800">
+                            <Code2 className="h-3.5 w-3.5 text-cobalt" />
+                            <span>Curated Code Library</span>
+                        </div>
 
-                    <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-text-primary">
-                        Battle-Tested Developer Snippets
-                    </h2>
-                    <p className="text-sm md:text-base text-text-secondary max-w-xl mx-auto">
-                        Explore syntax patterns across languages. Click any card to inspect full code, line-by-line explanations, and fork lineage.
-                    </p>
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-text-primary">
+                            Battle-Tested Developer Snippets
+                        </h2>
+                        <p className="text-xs sm:text-sm md:text-base text-text-secondary max-w-xl mx-auto leading-relaxed">
+                            Explore syntax patterns across languages. Click any card to inspect full code, line-by-line explanations, and fork lineage.
+                        </p>
+                    </LaserBorderCard>
                 </div>
 
                 {/* Filter Pills Bar with Sliding layoutId Active Indicator */}
@@ -567,7 +570,7 @@ export function CoverflowSnippetShowcase() {
                 </div>
 
                 {/* 3D Coverflow Stage with Balanced Circular Offset */}
-                <div className="relative flex items-center justify-center min-h-[480px] py-6 [perspective:1200px]">
+                <div className="relative flex items-center justify-center min-h-[480px] py-4 [perspective:1200px]">
                     <div className="relative flex w-full max-w-5xl items-center justify-center">
                         {visibleSnippets.map((snippet, index) => {
                             const count = visibleSnippets.length;
@@ -581,7 +584,7 @@ export function CoverflowSnippetShowcase() {
                             const isVisible = Math.abs(offset) <= 2;
 
                             const rotateY = offset * -20;
-                            const translateX = offset * 230;
+                            const translateX = offset * 250;
                             const scale = isCenter ? 1 : Math.max(0.72, 1 - Math.abs(offset) * 0.14);
                             const zIndex = 20 - Math.abs(offset) * 5;
                             const opacity = isCenter ? 1 : isVisible ? Math.max(0.45, 1 - Math.abs(offset) * 0.32) : 0;
@@ -610,7 +613,7 @@ export function CoverflowSnippetShowcase() {
                                         damping: 28,
                                         mass: 0.6,
                                     }}
-                                    className={`group absolute w-[310px] sm:w-[360px] md:w-[380px] cursor-pointer rounded-2xl border ${
+                                    className={`group absolute w-[330px] sm:w-[390px] md:w-[430px] cursor-pointer rounded-2xl border ${
                                         isCenter
                                             ? "border-cobalt bg-bg-surface shadow-2xl shadow-cobalt/25 ring-2 ring-cobalt/30 hover:-translate-y-1.5"
                                             : "border-neutral-200/80 bg-bg-surface dark:border-neutral-800/80 shadow-lg hover:border-cobalt/50 hover:opacity-90 hover:-translate-y-1"

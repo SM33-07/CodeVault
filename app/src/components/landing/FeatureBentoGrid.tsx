@@ -15,6 +15,7 @@ import {
     ChevronRight,
     Tag as TagIcon,
 } from "lucide-react";
+import { LaserBorderCard } from "@/components/ui/LaserBorderCard";
 
 export function FeatureBentoGrid() {
     // View Mode: 'stack' (3D morphing card stack by default) or 'grid' (symmetrical 2x2 grid)
@@ -339,24 +340,34 @@ export function FeatureBentoGrid() {
         },
     ];
     return (
-        <section className="mx-auto max-w-6xl px-4 py-20">
-            {/* Section Header with Morphing View Mode Switcher */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <section className="relative mx-auto max-w-6xl px-4 py-8 md:py-10 overflow-hidden">
+            {/* Subtle Ambient Radial Aura */}
+            <div className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 -z-10 h-[450px] w-[700px] rounded-full bg-violet/[0.04] blur-[160px]" />
+            <div className="pointer-events-none absolute bottom-10 right-10 -z-10 h-[350px] w-[350px] rounded-full bg-cobalt/[0.035] blur-[140px]" />
+
+            {/* Section Header Card with Morphing View Mode Switcher */}
+            <LaserBorderCard
+                laserColor="mint"
+                containerClassName="mb-6 relative z-10 w-full"
+                className="p-6 sm:p-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
+            >
                 <div className="space-y-3">
                     <div className="inline-flex items-center gap-2 rounded-full border border-neutral-200/80 bg-bg-surface/80 px-3.5 py-1 text-xs font-semibold text-text-secondary dark:border-neutral-800">
                         <Zap className="h-3.5 w-3.5 text-cobalt" />
                         <span>Engineered for Developer Productivity</span>
                     </div>
-                    <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-text-primary">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-text-primary">
                         Everything you need to master your snippet workflow
                     </h2>
-                    <p className="text-sm md:text-base text-text-secondary max-w-xl">
+                    <p className="text-xs sm:text-sm md:text-base text-text-secondary max-w-xl leading-relaxed">
                         No more lost gists, buried Slack messages, or forgotten browser tabs.
                     </p>
                 </div>
 
                 {/* View Mode Switcher Tabs with Sliding Indicator */}
-                <div className="flex items-center gap-1 self-start md:self-auto rounded-2xl border border-neutral-200/80 bg-bg-surface p-1 dark:border-neutral-800 backdrop-blur-md">
+                <div className="flex items-center gap-1 self-start md:self-auto rounded-2xl border border-neutral-200/80 bg-bg-base/80 p-1 dark:border-neutral-800 backdrop-blur-md shrink-0">
+
+
                     <button
                         onClick={() => setViewMode("grid")}
                         className={`relative flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
@@ -395,7 +406,7 @@ export function FeatureBentoGrid() {
                         <span className="relative z-10">Morphing Stack</span>
                     </button>
                 </div>
-            </div>
+            </LaserBorderCard>
 
             {/* Layout Container */}
             <LayoutGroup id="features-layout">
@@ -411,7 +422,7 @@ export function FeatureBentoGrid() {
                                 key={card.id}
                                 layout
                                 layoutId={`feature-card-${card.id}`}
-                                className="group flex flex-col justify-between rounded-3xl border border-neutral-200/80 bg-bg-surface p-6 sm:p-7 shadow-sm transition-all duration-300 hover:border-cobalt/50 hover:shadow-xl dark:border-neutral-800"
+                                className="group flex flex-col justify-between rounded-3xl border border-neutral-200/80 bg-bg-surface/95 p-6 sm:p-7 shadow-lg backdrop-blur-2xl transition-all duration-300 hover:border-cobalt/50 hover:shadow-2xl dark:border-neutral-800 dark:bg-bg-surface/90"
                             >
                                 <div>
                                     {/* Card Header */}
@@ -479,8 +490,8 @@ export function FeatureBentoGrid() {
                                             damping: 26,
                                         }}
                                         className={`absolute w-full rounded-3xl border p-6 sm:p-7 shadow-2xl transition-shadow cursor-pointer ${isTop
-                                            ? "border-cobalt bg-bg-surface ring-2 ring-cobalt/20"
-                                            : "border-neutral-200/70 bg-bg-surface/80 dark:border-neutral-800/70"
+                                            ? "border-cobalt bg-bg-surface/95 dark:bg-bg-surface/90 ring-2 ring-cobalt/20"
+                                            : "border-neutral-200/70 bg-bg-surface/90 dark:border-neutral-800/70 dark:bg-bg-surface/85"
                                             }`}
                                         style={{
                                             backdropFilter: "blur(12px)",

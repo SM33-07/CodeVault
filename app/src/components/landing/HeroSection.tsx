@@ -19,46 +19,19 @@ export function HeroSection() {
 
     return (
         <div className="relative mx-auto flex max-w-6xl flex-col items-center justify-center text-center px-4 pt-20 sm:pt-24 md:pt-28 pb-8 md:pb-12">
-            {/* Direct Atmospheric Background Gradient & Grid Layer */}
+            {/* Content-Protecting Spotlight Mask & Gradient Diffusion */}
             <div className="pointer-events-none absolute inset-x-0 -top-24 -z-10 h-[700px] w-full overflow-hidden">
-                {/* Top-Right Vivid Violet Glow */}
                 <div
-                    className="absolute -top-10 -right-10 h-[550px] w-[550px] rounded-full opacity-60 dark:opacity-75 blur-[100px]"
+                    className="absolute inset-0"
                     style={{
                         background:
-                            "radial-gradient(circle, rgba(124, 58, 237, 0.45) 0%, rgba(99, 102, 241, 0.25) 45%, transparent 70%)",
-                    }}
-                />
-                {/* Bottom-Left/Center Vivid Emerald/Mint Glow */}
-                <div
-                    className="absolute top-44 -left-16 h-[500px] w-[500px] rounded-full opacity-50 dark:opacity-65 blur-[100px]"
-                    style={{
-                        background:
-                            "radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(5, 150, 105, 0.15) 50%, transparent 70%)",
-                    }}
-                />
-                {/* Center / Top-Left Soft Cobalt Tint */}
-                <div
-                    className="absolute top-10 left-[15%] h-[400px] w-[400px] rounded-full opacity-35 dark:opacity-45 blur-[90px]"
-                    style={{
-                        background:
-                            "radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%)",
-                    }}
-                />
-                {/* High-Definition 1px Background Grid */}
-                <div
-                    className="absolute inset-0 opacity-40 dark:opacity-60"
-                    style={{
-                        backgroundImage: `
-                            linear-gradient(to right, rgba(59, 130, 246, 0.18) 1px, transparent 1px),
-                            linear-gradient(to bottom, rgba(59, 130, 246, 0.18) 1px, transparent 1px)
-                        `,
-                        backgroundSize: "48px 48px",
-                        maskImage: "radial-gradient(ellipse 90% 75% at 50% 35%, black 40%, transparent 85%)",
-                        WebkitMaskImage: "radial-gradient(ellipse 90% 75% at 50% 35%, black 40%, transparent 85%)",
+                            "radial-gradient(ellipse 80% 60% at 50% 30%, rgba(8, 11, 16, 0.45) 0%, rgba(8, 11, 16, 0.1) 60%, transparent 85%)",
                     }}
                 />
             </div>
+
+
+
 
             {/* Left Flanking Snippets (Desktop Only - Animate with Header) */}
             <div className="hidden lg:block pointer-events-auto">
@@ -248,9 +221,15 @@ export function HeroSection() {
             >
                 Save reusable functions, trace fork lineage back to original authors,
                 and search across languages and tags — all without leaving{" "}
-                <kbd className="rounded-md border border-neutral-300 bg-bg-elevated px-2 py-0.5 text-xs font-mono font-semibold text-text-primary shadow-xs dark:border-neutral-700">
-                    ⌘K
-                </kbd>
+                <span className="inline-flex items-center gap-1 font-mono text-xs font-semibold align-baseline">
+                    <kbd className="rounded-md border border-neutral-300 bg-bg-elevated px-2 py-0.5 text-xs text-text-primary shadow-xs dark:border-neutral-700">
+                        ⌘K
+                    </kbd>
+                    <span className="text-text-secondary opacity-60">/</span>
+                    <kbd className="rounded-md border border-neutral-300 bg-bg-elevated px-2 py-0.5 text-xs text-text-primary shadow-xs dark:border-neutral-700">
+                        Ctrl+K
+                    </kbd>
+                </span>
                 .
             </motion.p>
 

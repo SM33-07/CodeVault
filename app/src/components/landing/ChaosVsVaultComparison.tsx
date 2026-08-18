@@ -18,35 +18,48 @@ import {
     Lock,
 } from "lucide-react";
 
+import { LaserBorderCard } from "@/components/ui/LaserBorderCard";
+
 export function ChaosVsVaultComparison() {
     const [viewMode, setViewMode] = useState<"side-by-side" | "vault-focus">("side-by-side");
 
     return (
-        <section className="relative w-full px-4 py-16 md:py-24 border-t border-neutral-200/70 dark:border-neutral-800/70 bg-bg-base">
-            <div className="mx-auto max-w-6xl space-y-12">
-                {/* Header */}
-                <div className="text-center space-y-3 max-w-3xl mx-auto">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-cobalt/30 bg-cobalt/10 px-3.5 py-1 text-xs font-semibold text-cobalt">
-                        <Zap className="h-3.5 w-3.5" />
-                        <span>The Pain vs The Solution</span>
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight">
-                        Stop Losing Your Best Code. <br className="hidden sm:inline" />
-                        <span className="bg-gradient-to-r from-cobalt via-violet to-mint bg-clip-text text-transparent">
-                            Start Curating With Provenance.
-                        </span>
-                    </h2>
-                    <p className="text-sm md:text-base text-text-secondary leading-relaxed">
-                        Slack threads disappear in 90 days. Gists lack search structure. Sticky notes get lost. CodeVault turns your engineering team's scattered knowledge into an indexed, permanent asset.
-                    </p>
+        <section className="relative w-full px-4 py-8 md:py-12 overflow-hidden">
+            {/* Subtle Split Ambient Glow (Red Chaos Left / Mint Vault Right) */}
+            <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute top-1/3 -left-20 h-[500px] w-[500px] rounded-full bg-red-500/[0.04] blur-[160px]" />
+                <div className="absolute top-1/3 -right-20 h-[500px] w-[500px] rounded-full bg-emerald-500/[0.04] blur-[160px]" />
+            </div>
+
+            <div className="mx-auto max-w-6xl space-y-8 relative z-10">
+
+                {/* Laser Lightning Header Card */}
+                <div className="max-w-3xl mx-auto flex justify-center">
+                    <LaserBorderCard laserColor="cobalt" className="p-6 sm:p-8 text-center space-y-3 shadow-xl">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-cobalt/30 bg-cobalt/10 px-3.5 py-1 text-xs font-semibold text-cobalt">
+                            <Zap className="h-3.5 w-3.5" />
+                            <span>The Pain vs The Solution</span>
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight">
+                            Stop Losing Your Best Code. <br className="hidden sm:inline" />
+                            <span className="bg-gradient-to-r from-cobalt via-violet to-mint bg-clip-text text-transparent">
+                                Start Curating With Provenance.
+                            </span>
+                        </h2>
+                        <p className="text-xs sm:text-sm md:text-base text-text-secondary leading-relaxed max-w-2xl mx-auto">
+                            Slack threads disappear in 90 days. Gists lack search structure. Sticky notes get lost. CodeVault turns your engineering team's scattered knowledge into an indexed, permanent asset.
+                        </p>
+                    </LaserBorderCard>
                 </div>
+
 
                 {/* Comparison Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
                     {/* 1. The Chaos (Before) */}
-                    <div className="relative flex flex-col justify-between rounded-3xl border border-red-500/20 bg-gradient-to-b from-red-500/[0.03] to-bg-surface/50 p-6 md:p-8 shadow-lg backdrop-blur-xl dark:border-red-500/20 dark:bg-bg-surface/40">
+                    <div className="relative flex flex-col justify-between rounded-3xl border border-red-500/30 bg-bg-surface/95 dark:bg-bg-surface/90 p-6 md:p-8 shadow-2xl backdrop-blur-2xl">
                         <div className="space-y-6">
-                            <div className="flex items-center justify-between pb-4 border-b border-red-500/15">
+                            <div className="flex items-center justify-between pb-4 border-b border-red-500/20">
+
                                 <div className="flex items-center gap-2.5">
                                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
                                         <XCircle className="h-4 w-4" />
@@ -119,9 +132,10 @@ export function ChaosVsVaultComparison() {
                     </div>
 
                     {/* 2. The Sovereign Vault (After - CodeVault) */}
-                    <div className="relative flex flex-col justify-between rounded-3xl border-2 border-cobalt/60 bg-gradient-to-b from-cobalt/[0.08] via-bg-surface to-bg-surface p-6 md:p-8 shadow-2xl shadow-cobalt/15 backdrop-blur-xl dark:border-cobalt/50 dark:bg-bg-surface/80">
+                    <div className="relative flex flex-col justify-between rounded-3xl border-2 border-cobalt/60 bg-bg-surface/95 dark:bg-bg-surface/90 p-6 md:p-8 shadow-2xl shadow-cobalt/20 backdrop-blur-2xl">
                         {/* Glow accent */}
                         <div className="absolute -top-12 -right-12 h-40 w-40 rounded-full bg-violet/20 blur-3xl pointer-events-none" />
+
 
                         <div className="space-y-6">
                             <div className="flex items-center justify-between pb-4 border-b border-cobalt/20">

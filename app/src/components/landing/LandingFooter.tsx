@@ -180,8 +180,11 @@ export function LandingFooter() {
 
     return (
         <div className="relative w-full overflow-hidden">
+            {/* Subtle Top Laser Divider */}
+            <div className="relative w-full h-px bg-gradient-to-r from-transparent via-violet/25 to-transparent" />
+
             {/* 1. Main CTA Section */}
-            <section className="mx-auto max-w-5xl px-4 pt-16 pb-12 w-full">
+            <section className="mx-auto max-w-5xl px-4 pt-8 pb-10 w-full">
                 <motion.div
                     initial={{ y: 0 }}
                     whileInView={{ y: 0 }}
@@ -444,7 +447,7 @@ export function LandingFooter() {
                                         className="hover:text-cobalt transition-colors text-left flex items-center gap-1.5"
                                     >
                                         <span>Command Palette</span>
-                                        <kbd className="rounded bg-bg-elevated px-1 py-0.5 font-mono text-[9px] border border-neutral-700/50">⌘K</kbd>
+                                        <kbd className="rounded bg-bg-elevated px-1 py-0.5 font-mono text-[9px] border border-neutral-700/50">⌘K / Ctrl+K</kbd>
                                     </button>
                                 </li>
                                 <li>
@@ -561,7 +564,7 @@ export function LandingFooter() {
                             >
                                 <Command className="h-3 w-3 text-cobalt" />
                                 <span>Press</span>
-                                <kbd className="font-mono font-semibold text-text-primary">⌘K</kbd>
+                                <kbd className="font-mono font-semibold text-text-primary">⌘K / Ctrl+K</kbd>
                                 <span>to search</span>
                             </button>
 

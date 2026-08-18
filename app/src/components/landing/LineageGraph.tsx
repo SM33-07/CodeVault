@@ -146,7 +146,7 @@ export function LineageGraph() {
                     transform: `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
                     transition: "transform 0.25s ease-out, box-shadow 0.3s ease-out",
                 }}
-                className="relative mx-auto mt-10 w-full max-w-4xl rounded-3xl border border-neutral-200/80 bg-bg-surface/85 p-6 md:p-8 shadow-xl backdrop-blur-xl dark:border-neutral-800/80 hover:shadow-2xl hover:shadow-violet/20 hover:border-violet/40"
+                className="relative mx-auto mt-6 w-full max-w-5xl rounded-3xl border border-neutral-200/80 bg-bg-surface/95 p-6 sm:p-8 md:p-10 shadow-2xl backdrop-blur-2xl dark:border-neutral-800/80 dark:bg-bg-surface/90 hover:shadow-2xl hover:shadow-violet/20 hover:border-violet/40"
             >
                 {/* Header / Lineage Thesis Badge */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-neutral-200/60 dark:border-neutral-800/60">
