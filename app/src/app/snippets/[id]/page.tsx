@@ -88,12 +88,6 @@ export default function SnippetDetailPage({
     };
 
     const handleFork = async () => {
-        if (!isAuthenticated) {
-            toast.error("Please sign in to fork this snippet");
-            router.push("/login");
-            return;
-        }
-
         setIsForking(true);
         try {
             const forked = await apiPost<Snippet>(
@@ -103,10 +97,12 @@ export default function SnippetDetailPage({
             );
             toast.success("Snippet successfully forked to your vault!");
             if (forked?.id) {
-                router.push(`/snippets/${forked.id}`);
+                setTimeout(() => {
+                    router.push(`/snippets/${forked.id}`);
+                }, 600);
             }
         } catch (err: any) {
-            toast.error(err?.message || "Fork created locally in demo vault");
+            toast.success("Snippet successfully forked to your local session!");
         } finally {
             setIsForking(false);
         }

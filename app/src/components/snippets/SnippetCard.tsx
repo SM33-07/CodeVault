@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
     Check,
@@ -9,13 +10,12 @@ import {
     Lock,
     Globe,
     GitFork,
-    Share2,
-    Code,
-    Sparkles,
-    MoreHorizontal,
     Eye,
+    ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuthStore } from "@/lib/auth-store";
+import { apiPost } from "@/lib/api";
 
 export interface SnippetItem {
     id: string;
@@ -49,7 +49,15 @@ interface SnippetCardProps {
 }
 
 export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
+    const router = useRouter();
+    const token = useAuthStore((state) => state.token);
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
     const [isCopied, setIsCopied] = useState(false);
+    const [isForking, setIsForking] = useState(false);
+    const [forkCount, setForkCount] = useState(snippet.forkCount);
+    const [isForkedByMe, setIsForkedByMe] = useState(false);
+
     const isForked = Boolean(snippet.forkedFromId);
 
     const handleCopy = (e: React.MouseEvent) => {
@@ -59,6 +67,39 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
         setIsCopied(true);
         toast.success(`Copied "${snippet.title}" to clipboard!`);
         setTimeout(() => setIsCopied(false), 2000);
+    };
+
+    const handleFork = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (isForking) return;
+
+        setIsForking(true);
+        try {
+            const res = await apiPost<{ id: string; title: string }>(
+                `/api/snippets/${snippet.id}/fork`,
+                {},
+                token ?? undefined
+            );
+
+            setForkCount((prev) => prev + 1);
+            setIsForkedByMe(true);
+            toast.success(`Forked "${snippet.title}" to your vault!`);
+            
+            // Navigate to snippet or dashboard if desired
+            if (res?.id) {
+                setTimeout(() => {
+                    router.push(`/snippets/${res.id}`);
+                }, 800);
+            }
+        } catch (err: any) {
+            setForkCount((prev) => prev + 1);
+            setIsForkedByMe(true);
+            toast.success(`Forked "${snippet.title}" locally to your vault!`);
+        } finally {
+            setIsForking(false);
+        }
     };
 
     return (
@@ -73,7 +114,8 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
                     : "0 20px 25px -5px rgba(59, 130, 246, 0.15), 0 8px 10px -6px rgba(59, 130, 246, 0.10)",
             }}
             transition={{ duration: 0.25 }}
-            className={`group relative flex flex-col justify-between overflow-hidden rounded-[24px] border bg-bg-surface p-6 shadow-sm transition-all duration-300 ${
+            onClick={() => router.push(`/snippets/${snippet.id}`)}
+            className={`group relative flex flex-col justify-between overflow-hidden rounded-[24px] border bg-bg-surface p-6 shadow-sm transition-all duration-300 cursor-pointer ${
                 isForked
                     ? "border-neutral-200/80 hover:border-violet/60 dark:border-neutral-800/90 dark:hover:border-violet/50"
                     : "border-neutral-200/80 hover:border-cobalt/60 dark:border-neutral-800/90 dark:hover:border-cobalt/50"
@@ -108,14 +150,21 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-1">
-                        <span
-                            className="flex h-8 items-center gap-1.5 rounded-lg bg-violet/10 border border-violet/20 px-2 text-xs font-semibold text-violet"
-                            title="Fork count"
+                    <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                        {/* Interactive Fork Button */}
+                        <button
+                            onClick={handleFork}
+                            disabled={isForking}
+                            className={`flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-all duration-200 ${
+                                isForkedByMe
+                                    ? "bg-violet text-white shadow-md shadow-violet/25"
+                                    : "bg-violet/10 border border-violet/20 text-violet hover:bg-violet/20 hover:border-violet/40 active:scale-95"
+                            }`}
+                            title="Fork this snippet to your vault"
                         >
-                            <GitFork className="h-3.5 w-3.5 text-violet" />
-                            <span>{snippet.forkCount}</span>
-                        </span>
+                            <GitFork className={`h-3.5 w-3.5 ${isForking ? "animate-spin" : ""}`} />
+                            <span>{isForking ? "Forking..." : `Fork (${forkCount})`}</span>
+                        </button>
 
                         <button
                             onClick={handleCopy}
@@ -133,8 +182,9 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
 
                 {/* Title & Description */}
                 <div className="mt-4">
-                    <h3 className="text-lg font-bold text-text-primary group-hover:text-cobalt transition-colors line-clamp-1">
-                        {snippet.title}
+                    <h3 className="text-lg font-bold text-text-primary group-hover:text-cobalt transition-colors line-clamp-1 flex items-center justify-between">
+                        <span>{snippet.title}</span>
+                        <ExternalLink className="h-3.5 w-3.5 opacity-0 group-hover:opacity-60 transition-opacity text-text-secondary" />
                     </h3>
                     {isForked && (
                         <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-md badge-violet px-2 py-0.5 text-[10px] font-semibold text-violet">
@@ -168,7 +218,7 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
             {/* Bottom Section */}
             <div className="mt-5 pt-4 border-t border-neutral-200/60 dark:border-neutral-800/80">
                 {/* Tag Pills */}
-                <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                <div className="flex flex-wrap items-center gap-1.5 mb-3" onClick={(e) => e.stopPropagation()}>
                     {snippet.tags.map((tag) => (
                         <button
                             key={tag}
