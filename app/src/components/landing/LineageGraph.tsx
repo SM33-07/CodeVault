@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { GitFork, Sparkles, User, ArrowUpRight, Code, ShieldCheck, Plus, X, Check, RefreshCw, Layers } from "lucide-react";
 import { toast } from "sonner";
@@ -87,6 +88,24 @@ export function LineageGraph() {
     const [customTitle, setCustomTitle] = useState("");
     const [customDiff, setCustomDiff] = useState("");
     const [hasSimulated, setHasSimulated] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (isSimulatorOpen) {
+            const originalOverflow = document.body.style.overflow;
+            const originalTouchAction = document.body.style.touchAction;
+            document.body.style.overflow = "hidden";
+            document.body.style.touchAction = "none";
+            return () => {
+                document.body.style.overflow = originalOverflow;
+                document.body.style.touchAction = originalTouchAction;
+            };
+        }
+    }, [isSimulatorOpen]);
 
     const handleOpenSimulator = () => {
         setIsSimulatorOpen(true);
@@ -448,118 +467,122 @@ export function LineageGraph() {
                 </div>
             </motion.div>
 
-            {/* Interactive Fork Simulator Modal */}
-            <AnimatePresence>
-                {isSimulatorOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <motion.div
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setIsSimulatorOpen(false)}
-                            className="absolute inset-0 bg-black/60 backdrop-blur-md"
-                        />
+            {/* Interactive Fork Simulator Modal (Portaled to document.body to prevent parent transforms and scroll collision) */}
+            {mounted && createPortal(
+                <AnimatePresence>
+                    {isSimulatorOpen && (
+                        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 overflow-y-auto">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setIsSimulatorOpen(false)}
+                                className="fixed inset-0 bg-black/80 backdrop-blur-xl"
+                            />
 
-                        <motion.div
-                            initial={{ scale: 0.95, y: 15 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                            className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-neutral-200/80 bg-bg-surface p-6 shadow-2xl backdrop-blur-2xl dark:border-neutral-800/80 dark:bg-bg-surface/95 z-10"
-                        >
-                            {/* Modal Header */}
-                            <div className="flex items-center justify-between pb-4 border-b border-neutral-200/60 dark:border-neutral-800/60">
-                                <div className="flex items-center gap-2.5">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 text-violet border border-violet/30 shadow-xs">
-                                        <Sparkles className="h-4 w-4" />
+                            <motion.div
+                                initial={{ scale: 0.95, y: 15, opacity: 0 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                                className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-neutral-200/80 bg-bg-surface p-6 shadow-2xl backdrop-blur-2xl dark:border-neutral-800/80 dark:bg-bg-surface/95 z-10 my-auto"
+                            >
+                                {/* Modal Header */}
+                                <div className="flex items-center justify-between pb-4 border-b border-neutral-200/60 dark:border-neutral-800/60">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet/15 text-violet border border-violet/30 shadow-xs">
+                                            <Sparkles className="h-4 w-4" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-bold text-text-primary">
+                                                Interactive Fork Simulator
+                                            </h3>
+                                            <p className="text-[11px] text-text-secondary">
+                                                Spawn a mutation branch connected to useAuth.ts
+                                            </p>
+                                        </div>
                                     </div>
+                                    <button
+                                        onClick={() => setIsSimulatorOpen(false)}
+                                        className="flex h-7 w-7 items-center justify-center rounded-lg text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </button>
+                                </div>
+
+                                {/* Modal Body: Preset Selection */}
+                                <div className="mt-4 space-y-4">
                                     <div>
-                                        <h3 className="text-sm font-bold text-text-primary">
-                                            Interactive Fork Simulator
-                                        </h3>
-                                        <p className="text-[11px] text-text-secondary">
-                                            Spawn a mutation branch connected to useAuth.ts
-                                        </p>
+                                        <label className="text-[11px] font-bold uppercase tracking-wider text-text-secondary block mb-2">
+                                            Select Template Preset:
+                                        </label>
+                                        <div className="grid grid-cols-1 gap-2">
+                                            {SIMULATION_PRESETS.map((preset, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => {
+                                                        setSelectedPresetIdx(idx);
+                                                        setCustomTitle(preset.title);
+                                                        setCustomDiff(preset.forkDiff);
+                                                    }}
+                                                    className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
+                                                        selectedPresetIdx === idx
+                                                            ? "border-violet bg-violet/10 text-text-primary shadow-xs"
+                                                            : "border-neutral-200/60 dark:border-neutral-800 bg-bg-elevated/50 text-text-secondary hover:border-violet/40 hover:text-text-primary"
+                                                    }`}
+                                                >
+                                                    <div>
+                                                        <span className="text-xs font-bold font-mono text-text-primary block">
+                                                            {preset.title}
+                                                        </span>
+                                                        <span className="text-[11px] text-text-secondary block mt-0.5">
+                                                            {preset.forkDiff}
+                                                        </span>
+                                                    </div>
+                                                    <span className="rounded-md bg-bg-surface px-2 py-0.5 text-[10px] font-bold text-violet border border-violet/20 font-mono">
+                                                        {preset.language}
+                                                    </span>
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                                <button
-                                    onClick={() => setIsSimulatorOpen(false)}
-                                    className="flex h-7 w-7 items-center justify-center rounded-lg text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors"
-                                >
-                                    <X className="h-4 w-4" />
-                                </button>
-                            </div>
 
-                            {/* Modal Body: Preset Selection */}
-                            <div className="mt-4 space-y-4">
-                                <div>
-                                    <label className="text-[11px] font-bold uppercase tracking-wider text-text-secondary block mb-2">
-                                        Select Template Preset:
-                                    </label>
-                                    <div className="grid grid-cols-1 gap-2">
-                                        {SIMULATION_PRESETS.map((preset, idx) => (
-                                            <button
-                                                key={idx}
-                                                onClick={() => {
-                                                    setSelectedPresetIdx(idx);
-                                                    setCustomTitle(preset.title);
-                                                    setCustomDiff(preset.forkDiff);
-                                                }}
-                                                className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
-                                                    selectedPresetIdx === idx
-                                                        ? "border-violet bg-violet/10 text-text-primary shadow-xs"
-                                                        : "border-neutral-200/60 dark:border-neutral-800 bg-bg-elevated/50 text-text-secondary hover:border-violet/40 hover:text-text-primary"
-                                                }`}
-                                            >
-                                                <div>
-                                                    <span className="text-xs font-bold font-mono text-text-primary block">
-                                                        {preset.title}
-                                                    </span>
-                                                    <span className="text-[11px] text-text-secondary block mt-0.5">
-                                                        {preset.forkDiff}
-                                                    </span>
-                                                </div>
-                                                <span className="rounded-md bg-bg-surface px-2 py-0.5 text-[10px] font-bold text-violet border border-violet/20 font-mono">
-                                                    {preset.language}
-                                                </span>
-                                            </button>
-                                        ))}
+                                    {/* Simulation Workflow Guide */}
+                                    <div className="rounded-xl border border-violet/20 bg-violet/5 p-3 text-[11px] text-text-secondary space-y-1.5">
+                                        <span className="font-bold text-violet flex items-center gap-1.5 text-xs">
+                                            <GitFork className="h-3.5 w-3.5" />
+                                            How CodeVault Provenance Works:
+                                        </span>
+                                        <ul className="space-y-1 text-[11px] list-disc list-inside">
+                                            <li><strong>Parent Anchor:</strong> Fork branches from <code className="text-violet font-mono">useAuth.ts</code> (#root by CodeVault Core).</li>
+                                            <li><strong>Immutable Attribution:</strong> Your mutation diff is tracked while preserving root author credit.</li>
+                                            <li><strong>Real-time Graph:</strong> The visual tree updates instantly with a glowing connecting laser beam.</li>
+                                        </ul>
                                     </div>
                                 </div>
 
-                                {/* Simulation Workflow Guide */}
-                                <div className="rounded-xl border border-violet/20 bg-violet/5 p-3 text-[11px] text-text-secondary space-y-1.5">
-                                    <span className="font-bold text-violet flex items-center gap-1.5 text-xs">
-                                        <GitFork className="h-3.5 w-3.5" />
-                                        How CodeVault Provenance Works:
-                                    </span>
-                                    <ul className="space-y-1 text-[11px] list-disc list-inside">
-                                        <li><strong>Parent Anchor:</strong> Fork branches from <code className="text-violet font-mono">useAuth.ts</code> (#root by CodeVault Core).</li>
-                                        <li><strong>Immutable Attribution:</strong> Your mutation diff is tracked while preserving root author credit.</li>
-                                        <li><strong>Real-time Graph:</strong> The visual tree updates instantly with a glowing connecting laser beam.</li>
-                                    </ul>
+                                {/* Modal Actions */}
+                                <div className="mt-6 pt-4 border-t border-neutral-200/60 dark:border-neutral-800/60 flex items-center justify-end gap-2">
+                                    <button
+                                        onClick={() => setIsSimulatorOpen(false)}
+                                        className="rounded-full px-4 py-2 text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleExecuteFork}
+                                        className="sheen-button inline-flex items-center gap-1.5 rounded-full bg-violet px-5 py-2 text-xs font-bold text-white shadow-lg shadow-violet/25 hover:bg-violet-hover active:scale-95 transition-all"
+                                    >
+                                        <Sparkles className="h-3.5 w-3.5" />
+                                        <span>Execute & Trace Lineage</span>
+                                    </button>
                                 </div>
-                            </div>
-
-                            {/* Modal Actions */}
-                            <div className="mt-6 pt-4 border-t border-neutral-200/60 dark:border-neutral-800/60 flex items-center justify-end gap-2">
-                                <button
-                                    onClick={() => setIsSimulatorOpen(false)}
-                                    className="rounded-full px-4 py-2 text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleExecuteFork}
-                                    className="sheen-button inline-flex items-center gap-1.5 rounded-full bg-violet px-5 py-2 text-xs font-bold text-white shadow-lg shadow-violet/25 hover:bg-violet-hover active:scale-95 transition-all"
-                                >
-                                    <Sparkles className="h-3.5 w-3.5" />
-                                    <span>Execute & Trace Lineage</span>
-                                </button>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </>
     );
 }

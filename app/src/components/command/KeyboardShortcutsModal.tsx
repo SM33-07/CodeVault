@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Command, Keyboard, X, Sparkles, Search, Plus, GitFork, Copy, Sun, Shield } from "lucide-react";
 
@@ -55,6 +56,24 @@ const SHORTCUTS: ShortcutItem[] = [
 
 export function KeyboardShortcutsModal() {
     const [isOpen, setIsOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            const originalOverflow = document.body.style.overflow;
+            const originalTouchAction = document.body.style.touchAction;
+            document.body.style.overflow = "hidden";
+            document.body.style.touchAction = "none";
+            return () => {
+                document.body.style.overflow = originalOverflow;
+                document.body.style.touchAction = originalTouchAction;
+            };
+        }
+    }, [isOpen]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -80,89 +99,95 @@ export function KeyboardShortcutsModal() {
     }, [isOpen]);
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    {/* Backdrop */}
-                    <motion.div
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setIsOpen(false)}
-                        className="absolute inset-0 bg-black/60 backdrop-blur-md"
-                    />
-
-                    {/* Modal Dialog */}
-                    <motion.div
-                        initial={{ scale: 0.95, y: 15 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                        transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-neutral-200/80 bg-bg-surface p-6 shadow-2xl backdrop-blur-2xl dark:border-neutral-800/80 dark:bg-bg-surface/95 z-10"
-                    >
-                        {/* Header */}
-                        <div className="flex items-center justify-between pb-4 border-b border-neutral-200/60 dark:border-neutral-800/60">
-                            <div className="flex items-center gap-2.5">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-cobalt/15 text-cobalt border border-cobalt/30 shadow-xs">
-                                    <Keyboard className="h-4 w-4" />
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-bold text-text-primary">
-                                        Developer Keyboard Shortcuts
-                                    </h3>
-                                    <p className="text-[11px] text-text-secondary">
-                                        Keyboard-first speed for power users
-                                    </p>
-                                </div>
-                            </div>
-                            <button
+        <>
+            {mounted && createPortal(
+                <AnimatePresence>
+                    {isOpen && (
+                        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 overflow-y-auto">
+                            {/* Backdrop */}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
                                 onClick={() => setIsOpen(false)}
-                                className="flex h-7 w-7 items-center justify-center rounded-lg text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors"
+                                className="fixed inset-0 bg-black/80 backdrop-blur-xl"
+                            />
+
+                            {/* Modal Dialog */}
+                            <motion.div
+                                initial={{ scale: 0.95, y: 15, opacity: 0 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                                className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-neutral-200/80 bg-bg-surface p-6 shadow-2xl backdrop-blur-2xl dark:border-neutral-800/80 dark:bg-bg-surface/95 z-10 my-auto"
                             >
-                                <X className="h-4 w-4" />
-                            </button>
-                        </div>
-
-                        {/* Shortcuts List */}
-                        <div className="mt-4 space-y-4 max-h-[60vh] overflow-y-auto pr-1">
-                            {["Navigation", "Snippet Actions", "System"].map((category) => (
-                                <div key={category} className="space-y-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">
-                                        {category}
-                                    </span>
-                                    <div className="space-y-1.5">
-                                        {SHORTCUTS.filter((s) => s.category === category).map((shortcut, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="flex items-center justify-between rounded-xl bg-bg-elevated/60 px-3 py-2 text-xs border border-neutral-200/40 dark:border-neutral-800/40"
-                                            >
-                                                <span className="text-text-primary font-medium">
-                                                    {shortcut.description}
-                                                </span>
-                                                <div className="flex items-center gap-1">
-                                                    {shortcut.keys.map((k, kIdx) => (
-                                                        <kbd
-                                                            key={kIdx}
-                                                            className="rounded-md border border-neutral-300 dark:border-neutral-700 bg-bg-surface px-2 py-0.5 font-mono text-[11px] font-bold text-text-primary shadow-xs"
-                                                        >
-                                                            {k}
-                                                        </kbd>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
+                                {/* Header */}
+                                <div className="flex items-center justify-between pb-4 border-b border-neutral-200/60 dark:border-neutral-800/60">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-cobalt/15 text-cobalt border border-cobalt/30 shadow-xs">
+                                            <Keyboard className="h-4 w-4" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-bold text-text-primary">
+                                                Developer Keyboard Shortcuts
+                                            </h3>
+                                            <p className="text-[11px] text-text-secondary">
+                                                Keyboard-first speed for power users
+                                            </p>
+                                        </div>
                                     </div>
+                                    <button
+                                        onClick={() => setIsOpen(false)}
+                                        className="flex h-7 w-7 items-center justify-center rounded-lg text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-colors"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </button>
                                 </div>
-                            ))}
-                        </div>
 
-                        {/* Footer Tip */}
-                        <div className="mt-6 pt-3 border-t border-neutral-200/60 dark:border-neutral-800/60 flex items-center justify-between text-[11px] text-text-secondary">
-                            <span>Press <kbd className="font-mono text-text-primary font-bold">?</kbd> anywhere to toggle</span>
-                            <span className="text-cobalt font-semibold">Sub-50ms DX</span>
+                                {/* Shortcuts List */}
+                                <div className="mt-4 space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                                    {["Navigation", "Snippet Actions", "System"].map((category) => (
+                                        <div key={category} className="space-y-2">
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+                                                {category}
+                                            </span>
+                                            <div className="space-y-1.5">
+                                                {SHORTCUTS.filter((s) => s.category === category).map((shortcut, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        className="flex items-center justify-between rounded-xl bg-bg-elevated/60 px-3 py-2 text-xs border border-neutral-200/40 dark:border-neutral-800/40"
+                                                    >
+                                                        <span className="text-text-primary font-medium">
+                                                            {shortcut.description}
+                                                        </span>
+                                                        <div className="flex items-center gap-1">
+                                                            {shortcut.keys.map((k, kIdx) => (
+                                                                <kbd
+                                                                    key={kIdx}
+                                                                    className="rounded-md border border-neutral-300 dark:border-neutral-700 bg-bg-surface px-2 py-0.5 font-mono text-[11px] font-bold text-text-primary shadow-xs"
+                                                                >
+                                                                    {k}
+                                                                </kbd>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Footer Tip */}
+                                <div className="mt-6 pt-3 border-t border-neutral-200/60 dark:border-neutral-800/60 flex items-center justify-between text-[11px] text-text-secondary">
+                                    <span>Press <kbd className="font-mono text-text-primary font-bold">?</kbd> anywhere to toggle</span>
+                                    <span className="text-cobalt font-semibold">Sub-50ms DX</span>
+                                </div>
+                            </motion.div>
                         </div>
-                    </motion.div>
-                </div>
+                    )}
+                </AnimatePresence>,
+                document.body
             )}
-        </AnimatePresence>
+        </>
     );
 }

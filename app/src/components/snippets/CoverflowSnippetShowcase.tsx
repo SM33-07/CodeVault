@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ChevronLeft,
@@ -445,7 +446,25 @@ export function CoverflowSnippetShowcase() {
     const [modalTab, setModalTab] = useState<"code" | "explain" | "lineage">("code");
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [isAutoPlay, setIsAutoPlay] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (selectedSnippet) {
+            const originalOverflow = document.body.style.overflow;
+            const originalTouchAction = document.body.style.touchAction;
+            document.body.style.overflow = "hidden";
+            document.body.style.touchAction = "none";
+            return () => {
+                document.body.style.overflow = originalOverflow;
+                document.body.style.touchAction = originalTouchAction;
+            };
+        }
+    }, [selectedSnippet]);
 
     // Filtered snippets based on language selection
     const visibleSnippets = React.useMemo(() => {
@@ -754,131 +773,101 @@ export function CoverflowSnippetShowcase() {
                     </div>
                 </div>
             </div>
+            {mounted && createPortal(
+                <AnimatePresence>
+                    {selectedSnippet && (
+                        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setSelectedSnippet(null)}
+                                className="fixed inset-0 bg-black/80 backdrop-blur-xl"
+                            />
 
-            <AnimatePresence>
-                {selectedSnippet && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-                        <motion.div
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setSelectedSnippet(null)}
-                            className="fixed inset-0 bg-black/70 backdrop-blur-md"
-                        />
+                            <motion.div
+                                initial={{ scale: 0.95, y: 20, opacity: 0 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                className="relative z-10 w-full max-w-3xl overflow-hidden rounded-3xl border border-neutral-200 bg-bg-surface shadow-2xl dark:border-neutral-800 my-auto"
+                            >
+                                <div className="border-b border-neutral-200/80 bg-bg-surface p-6 dark:border-neutral-800">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span
+                                                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold text-white shadow-xs"
+                                                    style={{ backgroundColor: selectedSnippet.langColor }}
+                                                >
+                                                    <Code2 className="h-3.5 w-3.5" />
+                                                    <span>{selectedSnippet.language}</span>
+                                                </span>
 
-                        <motion.div
-                            initial={{ scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            className="relative z-10 w-full max-w-3xl overflow-hidden rounded-3xl border border-neutral-200 bg-bg-surface shadow-2xl dark:border-neutral-800"
-                        >
-                            <div className="border-b border-neutral-200/80 bg-bg-surface p-6 dark:border-neutral-800">
-                                <div className="flex items-start justify-between gap-4">
-                                    <div>
-                                        <div className="flex flex-wrap items-center gap-2">
-                                            <span
-                                                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold text-white shadow-xs"
-                                                style={{ backgroundColor: selectedSnippet.langColor }}
-                                            >
-                                                <Code2 className="h-3.5 w-3.5" />
-                                                <span>{selectedSnippet.language}</span>
-                                            </span>
+                                                <span className="inline-flex items-center gap-1.5 badge-mint rounded-full px-2.5 py-0.5 text-xs font-semibold">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                    <span>Public Snippet</span>
+                                                </span>
 
-                                            <span className="inline-flex items-center gap-1.5 badge-mint rounded-full px-2.5 py-0.5 text-xs font-semibold">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                                <span>Public Snippet</span>
-                                            </span>
+                                                <span className="text-xs text-text-secondary">
+                                                    By {selectedSnippet.author.name}
+                                                </span>
+                                            </div>
 
-                                            <span className="text-xs text-text-secondary">
-                                                By {selectedSnippet.author.name}
-                                            </span>
+                                            <h2 className="mt-3 text-xl sm:text-2xl font-extrabold text-text-primary">
+                                                {selectedSnippet.title}
+                                            </h2>
+                                            <p className="mt-1 text-xs sm:text-sm text-text-secondary">
+                                                {selectedSnippet.description}
+                                            </p>
                                         </div>
 
-                                        <h2 className="mt-3 text-xl sm:text-2xl font-extrabold text-text-primary">
-                                            {selectedSnippet.title}
-                                        </h2>
-                                        <p className="mt-1 text-xs sm:text-sm text-text-secondary">
-                                            {selectedSnippet.description}
-                                        </p>
+                                        <button
+                                            onClick={() => setSelectedSnippet(null)}
+                                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-bg-surface text-text-secondary hover:bg-bg-elevated hover:text-text-primary dark:border-neutral-800"
+                                            aria-label="Close modal"
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </button>
                                     </div>
 
-                                    <button
-                                        onClick={() => setSelectedSnippet(null)}
-                                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-bg-surface text-text-secondary hover:bg-bg-elevated hover:text-text-primary dark:border-neutral-800"
-                                        aria-label="Close modal"
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </button>
-                                </div>
-
-                                <div className="mt-6 flex flex-wrap items-center justify-between gap-3 pt-2">
-                                    <div className="flex items-center gap-1.5 rounded-xl bg-bg-elevated p-1">
+                                    {/* Tabs */}
+                                    <div className="mt-6 flex items-center gap-2 border-b border-neutral-200/80 pb-px dark:border-neutral-800">
                                         <button
                                             onClick={() => setModalTab("code")}
-                                            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                                            className={`flex items-center gap-2 border-b-2 px-3 py-2 text-xs font-semibold transition-all ${
                                                 modalTab === "code"
-                                                    ? "bg-bg-surface text-text-primary shadow-xs"
-                                                    : "text-text-secondary hover:text-text-primary"
+                                                    ? "border-cobalt text-cobalt"
+                                                    : "border-transparent text-text-secondary hover:text-text-primary"
                                             }`}
                                         >
                                             <Code2 className="h-3.5 w-3.5" />
                                             <span>Full Code</span>
                                         </button>
-
                                         <button
                                             onClick={() => setModalTab("explain")}
-                                            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                                            className={`flex items-center gap-2 border-b-2 px-3 py-2 text-xs font-semibold transition-all ${
                                                 modalTab === "explain"
-                                                    ? "bg-bg-surface text-text-primary shadow-xs"
-                                                    : "text-text-secondary hover:text-text-primary"
+                                                    ? "border-cobalt text-cobalt"
+                                                    : "border-transparent text-text-secondary hover:text-text-primary"
                                             }`}
                                         >
-                                            <Sparkles className="h-3.5 w-3.5 text-cobalt" />
+                                            <Sparkles className="h-3.5 w-3.5" />
                                             <span>AI Explanation</span>
                                         </button>
-
                                         <button
                                             onClick={() => setModalTab("lineage")}
-                                            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                                            className={`flex items-center gap-2 border-b-2 px-3 py-2 text-xs font-semibold transition-all ${
                                                 modalTab === "lineage"
-                                                    ? "bg-bg-surface text-text-primary shadow-xs"
-                                                    : "text-text-secondary hover:text-text-primary"
+                                                    ? "border-cobalt text-cobalt"
+                                                    : "border-transparent text-text-secondary hover:text-text-primary"
                                             }`}
                                         >
-                                            <GitFork className="h-3.5 w-3.5 text-violet" />
-                                            <span>Fork Lineage</span>
-                                        </button>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={() => copyCode(selectedSnippet.code, selectedSnippet.id)}
-                                            className="flex items-center gap-1.5 rounded-xl border border-neutral-300 bg-bg-surface px-3.5 py-1.5 text-xs font-semibold text-text-primary shadow-xs hover:bg-bg-elevated dark:border-neutral-700 transition-all active:scale-95"
-                                        >
-                                            {copiedId === selectedSnippet.id ? (
-                                                <>
-                                                    <Check className="h-3.5 w-3.5 text-mint" />
-                                                    <span>Copied!</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Copy className="h-3.5 w-3.5" />
-                                                    <span>Copy Code</span>
-                                                </>
-                                            )}
-                                        </button>
-
-                                        <Link
-                                            href="/snippets"
-                                            onClick={() => setSelectedSnippet(null)}
-                                            className="flex items-center gap-1.5 rounded-xl bg-cobalt px-3.5 py-1.5 text-xs font-semibold text-white shadow-md shadow-cobalt/20 hover:bg-cobalt-hover active:bg-cobalt-active transition-all active:scale-95"
-                                        >
                                             <GitFork className="h-3.5 w-3.5" />
-                                            <span>Fork to Vault</span>
-                                        </Link>
+                                            <span>Lineage & Diff</span>
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
 
                             <div className="p-6 max-h-[60vh] overflow-y-auto bg-bg-surface">
                                 {modalTab === "code" && (
@@ -1019,7 +1008,9 @@ export function CoverflowSnippetShowcase() {
                         </motion.div>
                     </div>
                 )}
-            </AnimatePresence>
-        </div>
-    );
+            </AnimatePresence>,
+            document.body
+        )}
+    </div>
+);
 }

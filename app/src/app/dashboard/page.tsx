@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -54,6 +55,24 @@ export default function DashboardPage() {
     const [newCode, setNewCode] = useState("");
     const [newTags, setNewTags] = useState("");
     const [isPrivate, setIsPrivate] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (isCreateOpen) {
+            const originalOverflow = document.body.style.overflow;
+            const originalTouchAction = document.body.style.touchAction;
+            document.body.style.overflow = "hidden";
+            document.body.style.touchAction = "none";
+            return () => {
+                document.body.style.overflow = originalOverflow;
+                document.body.style.touchAction = originalTouchAction;
+            };
+        }
+    }, [isCreateOpen]);
 
     const handleCopy = (snippet: SnippetItem, e?: React.MouseEvent) => {
         e?.stopPropagation();
@@ -591,158 +610,162 @@ export default function DashboardPage() {
             </div>
 
             {/* Create Snippet Slide-Over Modal */}
-            <AnimatePresence>
-                {isCreateOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <motion.div
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setIsCreateOpen(false)}
-                            className="absolute inset-0 bg-black/60 backdrop-blur-xs"
-                        />
+            {mounted && createPortal(
+                <AnimatePresence>
+                    {isCreateOpen && (
+                        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 overflow-y-auto">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setIsCreateOpen(false)}
+                                className="fixed inset-0 bg-black/80 backdrop-blur-xl"
+                            />
 
-                        <motion.div
-                            initial={{ scale: 0.95, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            className="relative w-full max-w-xl rounded-3xl border border-neutral-200 bg-bg-surface p-6 shadow-2xl dark:border-neutral-800 max-h-[90vh] overflow-y-auto"
-                        >
-                            <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-800">
-                                <div className="flex items-center gap-2.5">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cobalt text-white shadow-md shadow-cobalt/20">
-                                        <Plus className="h-5 w-5" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-base font-bold text-text-primary">
-                                            Create New Snippet
-                                        </h3>
-                                        <p className="text-xs text-text-secondary">
-                                            Add a reusable code snippet to your vault.
-                                        </p>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => setIsCreateOpen(false)}
-                                    className="rounded-lg p-1.5 text-text-secondary hover:bg-bg-elevated"
-                                >
-                                    <X className="h-4 w-4" />
-                                </button>
-                            </div>
-
-                            <form onSubmit={handleCreateSnippet} className="mt-4 space-y-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div>
-                                        <label className="block text-xs font-semibold text-text-primary mb-1">
-                                            Title *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={newTitle}
-                                            onChange={(e) => setNewTitle(e.target.value)}
-                                            placeholder="e.g. useDebounce hook"
-                                            required
-                                            className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-semibold text-text-primary mb-1">
-                                            Language
-                                        </label>
-                                        <select
-                                            value={newLanguage}
-                                            onChange={(e) => setNewLanguage(e.target.value)}
-                                            className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none dark:border-neutral-800"
-                                        >
-                                            {languagesList.filter((l) => l !== "All").map((lang) => (
-                                                <option key={lang} value={lang}>
-                                                    {lang}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-semibold text-text-primary mb-1">
-                                        Tags (comma-separated)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={newTags}
-                                        onChange={(e) => setNewTags(e.target.value)}
-                                        placeholder="e.g. react, hooks, utility"
-                                        className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-semibold text-text-primary mb-1">
-                                        Description
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={newDescription}
-                                        onChange={(e) => setNewDescription(e.target.value)}
-                                        placeholder="Short summary of snippet purpose..."
-                                        className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-semibold text-text-primary mb-1">
-                                        Code Body *
-                                    </label>
-                                    <textarea
-                                        rows={6}
-                                        value={newCode}
-                                        onChange={(e) => setNewCode(e.target.value)}
-                                        placeholder="Paste or write your code here..."
-                                        required
-                                        className="w-full rounded-xl border border-neutral-200 bg-bg-base p-3 font-mono text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
-                                    />
-                                </div>
-
-                                {/* Visibility Toggle */}
-                                <div className="flex items-center justify-between rounded-xl bg-bg-elevated p-3 border border-neutral-200 dark:border-neutral-800">
+                            <motion.div
+                                initial={{ scale: 0.95, y: 10, opacity: 0 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                className="relative w-full max-w-xl rounded-3xl border border-neutral-200 bg-bg-surface p-6 shadow-2xl dark:border-neutral-800 max-h-[90vh] overflow-y-auto z-10 my-auto"
+                            >
+                                <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-800">
                                     <div className="flex items-center gap-2.5">
-                                        <Lock className="h-4 w-4 text-cobalt" />
+                                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cobalt text-white shadow-md shadow-cobalt/20">
+                                            <Plus className="h-5 w-5" />
+                                        </div>
                                         <div>
-                                            <p className="text-xs font-semibold text-text-primary">
-                                                Private Snippet
-                                            </p>
-                                            <p className="text-[10px] text-text-secondary">
-                                                Hidden from public snippet library.
+                                            <h3 className="text-base font-bold text-text-primary">
+                                                Create New Snippet
+                                            </h3>
+                                            <p className="text-xs text-text-secondary">
+                                                Add a reusable code snippet to your vault.
                                             </p>
                                         </div>
                                     </div>
-                                    <input
-                                        type="checkbox"
-                                        checked={isPrivate}
-                                        onChange={(e) => setIsPrivate(e.target.checked)}
-                                        className="h-4 w-4 rounded accent-cobalt cursor-pointer"
-                                    />
+                                    <button
+                                        onClick={() => setIsCreateOpen(false)}
+                                        className="rounded-lg p-1.5 text-text-secondary hover:bg-bg-elevated"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </button>
                                 </div>
 
-                                <div className="flex items-center justify-end gap-3 pt-3 border-t border-neutral-100 dark:border-neutral-800">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsCreateOpen(false)}
-                                        className="rounded-xl px-4 py-2 text-xs font-semibold text-text-secondary hover:bg-bg-elevated"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="rounded-xl bg-cobalt px-5 py-2 text-xs font-semibold text-white shadow-md hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95 transition-all"
-                                    >
-                                        Save to Vault
-                                    </button>
-                                </div>
-                            </form>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
+                                <form onSubmit={handleCreateSnippet} className="mt-4 space-y-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-text-primary mb-1">
+                                                Title *
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={newTitle}
+                                                onChange={(e) => setNewTitle(e.target.value)}
+                                                placeholder="e.g. useDebounce hook"
+                                                required
+                                                className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-text-primary mb-1">
+                                                Language
+                                            </label>
+                                            <select
+                                                value={newLanguage}
+                                                onChange={(e) => setNewLanguage(e.target.value)}
+                                                className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none dark:border-neutral-800"
+                                            >
+                                                {languagesList.filter((l) => l !== "All").map((lang) => (
+                                                    <option key={lang} value={lang}>
+                                                        {lang}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-semibold text-text-primary mb-1">
+                                            Tags (comma-separated)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newTags}
+                                            onChange={(e) => setNewTags(e.target.value)}
+                                            placeholder="e.g. react, hooks, utility"
+                                            className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-semibold text-text-primary mb-1">
+                                            Description
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newDescription}
+                                            onChange={(e) => setNewDescription(e.target.value)}
+                                            placeholder="Short summary of snippet purpose..."
+                                            className="w-full rounded-xl border border-neutral-200 bg-bg-elevated px-3 py-2 text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-semibold text-text-primary mb-1">
+                                            Code Body *
+                                        </label>
+                                        <textarea
+                                            rows={6}
+                                            value={newCode}
+                                            onChange={(e) => setNewCode(e.target.value)}
+                                            placeholder="Paste or write your code here..."
+                                            required
+                                            className="w-full rounded-xl border border-neutral-200 bg-bg-base p-3 font-mono text-xs text-text-primary outline-none focus:border-cobalt dark:border-neutral-800"
+                                        />
+                                    </div>
+
+                                    {/* Visibility Toggle */}
+                                    <div className="flex items-center justify-between rounded-xl bg-bg-elevated p-3 border border-neutral-200 dark:border-neutral-800">
+                                        <div className="flex items-center gap-2.5">
+                                            <Lock className="h-4 w-4 text-cobalt" />
+                                            <div>
+                                                <p className="text-xs font-semibold text-text-primary">
+                                                    Private Snippet
+                                                </p>
+                                                <p className="text-[10px] text-text-secondary">
+                                                    Hidden from public snippet library.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input
+                                            type="checkbox"
+                                            checked={isPrivate}
+                                            onChange={(e) => setIsPrivate(e.target.checked)}
+                                            className="h-4 w-4 rounded accent-cobalt cursor-pointer"
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center justify-end gap-3 pt-3 border-t border-neutral-100 dark:border-neutral-800">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsCreateOpen(false)}
+                                            className="rounded-xl px-4 py-2 text-xs font-semibold text-text-secondary hover:bg-bg-elevated"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="rounded-xl bg-cobalt px-5 py-2 text-xs font-semibold text-white shadow-md hover:bg-cobalt-hover active:bg-cobalt-active active:scale-95 transition-all"
+                                        >
+                                            Save to Vault
+                                        </button>
+                                    </div>
+                                </form>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </div>
     );
 }
