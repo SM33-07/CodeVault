@@ -23,8 +23,8 @@ export default function ProfileSettingsPage() {
 
     const [displayName, setDisplayName] = useState(user?.displayName || "");
     const [bio, setBio] = useState(user?.bio || "");
-    const [githubHandle, setGithubHandle] = useState("SM33-07");
-    const [websiteUrl, setWebsiteUrl] = useState("https://trycodevault.vercel.app");
+    const [githubHandle, setGithubHandle] = useState(user?.githubUsername || "");
+    const [websiteUrl, setWebsiteUrl] = useState(user?.websiteUrl || "");
     const [geminiApiKey, setGeminiApiKey] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 

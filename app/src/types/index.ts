@@ -3,8 +3,11 @@ export type User = {
   email: string;
   displayName?: string;
   bio?: string;
-  createdAt: string;
-  updatedAt: string;
+  githubUsername?: string;
+  websiteUrl?: string;
+  avatarUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type Snippet = {

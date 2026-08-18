@@ -18,17 +18,19 @@ export async function GET(
             }
         }
 
-        // Serverless Profile Fallback
+        // Serverless Profile Generation
         return NextResponse.json({
             id,
-            displayName: "Soham More",
+            displayName: id === "me" ? "Developer" : id,
             email: "developer@codevault.dev",
-            bio: "Full-stack engineer building high-performance developer tools, snippet managers, and distributed systems.",
-            createdAt: "Joined July 2026",
+            bio: "CodeVault developer & snippet curator.",
+            createdAt: "Active Member",
+            followersCount: 0,
+            followingCount: 0,
             stats: {
-                snippetsCount: 12,
-                totalViews: 3420,
-                forksCount: 8,
+                snippetsCount: 0,
+                totalViews: 0,
+                forksCount: 0,
             },
         });
     } catch (err: any) {

@@ -56,16 +56,16 @@ export default function UserProfilePage({
     const [isLoading, setIsLoading] = useState(true);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [isFollowing, setIsFollowing] = useState(false);
-    const [followersCount, setFollowersCount] = useState(48);
+    const [followersCount, setFollowersCount] = useState(0);
     const [activeTab, setActiveTab] = useState<"all" | "starred" | "forks">("all");
-    const [starredIds, setStarredIds] = useState<Set<string>>(new Set(["snip-1"]));
+    const [starredIds, setStarredIds] = useState<Set<string>>(new Set());
 
     // Edit Profile Modal
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editDisplayName, setEditDisplayName] = useState("");
     const [editBio, setEditBio] = useState("");
-    const [editGithub, setEditGithub] = useState("SM33-07");
-    const [editWebsite, setEditWebsite] = useState("https://trycodevault.vercel.app");
+    const [editGithub, setEditGithub] = useState("");
+    const [editWebsite, setEditWebsite] = useState("");
 
     const [mounted, setMounted] = useState(false);
 
@@ -101,6 +101,12 @@ export default function UserProfilePage({
                         ? currentUser.id
                         : resolvedParams.userId;
 
+                const savedFollowers = localStorage.getItem(`codevault_followers_${targetId}`);
+                const isSavedFollowing = localStorage.getItem(`codevault_following_${targetId}`) === "true";
+                if (isMounted) {
+                    setIsFollowing(isSavedFollowing);
+                }
+
                 const [userData, userSnippets] = await Promise.all([
                     apiGet<any>(`/api/users/${targetId}`, token ?? undefined).catch(() => null),
                     apiGet<any[]>(`/api/users/${targetId}/snippets`, token ?? undefined).catch(() => null),
@@ -111,17 +117,26 @@ export default function UserProfilePage({
                         setProfile(userData);
                         setEditDisplayName(userData.displayName || "");
                         setEditBio(userData.bio || "");
+                        setEditGithub(userData.github || currentUser?.githubUsername || "");
+                        setEditWebsite(userData.website || currentUser?.websiteUrl || "");
+                        setFollowersCount(savedFollowers ? parseInt(savedFollowers, 10) : (userData.followersCount ?? 0));
                     } else {
                         const fallback = {
                             id: targetId,
-                            displayName: currentUser?.displayName || "Soham More",
+                            displayName: currentUser?.displayName || (currentUser?.email ? currentUser.email.split("@")[0] : "Developer"),
                             email: currentUser?.email || "developer@codevault.dev",
-                            bio: currentUser?.bio || "Full-stack engineer building high-performance developer tools, snippet managers, and distributed systems.",
-                            createdAt: "Joined July 2026",
+                            bio: currentUser?.bio || "CodeVault developer & snippet curator.",
+                            createdAt: currentUser?.createdAt ? new Date(currentUser.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : "Active Member",
+                            github: currentUser?.githubUsername || "",
+                            website: currentUser?.websiteUrl || "",
+                            followersCount: 0,
                         };
                         setProfile(fallback);
                         setEditDisplayName(fallback.displayName);
                         setEditBio(fallback.bio);
+                        setEditGithub(fallback.github);
+                        setEditWebsite(fallback.website);
+                        setFollowersCount(savedFollowers ? parseInt(savedFollowers, 10) : 0);
                     }
 
                     if (Array.isArray(userSnippets) && userSnippets.length > 0) {
@@ -134,15 +149,21 @@ export default function UserProfilePage({
                 if (isMounted) {
                     const fallback = {
                         id: resolvedParams.userId,
-                        displayName: "Developer Profile",
-                        email: "developer@codevault.dev",
-                        bio: "Open source contributor & CodeVault creator.",
-                        createdAt: "July 2026",
+                        displayName: currentUser?.displayName || "Developer",
+                        email: currentUser?.email || "developer@codevault.dev",
+                        bio: currentUser?.bio || "CodeVault developer & snippet curator.",
+                        createdAt: "Active Member",
+                        github: currentUser?.githubUsername || "",
+                        website: currentUser?.websiteUrl || "",
+                        followersCount: 0,
                     };
                     setProfile(fallback);
                     setEditDisplayName(fallback.displayName);
                     setEditBio(fallback.bio);
+                    setEditGithub(fallback.github);
+                    setEditWebsite(fallback.website);
                     setSnippets(SAMPLE_SNIPPETS);
+                    setFollowersCount(0);
                 }
             } finally {
                 if (isMounted) setIsLoading(false);
@@ -188,9 +209,13 @@ export default function UserProfilePage({
     };
 
     const handleToggleFollow = () => {
+        const targetId = resolvedParams.userId === "me" && currentUser?.id ? currentUser.id : resolvedParams.userId;
         setIsFollowing((prev) => {
             const next = !prev;
-            setFollowersCount((c) => (next ? c + 1 : c - 1));
+            const newCount = Math.max(0, followersCount + (next ? 1 : -1));
+            setFollowersCount(newCount);
+            localStorage.setItem(`codevault_following_${targetId}`, String(next));
+            localStorage.setItem(`codevault_followers_${targetId}`, String(newCount));
             toast.success(next ? `Now following ${displayName}` : `Unfollowed ${displayName}`);
             return next;
         });

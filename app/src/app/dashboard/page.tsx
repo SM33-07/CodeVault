@@ -66,7 +66,7 @@ export default function DashboardPage() {
     const [selectedLanguage, setSelectedLanguage] = useState("All");
     const [sortBy, setSortBy] = useState<"newest" | "views" | "forks">("newest");
     const [copiedId, setCopiedId] = useState<string | null>(null);
-    const [starredIds, setStarredIds] = useState<Set<string>>(new Set(["snip-1", "snip-3"]));
+    const [starredIds, setStarredIds] = useState<Set<string>>(new Set());
 
     // Modals state
     const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -92,10 +92,10 @@ export default function DashboardPage() {
 
     // Settings State
     const [settingsSection, setSettingsSection] = useState<"profile" | "editor" | "ai" | "vault">("profile");
-    const [settingsDisplayName, setSettingsDisplayName] = useState(user?.displayName || "Soham More");
-    const [settingsBio, setSettingsBio] = useState(user?.bio || "Full-stack developer building high-performance dev tools and code lineage graphs.");
-    const [settingsGithub, setSettingsGithub] = useState("SM33-07");
-    const [settingsWebsite, setSettingsWebsite] = useState("https://trycodevault.vercel.app");
+    const [settingsDisplayName, setSettingsDisplayName] = useState(user?.displayName || (user?.email ? user.email.split("@")[0] : "Developer"));
+    const [settingsBio, setSettingsBio] = useState(user?.bio || "");
+    const [settingsGithub, setSettingsGithub] = useState(user?.githubUsername || "");
+    const [settingsWebsite, setSettingsWebsite] = useState(user?.websiteUrl || "");
     
     // Editor Settings
     const [editorTheme, setEditorTheme] = useState<"obsidian" | "tokyo-night" | "dracula" | "vscode-dark">("obsidian");

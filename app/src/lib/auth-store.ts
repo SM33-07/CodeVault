@@ -7,6 +7,9 @@ type User = {
     displayName?: string;
     avatarUrl?: string;
     bio?: string;
+    githubUsername?: string;
+    websiteUrl?: string;
+    createdAt?: string;
 };
 
 type AuthStore = {
