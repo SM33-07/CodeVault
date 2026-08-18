@@ -88,6 +88,12 @@ export default function SnippetDetailPage({
     };
 
     const handleFork = async () => {
+        if (!isAuthenticated) {
+            toast.info("Please sign in to save this fork to your personal vault");
+            router.push(`/login?redirect=/snippets/${resolvedParams.id}`);
+            return;
+        }
+
         setIsForking(true);
         try {
             const forked = await apiPost<Snippet>(
@@ -102,7 +108,7 @@ export default function SnippetDetailPage({
                 }, 600);
             }
         } catch (err: any) {
-            toast.success("Snippet successfully forked to your local session!");
+            toast.error(err?.message || "Failed to create fork");
         } finally {
             setIsForking(false);
         }

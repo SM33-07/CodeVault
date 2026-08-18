@@ -73,6 +73,12 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
         e.stopPropagation();
         e.preventDefault();
 
+        if (!isAuthenticated) {
+            toast.info("Please sign in to save this fork to your personal vault");
+            router.push(`/login?redirect=/snippets/${snippet.id}`);
+            return;
+        }
+
         if (isForking) return;
 
         setIsForking(true);
@@ -87,16 +93,13 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
             setIsForkedByMe(true);
             toast.success(`Forked "${snippet.title}" to your vault!`);
             
-            // Navigate to snippet or dashboard if desired
             if (res?.id) {
                 setTimeout(() => {
                     router.push(`/snippets/${res.id}`);
-                }, 800);
+                }, 600);
             }
         } catch (err: any) {
-            setForkCount((prev) => prev + 1);
-            setIsForkedByMe(true);
-            toast.success(`Forked "${snippet.title}" locally to your vault!`);
+            toast.error(err?.message || "Failed to create fork");
         } finally {
             setIsForking(false);
         }
