@@ -1,6 +1,3 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4001";
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -9,6 +6,23 @@ export class ApiError extends Error {
     super(message);
     this.name = "ApiError";
   }
+}
+
+function getApiBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
+  }
+
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return "http://localhost:4001";
+    }
+    // On Vercel / deployed production, default to relative origin
+    return "";
+  }
+
+  return process.env.NODE_ENV === "production" ? "" : "http://localhost:4001";
 }
 
 type RequestOptions = {
@@ -31,31 +45,44 @@ export async function apiFetch<T>(
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  const baseUrl = getApiBaseUrl();
+  const url = `${baseUrl}${path}`;
 
-  if (!response.ok) {
-    let message = "Something went wrong.";
+  try {
+    const response = await fetch(url, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
 
-    try {
-      const error = await response.json();
-      message = error.error ?? message;
-    } catch {
-      // Ignore malformed error bodies.
+    if (!response.ok) {
+      let message = "Something went wrong.";
+
+      try {
+        const error = await response.json();
+        message = error.error ?? error.message ?? message;
+      } catch {
+        // Ignore malformed error bodies.
+      }
+
+      throw new ApiError(message, response.status);
     }
 
-    throw new ApiError(message, response.status);
-  }
+    // Handle 204 No Content
+    if (response.status === 204) {
+      return undefined as T;
+    }
 
-  // Handle 204 No Content
-  if (response.status === 204) {
-    return undefined as T;
+    return response.json() as Promise<T>;
+  } catch (err: any) {
+    if (err instanceof ApiError) {
+      throw err;
+    }
+    throw new ApiError(
+      err?.message || "Network request failed. Please check your connection.",
+      500
+    );
   }
-
-  return response.json() as Promise<T>;
 }
 
 export function apiGet<T>(path: string, token?: string) {

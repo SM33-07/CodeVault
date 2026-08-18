@@ -1,10 +1,21 @@
 /**
  * Unified API Client for CodeVault Frontend
- * Connects to Express API at NEXT_PUBLIC_API_URL or defaults to http://localhost:5000/api/v1
+ * Automatically routes to deployed Next.js API or external backend
  */
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+function getApiBaseUrl(): string {
+    if (process.env.NEXT_PUBLIC_API_URL) {
+        return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
+    }
+    if (typeof window !== "undefined") {
+        const hostname = window.location.hostname;
+        if (hostname === "localhost" || hostname === "127.0.0.1") {
+            return "http://localhost:4001";
+        }
+        return "";
+    }
+    return process.env.NODE_ENV === "production" ? "" : "http://localhost:4001";
+}
 
 function getAuthHeader(): Record<string, string> {
     if (typeof window === "undefined") return {};
@@ -25,7 +36,8 @@ function getAuthHeader(): Record<string, string> {
 
 export const api = {
     async get(endpoint: string) {
-        const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const baseUrl = getApiBaseUrl();
+        const res = await fetch(`${baseUrl}${endpoint}`, {
             headers: {
                 "Content-Type": "application/json",
                 ...getAuthHeader(),
@@ -35,7 +47,8 @@ export const api = {
     },
 
     async post(endpoint: string, data: any) {
-        const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const baseUrl = getApiBaseUrl();
+        const res = await fetch(`${baseUrl}${endpoint}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -47,7 +60,8 @@ export const api = {
     },
 
     async put(endpoint: string, data: any) {
-        const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const baseUrl = getApiBaseUrl();
+        const res = await fetch(`${baseUrl}${endpoint}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -59,7 +73,8 @@ export const api = {
     },
 
     async delete(endpoint: string) {
-        const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const baseUrl = getApiBaseUrl();
+        const res = await fetch(`${baseUrl}${endpoint}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -74,17 +89,20 @@ export const api = {
      */
     async explainSnippet(snippetId: string, snippetCode?: string, language?: string) {
         try {
-            const res = await fetch(`${API_BASE_URL}/ai/${snippetId}/explain`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    ...getAuthHeader(),
-                },
-            });
+            const baseUrl = getApiBaseUrl();
+            if (baseUrl) {
+                const res = await fetch(`${baseUrl}/ai/${snippetId}/explain`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...getAuthHeader(),
+                    },
+                });
 
-            if (res.ok) {
-                const data = await res.json();
-                return data;
+                if (res.ok) {
+                    const data = await res.json();
+                    return data;
+                }
             }
         } catch (e) {
             console.warn("Backend AI route unreachable, generating client-side explanation:", e);
