@@ -26,6 +26,7 @@ import { Snippet } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SAMPLE_SNIPPETS } from "@/components/snippets/SnippetFilterGrid";
 import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
+import { getStoredForks, getStoredSnippets } from "@/lib/vault-storage";
 
 export default function SnippetsLibraryPage() {
     const router = useRouter();
@@ -38,6 +39,13 @@ export default function SnippetsLibraryPage() {
     const [selectedLanguage, setSelectedLanguage] = useState("All");
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [vaultVersion, setVaultVersion] = useState(0);
+
+    useEffect(() => {
+        const onVaultUpdated = () => setVaultVersion((v) => v + 1);
+        window.addEventListener("codevault-vault-updated", onVaultUpdated);
+        return () => window.removeEventListener("codevault-vault-updated", onVaultUpdated);
+    }, []);
 
     // Debounce search input by 300ms (per Step 11 spec)
     useEffect(() => {
@@ -60,15 +68,50 @@ export default function SnippetsLibraryPage() {
                 if (selectedTag) params.append("tag", selectedTag.replace("#", ""));
 
                 const path = `/api/snippets${params.toString() ? `?${params.toString()}` : ""}`;
-                const data = await apiGet<Snippet[]>(path, token ?? undefined);
+                const data = await apiGet<Snippet[]>(path, token ?? undefined).catch(() => null);
 
-                if (isMounted && Array.isArray(data)) {
-                    setSnippets(data);
+                const serverList = Array.isArray(data) && data.length > 0 ? data : SAMPLE_SNIPPETS;
+                const localSnippets = getStoredSnippets();
+                const localForks = getStoredForks();
+
+                const map = new Map<string, any>();
+                for (const s of serverList) map.set(s.id, s);
+                for (const s of localSnippets) map.set(s.id, s);
+                for (const f of localForks) map.set(f.id, f);
+
+                let merged = Array.from(map.values());
+
+                if (debouncedQuery) {
+                    const q = debouncedQuery.toLowerCase();
+                    merged = merged.filter((s: any) =>
+                        (s.title && s.title.toLowerCase().includes(q)) ||
+                        (s.description && s.description.toLowerCase().includes(q)) ||
+                        (Array.isArray(s.tags) && s.tags.some((t: string) => t.toLowerCase().includes(q)))
+                    );
+                }
+                if (selectedLanguage !== "All") {
+                    merged = merged.filter((s: any) => s.language === selectedLanguage);
+                }
+                if (selectedTag) {
+                    const tagClean = selectedTag.replace(/^#/, "").toLowerCase();
+                    merged = merged.filter((s: any) =>
+                        Array.isArray(s.tags) && s.tags.some((t: string) => t.replace(/^#/, "").toLowerCase() === tagClean)
+                    );
+                }
+
+                if (isMounted) {
+                    setSnippets(merged);
                 }
             } catch (err) {
                 // Fallback to local sample dataset if backend server is not running
                 if (isMounted) {
-                    setSnippets(SAMPLE_SNIPPETS);
+                    const localSnippets = getStoredSnippets();
+                    const localForks = getStoredForks();
+                    const map = new Map<string, any>();
+                    for (const s of SAMPLE_SNIPPETS) map.set(s.id, s);
+                    for (const s of localSnippets) map.set(s.id, s);
+                    for (const f of localForks) map.set(f.id, f);
+                    setSnippets(Array.from(map.values()));
                 }
             } finally {
                 if (isMounted) setIsLoading(false);
@@ -80,7 +123,7 @@ export default function SnippetsLibraryPage() {
         return () => {
             isMounted = false;
         };
-    }, [debouncedQuery, selectedLanguage, selectedTag, token]);
+    }, [debouncedQuery, selectedLanguage, selectedTag, token, vaultVersion]);
 
     const handleCopy = (code: string, id: string, title: string, e: React.MouseEvent) => {
         e.preventDefault();

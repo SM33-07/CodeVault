@@ -48,6 +48,8 @@ import {
     getStoredSnippets,
     isForkSnippet,
     saveStoredFork,
+    saveStoredSnippet,
+    deleteStoredSnippet,
 } from "@/lib/vault-storage";
 
 function GithubIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
@@ -204,11 +206,15 @@ export default function DashboardPage() {
     const handleDelete = (id: string, title: string, e?: React.MouseEvent) => {
         e?.stopPropagation();
         const deletedSnippet = snippets.find((s) => s.id === id);
+        deleteStoredSnippet(id);
         setSnippets((prev) => prev.filter((s) => s.id !== id));
         toast.success(`Snippet "${title}" deleted`, {
             action: deletedSnippet ? {
                 label: "Undo",
-                onClick: () => setSnippets((prev) => [deletedSnippet, ...prev]),
+                onClick: () => {
+                    saveStoredSnippet(deletedSnippet as any);
+                    setSnippets((prev) => [deletedSnippet, ...prev]);
+                },
             } : undefined,
         });
     };
@@ -290,7 +296,7 @@ export default function DashboardPage() {
             author: {
                 name: user?.displayName || user?.email?.split("@")[0] || "You",
                 avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-                handle: "@vault_owner",
+                handle: `@${user?.displayName?.toLowerCase().replace(/\s+/g, "") || "vault_owner"}`,
             },
             gradientTheme: {
                 glow: "from-cobalt/20 to-violet/20",
@@ -307,6 +313,7 @@ export default function DashboardPage() {
             isPrivate: isPrivate || defaultSnippetPrivacy,
         };
 
+        saveStoredSnippet(newSnippet as any);
         setSnippets([newSnippet, ...snippets]);
         toast.success(newSnippet.isPrivate ? "Private snippet saved!" : "Snippet created successfully!");
 
@@ -323,6 +330,7 @@ export default function DashboardPage() {
         e.preventDefault();
         if (!editingSnippet) return;
 
+        saveStoredSnippet(editingSnippet as any);
         setSnippets((prev) =>
             prev.map((s) => (s.id === editingSnippet.id ? editingSnippet : s))
         );

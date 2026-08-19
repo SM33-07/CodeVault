@@ -51,7 +51,7 @@ export function getStoredForks(userId?: string): StoredSnippet[] {
         if (!raw) return [];
         const parsed: StoredSnippet[] = JSON.parse(raw);
         if (!Array.isArray(parsed)) return [];
-        if (userId) {
+        if (userId && userId !== "me") {
             return parsed.filter((f) => !f.ownerId || f.ownerId === userId || f.ownerId === "me");
         }
         return parsed;
@@ -100,7 +100,7 @@ export function getStoredSnippets(userId?: string): StoredSnippet[] {
         if (!raw) return [];
         const parsed: StoredSnippet[] = JSON.parse(raw);
         if (!Array.isArray(parsed)) return [];
-        if (userId) {
+        if (userId && userId !== "me") {
             return parsed.filter((s) => !s.ownerId || s.ownerId === userId || s.ownerId === "me");
         }
         return parsed;
@@ -122,8 +122,24 @@ export function saveStoredSnippet(snippet: StoredSnippet): void {
             updated = [snippet, ...current];
         }
         localStorage.setItem(SNIPPETS_STORAGE_KEY, JSON.stringify(updated));
+        window.dispatchEvent(new CustomEvent("codevault-vault-updated", { detail: { snippet } }));
     } catch (err) {
         console.warn("Failed to persist snippet to localStorage:", err);
+    }
+}
+
+export function deleteStoredSnippet(id: string): void {
+    if (typeof window === "undefined") return;
+    try {
+        const snippets = getStoredSnippets().filter((s) => s.id !== id);
+        localStorage.setItem(SNIPPETS_STORAGE_KEY, JSON.stringify(snippets));
+
+        const forks = getStoredForks().filter((f) => f.id !== id);
+        localStorage.setItem(FORKS_STORAGE_KEY, JSON.stringify(forks));
+
+        window.dispatchEvent(new CustomEvent("codevault-vault-updated", { detail: { deletedId: id } }));
+    } catch (err) {
+        console.warn("Failed to delete snippet from localStorage:", err);
     }
 }
 

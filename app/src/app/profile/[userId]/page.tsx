@@ -79,6 +79,14 @@ export default function UserProfilePage({
         setMounted(true);
     }, []);
 
+    const [vaultVersion, setVaultVersion] = useState(0);
+
+    useEffect(() => {
+        const onVaultUpdated = () => setVaultVersion((v) => v + 1);
+        window.addEventListener("codevault-vault-updated", onVaultUpdated);
+        return () => window.removeEventListener("codevault-vault-updated", onVaultUpdated);
+    }, []);
+
     const isOwnProfile = Boolean(
         currentUser?.id &&
         (currentUser.id === resolvedParams.userId || resolvedParams.userId === "me")
@@ -150,28 +158,17 @@ export default function UserProfilePage({
                     const localForks = getStoredForks(targetId);
                     const localUserSnippets = getStoredSnippets(targetId);
 
-                    let combinedSnippets: any[] = [];
-                    if (Array.isArray(userSnippets) && userSnippets.length > 0) {
-                        combinedSnippets = [...userSnippets];
-                        // Merge local forks not yet present
-                        for (const lf of localForks) {
-                            if (!combinedSnippets.some((s) => s.id === lf.id)) {
-                                combinedSnippets.unshift(lf);
-                            }
-                        }
-                        for (const ls of localUserSnippets) {
-                            if (!combinedSnippets.some((s) => s.id === ls.id)) {
-                                combinedSnippets.unshift(ls);
-                            }
-                        }
-                    } else if (localForks.length > 0 || localUserSnippets.length > 0) {
-                        const map = new Map<string, any>();
-                        for (const lf of localForks) map.set(lf.id, lf);
-                        for (const ls of localUserSnippets) map.set(ls.id, ls);
-                        combinedSnippets = Array.from(map.values());
-                    } else if (isOwnProfile) {
-                        combinedSnippets = [];
-                    } else {
+                    const map = new Map<string, any>();
+                    // Add server snippets if available
+                    if (Array.isArray(userSnippets)) {
+                        for (const s of userSnippets) map.set(s.id, s);
+                    }
+                    // Overlay local user snippets and forks
+                    for (const s of localUserSnippets) map.set(s.id, s);
+                    for (const f of localForks) map.set(f.id, f);
+
+                    let combinedSnippets = Array.from(map.values());
+                    if (combinedSnippets.length === 0 && !isOwnProfile) {
                         combinedSnippets = SAMPLE_SNIPPETS;
                     }
 
@@ -197,16 +194,14 @@ export default function UserProfilePage({
                     
                     const localForks = getStoredForks(resolvedParams.userId);
                     const localUserSnippets = getStoredSnippets(resolvedParams.userId);
-                    if (localForks.length > 0 || localUserSnippets.length > 0) {
-                        const map = new Map<string, any>();
-                        for (const lf of localForks) map.set(lf.id, lf);
-                        for (const ls of localUserSnippets) map.set(ls.id, ls);
-                        setSnippets(Array.from(map.values()));
-                    } else if (isOwnProfile) {
-                        setSnippets([]);
-                    } else {
-                        setSnippets(SAMPLE_SNIPPETS);
+                    const map = new Map<string, any>();
+                    for (const ls of localUserSnippets) map.set(ls.id, ls);
+                    for (const lf of localForks) map.set(lf.id, lf);
+                    let combined = Array.from(map.values());
+                    if (combined.length === 0 && !isOwnProfile) {
+                        combined = SAMPLE_SNIPPETS;
                     }
+                    setSnippets(combined);
                     setFollowersCount(0);
                 }
             } finally {

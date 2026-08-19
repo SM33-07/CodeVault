@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth-store";
 import { apiPost } from "@/lib/api";
 import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
+import { saveStoredSnippet, StoredSnippet } from "@/lib/vault-storage";
 
 const AVAILABLE_LANGUAGES = [
     { name: "TypeScript", color: "#3178C6", ext: ".ts" },
@@ -36,7 +37,7 @@ const AVAILABLE_LANGUAGES = [
 
 export default function CreateSnippetPage() {
     const router = useRouter();
-    const { token, isAuthenticated } = useAuthStore();
+    const { token, user, isAuthenticated } = useAuthStore();
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -72,7 +73,7 @@ export default function CreateSnippetPage() {
                 .map((t) => t.trim().replace(/^#/, ""))
                 .filter(Boolean);
 
-            if (!isAuthenticated || !token) {
+            if (!isAuthenticated) {
                 // If not logged in, notify and redirect to login
                 toast.info("Please sign in or create an account to persist your snippets");
                 router.push("/login?redirect=/snippets/new");
@@ -88,18 +89,44 @@ export default function CreateSnippetPage() {
                 tags: processedTags.length > 0 ? processedTags : undefined,
             };
 
-            const createdSnippet = await apiPost<any>("/api/snippets", payload, token);
+            const createdSnippet = await apiPost<any>("/api/snippets", payload, token ?? undefined).catch(() => null);
 
+            const snippetToSave: StoredSnippet = {
+                id: createdSnippet?.id || `snip-${Date.now()}`,
+                title: title.trim(),
+                description: description.trim() || "User created code snippet",
+                language,
+                langColor: activeLangObj.color,
+                code: codeBody.trim(),
+                codeBody: codeBody.trim(),
+                codePreview: codeBody.trim(),
+                tags: processedTags.length > 0 ? processedTags : ["custom"],
+                visibility,
+                isPrivate: visibility === "private",
+                viewCount: 0,
+                forkCount: 0,
+                createdAt: new Date().toISOString(),
+                ownerId: user?.id || "me",
+                author: {
+                    name: user?.displayName || "You",
+                    handle: `@${user?.displayName?.toLowerCase().replace(/\s+/g, "") || "developer"}`,
+                    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+                },
+                gradientTheme: {
+                    glow: "from-cobalt/20 to-violet/20",
+                    accent: "text-cobalt",
+                },
+            };
+
+            saveStoredSnippet(snippetToSave);
             toast.success(`Snippet "${title}" created successfully!`);
 
-            if (createdSnippet?.id) {
-                router.push(`/snippets/${createdSnippet.id}`);
-            } else {
-                router.push("/snippets");
-            }
+            setTimeout(() => {
+                router.push(`/snippets/${snippetToSave.id}`);
+            }, 500);
         } catch (err: any) {
             console.error("Failed to create snippet:", err);
-            toast.error(err?.message || "Failed to create snippet. Please check your network connection.");
+            toast.error(err?.message || "Failed to create snippet.");
         } finally {
             setIsSubmitting(false);
         }
