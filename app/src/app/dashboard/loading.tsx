@@ -7,6 +7,7 @@ export default function DashboardLoading() {
             size="lg"
             label="Synchronizing Workspace & Vault..."
             subtitle="Decrypting repositories, statistics & activity..."
+            timeoutMs={1200}
         />
     );
 }

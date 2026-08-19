@@ -7,6 +7,7 @@ export default function Loading() {
             size="lg"
             label="Decrypting Vault Route..."
             subtitle="Establishing secure encryption session..."
+            timeoutMs={1200}
         />
     );
 }

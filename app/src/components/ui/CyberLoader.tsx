@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface CyberLoaderProps {
@@ -9,6 +9,7 @@ interface CyberLoaderProps {
     subtitle?: string;
     fullscreen?: boolean;
     className?: string;
+    timeoutMs?: number;
 }
 
 export function CyberLoader({
@@ -17,7 +18,23 @@ export function CyberLoader({
     subtitle,
     fullscreen = false,
     className = "",
+    timeoutMs = 1500,
 }: CyberLoaderProps) {
+    const [isDismissed, setIsDismissed] = useState(false);
+
+    // Watchdog fallback: unconditionally auto-dismiss after timeoutMs so screen can never be locked
+    useEffect(() => {
+        if (!fullscreen) return;
+        const timer = setTimeout(() => {
+            setIsDismissed(true);
+        }, timeoutMs);
+        return () => clearTimeout(timer);
+    }, [fullscreen, timeoutMs]);
+
+    if (fullscreen && isDismissed) {
+        return null;
+    }
+
     const bars = [
         { height: [0.35, 1, 0.35], delay: 0 },
         { height: [0.55, 0.3, 0.85, 0.55], delay: 0.12 },
@@ -130,14 +147,17 @@ export function CyberLoader({
                 initial={{ opacity: 1 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="fixed inset-0 z-[999999] flex items-center justify-center bg-bg-base overflow-hidden"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                onClick={() => setIsDismissed(true)}
+                className="fixed inset-0 z-[999999] flex items-center justify-center bg-bg-base overflow-hidden cursor-pointer"
+                title="Click to dismiss loader"
             >
                 <motion.div
                     initial={{ scale: 0.94, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.96, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    onClick={(e) => e.stopPropagation()}
                     className="relative z-10 mx-4 flex flex-col items-center justify-center rounded-3xl border border-neutral-200/80 bg-bg-surface/95 backdrop-blur-2xl px-10 py-8 shadow-2xl dark:border-neutral-800"
                 >
                     {/* Glowing background halo */}

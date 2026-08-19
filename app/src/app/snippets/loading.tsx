@@ -7,6 +7,7 @@ export default function SnippetsLoading() {
             size="lg"
             label="Indexing Snippet Library..."
             subtitle="Decrypting code categories & community collections..."
+            timeoutMs={1200}
         />
     );
 }

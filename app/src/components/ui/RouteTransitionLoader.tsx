@@ -75,45 +75,62 @@ function getRouteLoaderInfo(path: string) {
 export function RouteTransitionLoader() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const [isInitialLoading, setIsInitialLoading] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
     const [targetPath, setTargetPath] = useState<string | null>(null);
     const [progress, setProgress] = useState(0);
 
     const startTimeRef = useRef<number>(0);
     const prevPathnameRef = useRef(pathname);
+    const navSafetyTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Initial site access or reload duration (adequate time for legibility and animation)
+    // Hard ceiling watchdog: absolutely guarantee that the full-screen loader can NEVER stay visible past 1.2 seconds
+    const showLoader = isInitialLoading || isNavigating;
+
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsInitialLoading(false);
-        }, 1800);
+        if (showLoader) {
+            const hardWatchdogTimer = setTimeout(() => {
+                setIsInitialLoading(false);
+                setIsNavigating(false);
+                setTargetPath(null);
+                setTimeout(() => setProgress(0), 200);
+            }, 1200);
 
-        return () => clearTimeout(timer);
+            return () => clearTimeout(hardWatchdogTimer);
+        }
+    }, [showLoader, pathname]);
+
+    // Initial mount safety cleanup
+    useEffect(() => {
+        const initialSafetyTimer = setTimeout(() => {
+            setIsInitialLoading(false);
+        }, 600);
+
+        return () => clearTimeout(initialSafetyTimer);
     }, []);
 
-    // When pathname or searchParams change, ensure minimum display duration so animation is legible and complete
+    // When pathname or searchParams change, dismiss navigation state promptly
     useEffect(() => {
         if (prevPathnameRef.current !== pathname) {
             prevPathnameRef.current = pathname;
-
-            const elapsedTime = Date.now() - startTimeRef.current;
-            const minDuration = 1400; // Guaranteed minimum display time for legibility and smooth visual satisfaction
-            const remainingTime = Math.max(0, minDuration - elapsedTime);
-
             setProgress(100);
+
+            if (navSafetyTimerRef.current) {
+                clearTimeout(navSafetyTimerRef.current);
+                navSafetyTimerRef.current = null;
+            }
 
             const hideTimer = setTimeout(() => {
                 setIsNavigating(false);
                 setTargetPath(null);
-                setTimeout(() => setProgress(0), 300);
-            }, remainingTime);
+                setTimeout(() => setProgress(0), 250);
+            }, 400);
 
             return () => clearTimeout(hideTimer);
         }
     }, [pathname, searchParams]);
 
-    // Intercept internal link clicks to trigger loader every single time
+    // Intercept internal link clicks to trigger top laser bar & transition
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {
             const target = (e.target as HTMLElement).closest("a");
@@ -137,11 +154,20 @@ export function RouteTransitionLoader() {
                     startTimeRef.current = Date.now();
                     setTargetPath(targetUrl);
                     setIsNavigating(true);
-                    setProgress(35);
+                    setProgress(40);
 
                     // Accelerate laser progress bar
-                    setTimeout(() => setProgress((p) => (p === 35 ? 75 : p)), 150);
-                    setTimeout(() => setProgress((p) => (p === 75 ? 90 : p)), 350);
+                    setTimeout(() => setProgress((p) => (p > 0 ? 80 : p)), 100);
+
+                    // Safety timeout specifically for this click in case route navigation is aborted or unchanged
+                    if (navSafetyTimerRef.current) {
+                        clearTimeout(navSafetyTimerRef.current);
+                    }
+                    navSafetyTimerRef.current = setTimeout(() => {
+                        setIsNavigating(false);
+                        setTargetPath(null);
+                        setTimeout(() => setProgress(0), 200);
+                    }, 1200);
                 }
             }
         };
@@ -149,11 +175,13 @@ export function RouteTransitionLoader() {
         document.addEventListener("click", handleClick, { capture: true });
         return () => {
             document.removeEventListener("click", handleClick, { capture: true });
+            if (navSafetyTimerRef.current) {
+                clearTimeout(navSafetyTimerRef.current);
+            }
         };
     }, []);
 
     const activeInfo = getRouteLoaderInfo(targetPath || pathname);
-    const showLoader = isInitialLoading || isNavigating;
 
     return (
         <>
@@ -167,23 +195,33 @@ export function RouteTransitionLoader() {
                             opacity: progress === 100 ? [1, 0] : 1,
                         }}
                         transition={{
-                            width: { duration: 0.25, ease: "easeOut" },
-                            opacity: { duration: 0.25, delay: 0.1 },
+                            width: { duration: 0.2, ease: "easeOut" },
+                            opacity: { duration: 0.2, delay: 0.05 },
                         }}
                         className="h-[3px] bg-gradient-to-r from-cobalt via-violet to-mint shadow-[0_0_15px_rgba(59,130,246,0.9),0_0_25px_rgba(139,92,246,0.7)]"
                     />
                 </div>
             )}
 
-            {/* Plain Background Fullscreen CyberLoader on every access, reload, and navigation */}
+            {/* Plain Background Fullscreen CyberLoader on route transitions with click-to-dismiss */}
             <AnimatePresence>
                 {showLoader && (
-                    <CyberLoader
-                        fullscreen
-                        size="lg"
-                        label={activeInfo.label}
-                        subtitle={activeInfo.subtitle}
-                    />
+                    <div
+                        onClick={() => {
+                            setIsInitialLoading(false);
+                            setIsNavigating(false);
+                            setTargetPath(null);
+                        }}
+                        className="fixed inset-0 z-[999999] cursor-pointer"
+                        title="Click to dismiss loader"
+                    >
+                        <CyberLoader
+                            fullscreen
+                            size="lg"
+                            label={activeInfo.label}
+                            subtitle={activeInfo.subtitle}
+                        />
+                    </div>
                 )}
             </AnimatePresence>
         </>

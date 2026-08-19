@@ -7,6 +7,7 @@ export default function ProfileLoading() {
             size="lg"
             label="Loading Developer Profile..."
             subtitle="Fetching user repository badges & stats..."
+            timeoutMs={1200}
         />
     );
 }
