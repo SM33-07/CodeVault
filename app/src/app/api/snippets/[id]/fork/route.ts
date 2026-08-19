@@ -1,19 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SAMPLE_SNIPPETS } from "@/components/snippets/SnippetFilterGrid";
 
+function shouldProxyToBackend(url?: string): boolean {
+    if (!url) return false;
+    const trimmed = url.trim().toLowerCase();
+    return !(
+        trimmed.includes("localhost") ||
+        trimmed.includes("127.0.0.1") ||
+        trimmed.includes("vercel.app") ||
+        trimmed.includes("trycodevault")
+    );
+}
+
 export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { id } = await params;
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || process.env.BACKEND_URL;
+        const backendUrl = process.env.BACKEND_URL;
 
         // 1. If an external backend is live, forward the fork request
-        if (backendUrl && !backendUrl.includes("localhost")) {
+        if (shouldProxyToBackend(backendUrl)) {
             try {
                 const authHeader = request.headers.get("authorization");
-                const response = await fetch(`${backendUrl.replace(/\/+$/, "")}/api/snippets/${id}/fork`, {
+                const response = await fetch(`${backendUrl!.replace(/\/+$/, "")}/api/snippets/${id}/fork`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
