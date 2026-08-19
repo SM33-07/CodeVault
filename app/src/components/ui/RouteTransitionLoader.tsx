@@ -5,49 +5,113 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { CyberLoader } from "./CyberLoader";
 
+function getRouteLoaderInfo(path: string) {
+    if (!path || path === "/") {
+        return {
+            label: "Initializing Sovereign Vault...",
+            subtitle: "Decrypting workspace & loading developer assets...",
+        };
+    }
+    if (path.startsWith("/dashboard")) {
+        return {
+            label: "Synchronizing Workspace & Vault...",
+            subtitle: "Decrypting repositories, statistics & activity...",
+        };
+    }
+    if (path === "/snippets/new") {
+        return {
+            label: "Configuring Code Workspace...",
+            subtitle: "Initializing editor environment & syntax parser...",
+        };
+    }
+    if (path.startsWith("/snippets/") && path !== "/snippets") {
+        return {
+            label: "Decrypting Code Snippet...",
+            subtitle: "Parsing syntax tree, provenance & lineage graph...",
+        };
+    }
+    if (path.startsWith("/snippets")) {
+        return {
+            label: "Indexing Snippet Library...",
+            subtitle: "Decrypting code categories & community collections...",
+        };
+    }
+    if (path.startsWith("/profile/settings")) {
+        return {
+            label: "Accessing Vault Security & Settings...",
+            subtitle: "Decrypting user preferences & API tokens...",
+        };
+    }
+    if (path.startsWith("/profile")) {
+        return {
+            label: "Loading Developer Profile...",
+            subtitle: "Fetching user repository badges & stats...",
+        };
+    }
+    if (path.startsWith("/login")) {
+        return {
+            label: "Authorizing Vault Terminal...",
+            subtitle: "Establishing secure encryption session...",
+        };
+    }
+    if (path.startsWith("/register")) {
+        return {
+            label: "Initializing Security Protocol...",
+            subtitle: "Preparing sovereign developer vault enrollment...",
+        };
+    }
+    if (path.startsWith("/auth")) {
+        return {
+            label: "Authorizing Vault Session...",
+            subtitle: "Exchanging cryptographic tokens...",
+        };
+    }
+    return {
+        label: "Decrypting Vault Route...",
+        subtitle: "Establishing secure encryption session...",
+    };
+}
+
 export function RouteTransitionLoader() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
     const [isNavigating, setIsNavigating] = useState(false);
-    const [isStuck, setIsStuck] = useState(false);
+    const [targetPath, setTargetPath] = useState<string | null>(null);
     const [progress, setProgress] = useState(0);
 
     const startTimeRef = useRef<number>(0);
     const prevPathnameRef = useRef(pathname);
 
-    // When pathname or searchParams change, ensure minimum display duration so animation is always appreciated
+    // Initial site access or reload duration (adequate time for legibility and animation)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsInitialLoading(false);
+        }, 1800);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    // When pathname or searchParams change, ensure minimum display duration so animation is legible and complete
     useEffect(() => {
         if (prevPathnameRef.current !== pathname) {
             prevPathnameRef.current = pathname;
 
             const elapsedTime = Date.now() - startTimeRef.current;
-            const minDuration = 450; // Guaranteed minimum display time for smooth visual satisfaction
+            const minDuration = 1400; // Guaranteed minimum display time for legibility and smooth visual satisfaction
             const remainingTime = Math.max(0, minDuration - elapsedTime);
 
             setProgress(100);
 
             const hideTimer = setTimeout(() => {
                 setIsNavigating(false);
-                setIsStuck(false);
+                setTargetPath(null);
                 setTimeout(() => setProgress(0), 300);
             }, remainingTime);
 
             return () => clearTimeout(hideTimer);
         }
     }, [pathname, searchParams]);
-
-    // Handle stuck state if network lag exceeds 3.5s
-    useEffect(() => {
-        let stuckTimer: NodeJS.Timeout;
-        if (isNavigating) {
-            stuckTimer = setTimeout(() => {
-                setIsStuck(true);
-            }, 3500);
-        } else {
-            setIsStuck(false);
-        }
-        return () => clearTimeout(stuckTimer);
-    }, [isNavigating]);
 
     // Intercept internal link clicks to trigger loader every single time
     useEffect(() => {
@@ -71,13 +135,13 @@ export function RouteTransitionLoader() {
 
                 if (targetUrl !== currentUrl) {
                     startTimeRef.current = Date.now();
+                    setTargetPath(targetUrl);
                     setIsNavigating(true);
-                    setIsStuck(false);
                     setProgress(35);
 
                     // Accelerate laser progress bar
-                    setTimeout(() => setProgress((p) => (p === 35 ? 75 : p)), 100);
-                    setTimeout(() => setProgress((p) => (p === 75 ? 90 : p)), 250);
+                    setTimeout(() => setProgress((p) => (p === 35 ? 75 : p)), 150);
+                    setTimeout(() => setProgress((p) => (p === 75 ? 90 : p)), 350);
                 }
             }
         };
@@ -88,62 +152,40 @@ export function RouteTransitionLoader() {
         };
     }, []);
 
-    if (!isNavigating && progress === 0) return null;
+    const activeInfo = getRouteLoaderInfo(targetPath || pathname);
+    const showLoader = isInitialLoading || isNavigating;
 
     return (
-        <div className="fixed inset-0 z-[999999] pointer-events-none">
+        <>
             {/* Top Laser Lightning Progress Bar */}
-            <motion.div
-                initial={{ width: "0%", opacity: 1 }}
-                animate={{
-                    width: isNavigating ? `${progress}%` : "100%",
-                    opacity: progress === 100 ? [1, 0] : 1,
-                }}
-                transition={{
-                    width: { duration: 0.25, ease: "easeOut" },
-                    opacity: { duration: 0.25, delay: 0.1 },
-                }}
-                className="h-[3px] bg-gradient-to-r from-cobalt via-violet to-mint shadow-[0_0_15px_rgba(59,130,246,0.9),0_0_25px_rgba(139,92,246,0.7)]"
-            />
-
-            {/* Prominent Centered Obsidian CyberLoader displayed every time on page switch */}
-            <AnimatePresence>
-                {isNavigating && (
+            {progress > 0 && (
+                <div className="fixed top-0 left-0 right-0 z-[1000000] pointer-events-none">
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="pointer-events-auto fixed inset-0 flex items-center justify-center bg-black/65 backdrop-blur-md"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 10 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                            className="relative mx-4 flex flex-col items-center rounded-3xl border border-neutral-200/80 bg-bg-surface/95 backdrop-blur-2xl p-8 sm:p-10 shadow-2xl dark:border-neutral-800"
-                        >
-                            {/* Neon Ambient Halo */}
-                            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cobalt/30 via-violet/30 to-cobalt/30 blur-xl opacity-70 pointer-events-none" />
+                        initial={{ width: "0%", opacity: 1 }}
+                        animate={{
+                            width: showLoader ? `${progress}%` : "100%",
+                            opacity: progress === 100 ? [1, 0] : 1,
+                        }}
+                        transition={{
+                            width: { duration: 0.25, ease: "easeOut" },
+                            opacity: { duration: 0.25, delay: 0.1 },
+                        }}
+                        className="h-[3px] bg-gradient-to-r from-cobalt via-violet to-mint shadow-[0_0_15px_rgba(59,130,246,0.9),0_0_25px_rgba(139,92,246,0.7)]"
+                    />
+                </div>
+            )}
 
-                            <div className="relative z-10 flex flex-col items-center">
-                                <CyberLoader size="lg" label="Decrypting Vault Route..." />
-
-                                {isStuck && (
-                                    <motion.button
-                                        initial={{ opacity: 0, y: 4 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        onClick={() => window.location.reload()}
-                                        className="mt-4 text-[11px] font-semibold text-text-secondary hover:text-cobalt transition-colors underline"
-                                    >
-                                        Taking longer than usual? Click to reload
-                                    </motion.button>
-                                )}
-                            </div>
-                        </motion.div>
-                    </motion.div>
+            {/* Plain Background Fullscreen CyberLoader on every access, reload, and navigation */}
+            <AnimatePresence>
+                {showLoader && (
+                    <CyberLoader
+                        fullscreen
+                        size="lg"
+                        label={activeInfo.label}
+                        subtitle={activeInfo.subtitle}
+                    />
                 )}
             </AnimatePresence>
-        </div>
+        </>
     );
 }

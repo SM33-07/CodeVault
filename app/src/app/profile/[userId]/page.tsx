@@ -262,7 +262,14 @@ export default function UserProfilePage({
     };
 
     if (isLoading) {
-        return <CyberLoader fullscreen size="lg" label="Loading Developer Profile..." />;
+        return (
+            <CyberLoader
+                fullscreen
+                size="lg"
+                label="Loading Developer Profile..."
+                subtitle="Fetching user repository badges & stats..."
+            />
+        );
     }
 
     const displayName = profile?.displayName || profile?.email?.split("@")[0] || "Developer";

@@ -2,11 +2,11 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
 
 interface CyberLoaderProps {
     size?: "sm" | "md" | "lg";
     label?: string;
+    subtitle?: string;
     fullscreen?: boolean;
     className?: string;
 }
@@ -14,6 +14,7 @@ interface CyberLoaderProps {
 export function CyberLoader({
     size = "md",
     label,
+    subtitle,
     fullscreen = false,
     className = "",
 }: CyberLoaderProps) {
@@ -38,14 +39,14 @@ export function CyberLoader({
             barWidth: "w-1.5",
             gap: "gap-1.5",
             maxHeight: 36,
-            textClass: "text-xs",
+            textClass: "text-xs font-medium",
         },
         lg: {
             containerHeight: "h-16",
             barWidth: "w-2.5 sm:w-3",
             gap: "gap-2 sm:gap-2.5",
             maxHeight: 64,
-            textClass: "text-sm font-semibold tracking-wide",
+            textClass: "text-sm sm:text-base font-semibold tracking-wide",
         },
     };
 
@@ -95,8 +96,8 @@ export function CyberLoader({
                 <motion.div
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 }}
-                    className="mt-3.5 flex items-center gap-1.5"
+                    transition={{ delay: 0.1 }}
+                    className="mt-4 flex items-center gap-2"
                 >
                     <span className={`text-text-primary ${config.textClass}`}>
                         {label}
@@ -104,32 +105,49 @@ export function CyberLoader({
                     <motion.span
                         animate={{ opacity: [0, 1, 0] }}
                         transition={{ duration: 0.8, repeat: Infinity }}
-                        className="inline-block h-3 w-1.5 rounded-xs bg-cobalt"
+                        className="inline-block h-3.5 w-1.5 rounded-xs bg-cobalt"
                     />
                 </motion.div>
+            )}
+
+            {/* Optional Subtitle / Status description */}
+            {subtitle && (
+                <motion.p
+                    initial={{ opacity: 0, y: 2 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="mt-1.5 text-xs text-text-secondary text-center font-mono tracking-normal"
+                >
+                    {subtitle}
+                </motion.p>
             )}
         </div>
     );
 
     if (fullscreen) {
         return (
-            <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-bg-base overflow-hidden">
-                <BodyBackgroundLayer isFixed />
-
+            <motion.div
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="fixed inset-0 z-[999999] flex items-center justify-center bg-bg-base overflow-hidden"
+            >
                 <motion.div
-                    initial={{ scale: 0.92, opacity: 0 }}
+                    initial={{ scale: 0.94, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className="relative z-10 mx-4 flex flex-col items-center justify-center rounded-3xl border border-neutral-200/80 bg-bg-surface/90 backdrop-blur-2xl p-8 sm:p-10 shadow-2xl dark:border-neutral-800"
+                    exit={{ scale: 0.96, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="relative z-10 mx-4 flex flex-col items-center justify-center rounded-3xl border border-neutral-200/80 bg-bg-surface/95 backdrop-blur-2xl px-10 py-8 shadow-2xl dark:border-neutral-800"
                 >
                     {/* Glowing background halo */}
-                    <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cobalt/20 via-violet/20 to-cobalt/20 blur-xl opacity-60 pointer-events-none" />
+                    <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cobalt/25 via-violet/25 to-cobalt/25 blur-xl opacity-70 pointer-events-none" />
 
                     <div className="relative z-10">
                         {LoaderContent}
                     </div>
                 </motion.div>
-            </div>
+            </motion.div>
         );
     }
 

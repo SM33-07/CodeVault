@@ -115,7 +115,14 @@ export default function SnippetDetailPage({
     };
 
     if (isLoading) {
-        return <CyberLoader fullscreen size="lg" label="Decrypting Snippet..." />;
+        return (
+            <CyberLoader
+                fullscreen
+                size="lg"
+                label="Decrypting Code Snippet..."
+                subtitle="Parsing syntax tree, provenance & lineage graph..."
+            />
+        );
     }
 
     if (!snippet) {

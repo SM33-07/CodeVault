@@ -39,12 +39,28 @@ function AuthCallbackContent() {
         }
     }, [searchParams, router, setAuth]);
 
-    return <CyberLoader fullscreen size="lg" label="Authorizing Vault Session..." />;
+    return (
+        <CyberLoader
+            fullscreen
+            size="lg"
+            label="Authorizing Vault Session..."
+            subtitle="Exchanging cryptographic tokens..."
+        />
+    );
 }
 
 export default function AuthCallbackPage() {
     return (
-        <Suspense fallback={<CyberLoader fullscreen size="lg" label="Initializing..." />}>
+        <Suspense
+            fallback={
+                <CyberLoader
+                    fullscreen
+                    size="lg"
+                    label="Authorizing Vault Session..."
+                    subtitle="Initializing security handshake..."
+                />
+            }
+        >
             <AuthCallbackContent />
         </Suspense>
     );
