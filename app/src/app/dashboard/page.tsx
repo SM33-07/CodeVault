@@ -43,6 +43,12 @@ import { useAuthStore } from "@/lib/auth-store";
 import { SAMPLE_SNIPPETS } from "@/components/snippets/SnippetFilterGrid";
 import { SnippetItem } from "@/components/snippets/SnippetCard";
 import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
+import {
+    getStoredForks,
+    getStoredSnippets,
+    isForkSnippet,
+    saveStoredFork,
+} from "@/lib/vault-storage";
 
 function GithubIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
     return (
@@ -117,6 +123,18 @@ export default function DashboardPage() {
         setMounted(true);
         const storedKey = localStorage.getItem("codevault_gemini_key");
         if (storedKey) setGeminiKey(storedKey);
+
+        const localForks = getStoredForks();
+        const localSnippets = getStoredSnippets();
+        if (localForks.length > 0 || localSnippets.length > 0) {
+            const map = new Map<string, any>();
+            // Add sample snippets
+            for (const s of SAMPLE_SNIPPETS) map.set(s.id, s);
+            // Overlay stored user snippets and forks
+            for (const s of localSnippets) map.set(s.id, s);
+            for (const f of localForks) map.set(f.id, f);
+            setSnippets(Array.from(map.values()) as SnippetItem[]);
+        }
     }, []);
 
     // Scroll Lock when any modal is open
@@ -159,20 +177,27 @@ export default function DashboardPage() {
 
     const handleFork = (snippet: SnippetItem, e?: React.MouseEvent) => {
         e?.stopPropagation();
-        const forked: SnippetItem = {
+        const forked: any = {
             ...snippet,
             id: `snip-${Date.now()}`,
             title: `${snippet.title} (Fork)`,
-            forkCount: (snippet.forkCount || 0) + 1,
+            forkCount: 0,
             viewCount: 1,
             createdAt: "Just now",
+            forkedFromId: snippet.id,
+            forkedFromTitle: snippet.title,
+            isFork: true,
+            tags: Array.isArray(snippet.tags)
+                ? (snippet.tags.includes("forked") ? snippet.tags : [...snippet.tags, "forked"])
+                : ["forked"],
             author: {
                 name: user?.displayName || user?.email?.split("@")[0] || "You",
                 avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-                handle: "@you",
+                handle: `@${user?.displayName?.toLowerCase().replace(/\s+/g, "") || "you"}`,
             },
         };
-        setSnippets([forked, ...snippets]);
+        saveStoredFork(forked);
+        setSnippets((prev) => [forked, ...prev.filter((s) => s.id !== forked.id)]);
         toast.success(`Forked "${snippet.title}" to your personal vault!`);
     };
 
@@ -332,7 +357,7 @@ export default function DashboardPage() {
                         : activeTab === "starred"
                             ? starredIds.has(s.id)
                             : activeTab === "forks"
-                                ? (s.forkCount || 0) > 0 || s.title.includes("(Fork)")
+                                ? isForkSnippet(s)
                                 : true;
 
             const matchesLang =

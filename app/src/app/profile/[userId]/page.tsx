@@ -28,11 +28,17 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth-store";
-import { apiGet, apiPut } from "@/lib/api";
+import { apiGet, apiPost, apiPut } from "@/lib/api";
 import { Snippet } from "@/types";
 import { SAMPLE_SNIPPETS } from "@/components/snippets/SnippetFilterGrid";
 import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
 import { CyberLoader } from "@/components/ui/CyberLoader";
+import {
+    getStoredForks,
+    getStoredSnippets,
+    isForkSnippet,
+    saveStoredFork,
+} from "@/lib/vault-storage";
 
 function GithubIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
     return (
@@ -73,9 +79,10 @@ export default function UserProfilePage({
         setMounted(true);
     }, []);
 
-    const isOwnProfile =
+    const isOwnProfile = Boolean(
         currentUser?.id &&
-        (currentUser.id === resolvedParams.userId || resolvedParams.userId === "me");
+        (currentUser.id === resolvedParams.userId || resolvedParams.userId === "me")
+    );
 
     useEffect(() => {
         if (isEditModalOpen) {
@@ -139,11 +146,36 @@ export default function UserProfilePage({
                         setFollowersCount(savedFollowers ? parseInt(savedFollowers, 10) : 0);
                     }
 
+                    // Retrieve stored forks and snippets to merge
+                    const localForks = getStoredForks(targetId);
+                    const localUserSnippets = getStoredSnippets(targetId);
+
+                    let combinedSnippets: any[] = [];
                     if (Array.isArray(userSnippets) && userSnippets.length > 0) {
-                        setSnippets(userSnippets);
+                        combinedSnippets = [...userSnippets];
+                        // Merge local forks not yet present
+                        for (const lf of localForks) {
+                            if (!combinedSnippets.some((s) => s.id === lf.id)) {
+                                combinedSnippets.unshift(lf);
+                            }
+                        }
+                        for (const ls of localUserSnippets) {
+                            if (!combinedSnippets.some((s) => s.id === ls.id)) {
+                                combinedSnippets.unshift(ls);
+                            }
+                        }
+                    } else if (localForks.length > 0 || localUserSnippets.length > 0) {
+                        const map = new Map<string, any>();
+                        for (const lf of localForks) map.set(lf.id, lf);
+                        for (const ls of localUserSnippets) map.set(ls.id, ls);
+                        combinedSnippets = Array.from(map.values());
+                    } else if (isOwnProfile) {
+                        combinedSnippets = [];
                     } else {
-                        setSnippets(SAMPLE_SNIPPETS);
+                        combinedSnippets = SAMPLE_SNIPPETS;
                     }
+
+                    setSnippets(combinedSnippets);
                 }
             } catch (err) {
                 if (isMounted) {
@@ -162,7 +194,19 @@ export default function UserProfilePage({
                     setEditBio(fallback.bio);
                     setEditGithub(fallback.github);
                     setEditWebsite(fallback.website);
-                    setSnippets(SAMPLE_SNIPPETS);
+                    
+                    const localForks = getStoredForks(resolvedParams.userId);
+                    const localUserSnippets = getStoredSnippets(resolvedParams.userId);
+                    if (localForks.length > 0 || localUserSnippets.length > 0) {
+                        const map = new Map<string, any>();
+                        for (const lf of localForks) map.set(lf.id, lf);
+                        for (const ls of localUserSnippets) map.set(ls.id, ls);
+                        setSnippets(Array.from(map.values()));
+                    } else if (isOwnProfile) {
+                        setSnippets([]);
+                    } else {
+                        setSnippets(SAMPLE_SNIPPETS);
+                    }
                     setFollowersCount(0);
                 }
             } finally {
@@ -172,10 +216,16 @@ export default function UserProfilePage({
 
         loadProfileAndSnippets();
 
+        const handleVaultUpdate = () => {
+            loadProfileAndSnippets();
+        };
+        window.addEventListener("codevault-vault-updated", handleVaultUpdate);
+
         return () => {
             isMounted = false;
+            window.removeEventListener("codevault-vault-updated", handleVaultUpdate);
         };
-    }, [resolvedParams.userId, currentUser, token]);
+    }, [resolvedParams.userId, currentUser, token, isOwnProfile]);
 
     const handleCopy = (code: string, id: string, title: string, e: React.MouseEvent) => {
         e.preventDefault();
@@ -202,10 +252,54 @@ export default function UserProfilePage({
         });
     };
 
-    const handleFork = (snippet: any, e: React.MouseEvent) => {
+    const handleFork = async (snippet: any, e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        toast.success(`Forked "${snippet.title}" to your vault with lineage provenance!`);
+
+        if (!currentUser?.id && !token) {
+            toast.info("Please sign in to save this fork to your personal vault");
+            router.push(`/login?redirect=/profile/${resolvedParams.userId}`);
+            return;
+        }
+
+        try {
+            const res = await apiPost<any>(
+                `/api/snippets/${snippet.id}/fork`,
+                {},
+                token ?? undefined
+            ).catch(() => null);
+
+            const forkedData = res || {
+                id: `fork-${Date.now()}`,
+                title: `${snippet.title} (Fork)`,
+                description: `Forked from ${snippet.title}. Lineage preserved.`,
+                language: snippet.language || "TypeScript",
+                langColor: snippet.langColor,
+                code: snippet.code || snippet.codeBody || "",
+                codeBody: snippet.codeBody || snippet.code || "",
+                codePreview: snippet.codePreview,
+                tags: Array.isArray(snippet.tags) ? (snippet.tags.includes("forked") ? snippet.tags : [...snippet.tags, "forked"]) : ["forked"],
+                forkCount: 0,
+                viewCount: 1,
+                isPrivate: false,
+                forkedFromId: snippet.id,
+                forkedFromTitle: snippet.title,
+                isFork: true,
+                createdAt: new Date().toISOString(),
+                ownerId: currentUser?.id || "me",
+                author: {
+                    name: currentUser?.displayName || "You",
+                    handle: `@${currentUser?.displayName?.toLowerCase().replace(/\s+/g, "") || "developer"}`,
+                },
+                gradientTheme: snippet.gradientTheme,
+            };
+
+            saveStoredFork(forkedData);
+            setSnippets((prev) => [forkedData, ...prev.filter((s) => s.id !== forkedData.id)]);
+            toast.success(`Forked "${snippet.title}" to your vault with lineage provenance!`);
+        } catch (err: any) {
+            toast.error(err?.message || "Failed to fork snippet");
+        }
     };
 
     const handleToggleFollow = () => {
@@ -274,11 +368,12 @@ export default function UserProfilePage({
 
     const displayName = profile?.displayName || profile?.email?.split("@")[0] || "Developer";
     const totalViews = snippets.reduce((acc, s) => acc + (s.viewCount || 0), 0);
-    const totalForks = snippets.reduce((acc, s) => acc + (s.forkCount || 0), 0);
+    const forkedSnippetsCount = snippets.filter(isForkSnippet).length;
+    const totalForks = snippets.reduce((acc, s) => acc + (s.forkCount || 0), 0) + forkedSnippetsCount;
 
     const filteredSnippets = snippets.filter((s) => {
         if (activeTab === "starred") return starredIds.has(s.id);
-        if (activeTab === "forks") return (s.forkCount || 0) > 0 || (s.title && s.title.includes("(Fork)"));
+        if (activeTab === "forks") return isForkSnippet(s);
         return true;
     });
 
@@ -436,7 +531,7 @@ export default function UserProfilePage({
                 <div className="space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <h2 className="text-lg font-bold text-text-primary">
-                            Published Snippets
+                            {isOwnProfile ? "Personal Vault & Snippets" : "Published Snippets"}
                         </h2>
 
                         {/* Filter Tabs */}
@@ -466,100 +561,146 @@ export default function UserProfilePage({
                                 onClick={() => setActiveTab("forks")}
                                 className={`flex items-center gap-1 rounded-lg px-3 py-1 text-xs font-semibold transition-all ${
                                     activeTab === "forks"
-                                        ? "bg-bg-surface text-text-primary shadow-xs"
+                                        ? "bg-bg-surface text-violet shadow-xs font-bold"
                                         : "text-text-secondary hover:text-text-primary"
                                 }`}
                             >
                                 <GitFork className="h-3 w-3 text-violet" />
-                                <span>Fork Lineage</span>
+                                <span>Fork Lineage ({forkedSnippetsCount})</span>
                             </button>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredSnippets.map((snippet) => {
-                            const codeStr = snippet.codeBody || snippet.code || "";
-                            const snippetTitle = snippet.title || "Snippet";
-                            const langName = snippet.language || "Code";
+                    {filteredSnippets.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-neutral-300/80 dark:border-neutral-800 bg-bg-surface/50 p-12 text-center">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet/10 text-violet mb-3">
+                                <GitFork className="h-6 w-6" />
+                            </div>
+                            <h3 className="text-base font-semibold text-text-primary">
+                                {activeTab === "forks"
+                                    ? "No forked snippets found"
+                                    : activeTab === "starred"
+                                        ? "No favorite snippets yet"
+                                        : "No snippets in this vault yet"}
+                            </h3>
+                            <p className="mt-1 text-xs text-text-secondary max-w-sm">
+                                {activeTab === "forks"
+                                    ? "Fork public snippets from other developers to track provenance and keep your personal versions."
+                                    : "Explore public snippets and fork them into your vault."}
+                            </p>
+                            <Link
+                                href="/snippets"
+                                className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-cobalt px-4 py-2 text-xs font-semibold text-white shadow-md shadow-cobalt/20 hover:bg-cobalt-hover transition-all"
+                            >
+                                <span>Explore Snippets</span>
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredSnippets.map((snippet) => {
+                                const codeStr = snippet.codeBody || snippet.code || "";
+                                const snippetTitle = snippet.title || "Snippet";
+                                const langName = snippet.language || "Code";
+                                const isFork = isForkSnippet(snippet);
 
-                            return (
-                                <motion.div
-                                    key={snippet.id}
-                                    whileHover={{ y: -4 }}
-                                    className="group relative flex flex-col justify-between rounded-2xl border border-neutral-200/80 bg-bg-surface/90 backdrop-blur-xl p-5 shadow-xs hover:border-cobalt/60 dark:border-neutral-800"
-                                >
-                                    <div>
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <span className="rounded-md bg-bg-elevated border border-neutral-200 dark:border-neutral-800 px-2 py-0.5 text-[11px] font-semibold text-text-primary">
-                                                    {langName}
-                                                </span>
-                                                <span className="inline-flex items-center gap-1 badge-mint rounded-full px-2 py-0.5 text-[10px] font-semibold">
-                                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                                    <span>Public</span>
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <button
-                                                    onClick={(e) => handleToggleStar(snippet.id, e)}
-                                                    className={`p-1 rounded transition-colors ${
-                                                        starredIds.has(snippet.id) ? "text-amber-400" : "text-text-secondary hover:text-amber-400"
-                                                    }`}
-                                                    title="Favorite"
-                                                >
-                                                    <Star className={`h-3.5 w-3.5 ${starredIds.has(snippet.id) ? "fill-amber-400" : ""}`} />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => handleFork(snippet, e)}
-                                                    className="p-1 text-text-secondary hover:text-violet transition-colors"
-                                                    title="Fork Snippet"
-                                                >
-                                                    <GitFork className="h-3.5 w-3.5" />
-                                                </button>
-                                                <button
-                                                    onClick={(e) =>
-                                                        handleCopy(codeStr, snippet.id, snippetTitle, e)
-                                                    }
-                                                    className="p-1 text-text-secondary hover:text-text-primary"
-                                                    title="Copy Code"
-                                                >
-                                                    {copiedId === snippet.id ? (
-                                                        <Check className="h-3.5 w-3.5 text-emerald-400" />
+                                return (
+                                    <motion.div
+                                        key={snippet.id}
+                                        whileHover={{ y: -4 }}
+                                        className={`group relative flex flex-col justify-between rounded-2xl border bg-bg-surface/90 backdrop-blur-xl p-5 shadow-xs transition-all duration-300 ${
+                                            isFork
+                                                ? "border-violet/40 hover:border-violet/80 shadow-violet/5 dark:border-violet/30 dark:hover:border-violet/60"
+                                                : "border-neutral-200/80 hover:border-cobalt/60 dark:border-neutral-800"
+                                        }`}
+                                    >
+                                        <div>
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="rounded-md bg-bg-elevated border border-neutral-200 dark:border-neutral-800 px-2 py-0.5 text-[11px] font-semibold text-text-primary">
+                                                        {langName}
+                                                    </span>
+                                                    {isFork ? (
+                                                        <span className="inline-flex items-center gap-1 rounded-full bg-violet/10 border border-violet/30 px-2.5 py-0.5 text-[10px] font-semibold text-violet">
+                                                            <GitFork className="h-3 w-3" />
+                                                            <span>Forked</span>
+                                                        </span>
                                                     ) : (
-                                                        <Copy className="h-3.5 w-3.5" />
+                                                        <span className="inline-flex items-center gap-1 badge-mint rounded-full px-2 py-0.5 text-[10px] font-semibold">
+                                                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                            <span>{snippet.isPrivate || snippet.visibility === "private" ? "Private" : "Public"}</span>
+                                                        </span>
                                                     )}
-                                                </button>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <button
+                                                        onClick={(e) => handleToggleStar(snippet.id, e)}
+                                                        className={`p-1 rounded transition-colors ${
+                                                            starredIds.has(snippet.id) ? "text-amber-400" : "text-text-secondary hover:text-amber-400"
+                                                        }`}
+                                                        title="Favorite"
+                                                    >
+                                                        <Star className={`h-3.5 w-3.5 ${starredIds.has(snippet.id) ? "fill-amber-400" : ""}`} />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => handleFork(snippet, e)}
+                                                        className="p-1 text-text-secondary hover:text-violet transition-colors"
+                                                        title="Fork Snippet"
+                                                    >
+                                                        <GitFork className="h-3.5 w-3.5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) =>
+                                                            handleCopy(codeStr, snippet.id, snippetTitle, e)
+                                                        }
+                                                        className="p-1 text-text-secondary hover:text-text-primary"
+                                                        title="Copy Code"
+                                                    >
+                                                        {copiedId === snippet.id ? (
+                                                            <Check className="h-3.5 w-3.5 text-emerald-400" />
+                                                        ) : (
+                                                            <Copy className="h-3.5 w-3.5" />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <Link href={`/snippets/${snippet.id}`} className="block mt-2">
+                                                <h3 className="text-sm font-bold text-text-primary group-hover:text-cobalt transition-colors line-clamp-1">
+                                                    {snippetTitle}
+                                                </h3>
+                                                {snippet.forkedFromId && (
+                                                    <p className="text-[11px] font-medium text-violet flex items-center gap-1 mt-0.5">
+                                                        <GitFork className="h-3 w-3" />
+                                                        <span>
+                                                            {snippet.forkedFromTitle ? `Fork of ${snippet.forkedFromTitle}` : "Forked with Lineage"}
+                                                        </span>
+                                                    </p>
+                                                )}
+                                                <p className="mt-1 text-xs text-text-secondary line-clamp-2">
+                                                    {snippet.description || "Reusable snippet"}
+                                                </p>
+                                            </Link>
+
+                                            <div className="mt-3 overflow-hidden rounded-xl bg-bg-base border border-neutral-800 p-2.5 font-mono text-[11px] text-text-primary">
+                                                <pre className="line-clamp-3">{codeStr}</pre>
                                             </div>
                                         </div>
 
-                                        <Link href={`/snippets/${snippet.id}`} className="block mt-2">
-                                            <h3 className="text-sm font-bold text-text-primary group-hover:text-cobalt transition-colors line-clamp-1">
-                                                {snippetTitle}
-                                            </h3>
-                                            <p className="mt-1 text-xs text-text-secondary line-clamp-2">
-                                                {snippet.description || "Reusable snippet"}
-                                            </p>
-                                        </Link>
-
-                                        <div className="mt-3 overflow-hidden rounded-xl bg-bg-base border border-neutral-800 p-2.5 font-mono text-[11px] text-text-primary">
-                                            <pre className="line-clamp-3">{codeStr}</pre>
+                                        <div className="mt-4 pt-2 border-t border-neutral-200/60 dark:border-neutral-800 flex items-center justify-between text-[11px] text-text-secondary">
+                                            <span>{snippet.viewCount || 0} views • {snippet.forkCount || 0} forks</span>
+                                            <Link
+                                                href={`/snippets/${snippet.id}`}
+                                                className="font-semibold text-cobalt hover:underline flex items-center gap-1"
+                                            >
+                                                <span>Inspect</span>
+                                                <ExternalLink className="h-3 w-3" />
+                                            </Link>
                                         </div>
-                                    </div>
-
-                                    <div className="mt-4 pt-2 border-t border-neutral-200/60 dark:border-neutral-800 flex items-center justify-between text-[11px] text-text-secondary">
-                                        <span>{snippet.viewCount || 0} views</span>
-                                        <Link
-                                            href={`/snippets/${snippet.id}`}
-                                            className="font-semibold text-cobalt hover:underline flex items-center gap-1"
-                                        >
-                                            <span>Inspect</span>
-                                            <ExternalLink className="h-3 w-3" />
-                                        </Link>
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
-                    </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
             </div>
 

@@ -6,5 +6,5 @@ export const updatedProfileSchema = z.object({
 });
 
 export const userParamsSchema = z.object({
-    userId: z.string().uuid()
+    userId: z.string().min(1)
 });

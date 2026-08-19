@@ -16,6 +16,7 @@ import {
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth-store";
 import { apiPost } from "@/lib/api";
+import { saveStoredFork, isForkSnippet } from "@/lib/vault-storage";
 
 export interface SnippetItem {
     id: string;
@@ -51,6 +52,7 @@ interface SnippetCardProps {
 export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
     const router = useRouter();
     const token = useAuthStore((state) => state.token);
+    const user = useAuthStore((state) => state.user);
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
     const [isCopied, setIsCopied] = useState(false);
@@ -58,7 +60,7 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
     const [forkCount, setForkCount] = useState(snippet.forkCount);
     const [isForkedByMe, setIsForkedByMe] = useState(false);
 
-    const isForked = Boolean(snippet.forkedFromId);
+    const isForked = isForkSnippet(snippet);
 
     const handleCopy = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -83,19 +85,48 @@ export function SnippetCard({ snippet, onTagClick }: SnippetCardProps) {
 
         setIsForking(true);
         try {
-            const res = await apiPost<{ id: string; title: string }>(
+            const res = await apiPost<any>(
                 `/api/snippets/${snippet.id}/fork`,
                 {},
                 token ?? undefined
-            );
+            ).catch(() => null);
 
+            const forkedSnippet = res || {
+                id: `fork-${Date.now()}`,
+                title: `${snippet.title} (Fork)`,
+                description: `Forked from ${snippet.title}. Lineage preserved.`,
+                language: snippet.language,
+                langColor: snippet.langColor,
+                code: snippet.code,
+                codeBody: snippet.code,
+                codePreview: snippet.codePreview,
+                tags: Array.isArray(snippet.tags)
+                    ? (snippet.tags.includes("forked") ? snippet.tags : [...snippet.tags, "forked"])
+                    : ["forked"],
+                forkCount: 0,
+                viewCount: 1,
+                isPrivate: false,
+                forkedFromId: snippet.id,
+                forkedFromTitle: snippet.title,
+                isFork: true,
+                createdAt: new Date().toISOString(),
+                ownerId: user?.id || "me",
+                author: {
+                    name: user?.displayName || "You",
+                    handle: `@${user?.displayName?.toLowerCase().replace(/\s+/g, "") || "developer"}`,
+                    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+                },
+                gradientTheme: snippet.gradientTheme,
+            };
+
+            saveStoredFork(forkedSnippet);
             setForkCount((prev) => prev + 1);
             setIsForkedByMe(true);
             toast.success(`Forked "${snippet.title}" to your vault!`);
             
-            if (res?.id) {
+            if (forkedSnippet?.id) {
                 setTimeout(() => {
-                    router.push(`/snippets/${res.id}`);
+                    router.push(`/snippets/${forkedSnippet.id}`);
                 }, 600);
             }
         } catch (err: any) {

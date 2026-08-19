@@ -32,6 +32,7 @@ import { ExplainPanel } from "@/components/ExplainPanel";
 import { SAMPLE_SNIPPETS } from "@/components/snippets/SnippetFilterGrid";
 import { BodyBackgroundLayer } from "@/components/landing/BodyBackgroundLayer";
 import { CyberLoader } from "@/components/ui/CyberLoader";
+import { findSnippetByIdLocal, saveStoredFork } from "@/lib/vault-storage";
 
 export default function SnippetDetailPage({
     params,
@@ -61,8 +62,8 @@ export default function SnippetDetailPage({
                     setSnippet(data);
                 }
             } catch (err) {
-                // Fallback to sample snippet if backend is offline or ID matches sample
-                const local = SAMPLE_SNIPPETS.find((s) => s.id === resolvedParams.id) || SAMPLE_SNIPPETS[0];
+                // Fallback to local stored snippet or sample snippet if backend is offline
+                const local = findSnippetByIdLocal(resolvedParams.id) || SAMPLE_SNIPPETS.find((s) => s.id === resolvedParams.id) || SAMPLE_SNIPPETS[0];
                 if (isMounted) {
                     setSnippet(local);
                 }
@@ -96,15 +97,44 @@ export default function SnippetDetailPage({
 
         setIsForking(true);
         try {
-            const forked = await apiPost<Snippet>(
+            const forked = await apiPost<any>(
                 `/api/snippets/${resolvedParams.id}/fork`,
                 {},
                 token ?? undefined
-            );
+            ).catch(() => null);
+
+            const forkedData = forked || {
+                id: `fork-${Date.now()}`,
+                title: snippet?.title ? `${snippet.title} (Fork)` : "Forked Snippet",
+                description: `Forked from ${snippet?.title || "snippet"}. Lineage preserved.`,
+                language: snippet?.language || "TypeScript",
+                langColor: snippet?.langColor,
+                code: snippet?.codeBody || snippet?.code || "",
+                codeBody: snippet?.codeBody || snippet?.code || "",
+                codePreview: snippet?.codePreview,
+                tags: Array.isArray(snippet?.tags)
+                    ? (snippet.tags.includes("forked") ? snippet.tags : [...snippet.tags, "forked"])
+                    : ["forked"],
+                forkCount: 0,
+                viewCount: 1,
+                isPrivate: false,
+                forkedFromId: snippet?.id || resolvedParams.id,
+                forkedFromTitle: snippet?.title || "Original Snippet",
+                isFork: true,
+                createdAt: new Date().toISOString(),
+                ownerId: user?.id || "me",
+                author: {
+                    name: user?.displayName || "You",
+                    handle: `@${user?.displayName?.toLowerCase().replace(/\s+/g, "") || "developer"}`,
+                },
+                gradientTheme: snippet?.gradientTheme,
+            };
+
+            saveStoredFork(forkedData);
             toast.success("Snippet successfully forked to your vault!");
-            if (forked?.id) {
+            if (forkedData?.id) {
                 setTimeout(() => {
-                    router.push(`/snippets/${forked.id}`);
+                    router.push(`/snippets/${forkedData.id}`);
                 }, 600);
             }
         } catch (err: any) {

@@ -5,7 +5,11 @@ import { userService } from "../services/user.service";
 export const userController = {
     getProfile: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const user = await userService.getProfile(req.params.userId);
+            const targetId = req.params.userId === "me" ? req.user?.id : req.params.userId;
+            if (!targetId) {
+                return res.status(401).json({ error: "Authentication required for 'me' profile" });
+            }
+            const user = await userService.getProfile(targetId);
             res.status(200).json(user);
         } catch (err) {
             next(err);
@@ -18,8 +22,9 @@ export const userController = {
         next: NextFunction
     ) => {
         try {
+            const targetId = req.params.userId === "me" ? req.user!.id : req.params.userId;
             const updated = await userService.updateProfile(
-                req.params.userId,
+                targetId,
                 req.user!.id,
                 req.body
             );
@@ -36,8 +41,12 @@ export const userController = {
         next: NextFunction
     ) => {
         try {
+            const targetId = req.params.userId === "me" ? req.user?.id : req.params.userId;
+            if (!targetId) {
+                return res.status(200).json([]);
+            }
             const snippets = await snippetService.findByUserId(
-                req.params.userId,
+                targetId,
                 req.user?.id
             );
 
